@@ -1,0 +1,10 @@
+﻿ya:
+  Packages:
+    by: .package
+
+    ya:
+      Title:
+        by: xpath=.//a
+
+      Description:
+        by: .package-details

@@ -1,0 +1,32 @@
+﻿public class {{$1.name}}Component : Yapoml.Playwright.Component
+{
+  public {{$1.name}}Component(Microsoft.Playwright.IPage page, Microsoft.Playwright.IElementHandle elementHandle, Yapoml.Options.ISpaceOptions spaceOptions)
+    : base(page, elementHandle, spaceOptions)
+  {
+
+  }
+
+  {{ for component in $1.component_generation_contextes -}}
+    public {{ if component.is_plural }}System.Collections.Generic.IList<{{component.name}}Component>{{ else }}{{component.name}}Component{{ end }} {{component.name}}
+    {
+      get
+      {
+        var by = "{{ component.by.value }}";
+        
+        {{ if component.is_plural }}
+        EventSource.RaiseOnFindingComponents("{{component.name}}", by);
+        var elementHandles = Page.QuerySelectorAllAsync(by).GetAwaiter().GetResult();
+        EventSource.RaiseOnFoundComponents(by, elementHandles);
+        return elementHandles.Select(e => new {{component.name}}Component(Page, e, SpaceOptions)).ToList();
+        {{ else }}
+        EventSource.RaiseOnFindingComponent("{{component.name}}", by);
+        var elementHandle = Page.QuerySelectorAsync(by).GetAwaiter().GetResult();
+        EventSource.RaiseOnFoundComponent(by, Page, elementHandle);
+        return new {{component.name}}Component(Page, elementHandle, SpaceOptions);
+        {{ end }}
+      }
+    }
+
+    {{ include 'NestedComponentTemplate' component }}
+  {{ end }}
+}

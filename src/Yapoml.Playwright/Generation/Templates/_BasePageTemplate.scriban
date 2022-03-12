@@ -1,0 +1,14 @@
+﻿using Microsoft.Playwright;
+
+namespace Yapoml.Playwright
+{
+  /// <inheritdoc/>
+  public partial class Page : Yapoml.Playwright.Components.BasePage
+  {
+    public Page(IPage page, Yapoml.Options.ISpaceOptions spaceOptions)
+        : base (page, spaceOptions)
+    {
+
+    }
+  }
+}

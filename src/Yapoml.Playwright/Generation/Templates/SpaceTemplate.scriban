@@ -1,0 +1,25 @@
+﻿using Microsoft.Playwright;
+
+namespace {{namespace}}
+{
+  public partial class {{name}}Space
+  {
+    private IPage _page;
+
+    private Yapoml.Options.ISpaceOptions _spaceOptions;
+
+    public {{name}}Space(IPage page, Yapoml.Options.ISpaceOptions spaceOptions)
+    {
+      _page = page;
+      _spaceOptions = spaceOptions;
+    }
+
+    {{ for space in spaces -}}
+    public {{space.namespace}}.{{space.name}}Space {{space.name}} => new {{space.namespace}}.{{space.name}}Space(_page, _spaceOptions);
+    {{ end }}
+
+    {{ for page in pages }}
+    public {{page.namespace}}.{{page.name}} {{page.name}} => new {{page.namespace}}.{{page.name}}(_page, _spaceOptions);
+    {{ end }}
+  }
+}

@@ -6,13 +6,13 @@ namespace Yapoml.Playwright.Events.Args.WebElement
 {
     public class FoundElementsEventArgs : EventArgs
     {
-        public FoundElementsEventArgs(string by, IReadOnlyList<IElementHandle> elementHandles)
+        public FoundElementsEventArgs(string by, IReadOnlyList<ILocator> locators)
         {
             By = by;
-            ElementHandles = elementHandles;
+            Locators = locators;
         }
 
         public string By { get; }
-        public IReadOnlyList<IElementHandle> ElementHandles { get; }
+        public IReadOnlyList<ILocator> Locators { get; }
     }
 }

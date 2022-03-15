@@ -5,15 +5,15 @@ namespace Yapoml.Playwright.Events.Args.WebElement
 {
     public class FoundElementEventArgs : EventArgs
     {
-        public FoundElementEventArgs(string by, IPage page, IElementHandle elementHandle)
+        public FoundElementEventArgs(string by, IPage page, ILocator locator)
         {
             By = by;
             Page = page;
-            ElementHandle = elementHandle;
+            Locator = locator;
         }
 
         public string By { get; }
         public IPage Page { get; }
-        public IElementHandle ElementHandle { get; }
+        public ILocator Locator { get; }
     }
 }

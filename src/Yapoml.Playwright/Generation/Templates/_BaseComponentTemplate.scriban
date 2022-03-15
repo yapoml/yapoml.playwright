@@ -2,11 +2,11 @@
 
 namespace Yapoml.Playwright
 {
-  /// <inheritdoc/>
+  /// <inheritdoc />
   public partial class Component : Yapoml.Playwright.Components.BaseComponent
   {
-    public Component(IPage page, IElementHandle elementHandle, Yapoml.Options.ISpaceOptions spaceOptions)
-        : base (page, elementHandle, spaceOptions)
+    public Component(IPage page, ILocator locator, Yapoml.Options.ISpaceOptions spaceOptions)
+        : base (page, locator, spaceOptions)
     {
 
     }

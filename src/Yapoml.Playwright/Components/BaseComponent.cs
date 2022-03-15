@@ -8,293 +8,284 @@ using Yapoml.Playwright.Events;
 namespace Yapoml.Playwright.Components
 {
     /// <inheritdoc/>
-    public partial class BaseComponent : IElementHandle
+    public partial class BaseComponent : ILocator
     {
         protected IPage Page { get; private set; }
 
-        public IElementHandle WrappedElementHandle { get; private set; }
+        public ILocator WrappedLocator { get; private set; }
 
         protected ISpaceOptions SpaceOptions { get; private set; }
 
         protected IComponentEventSource EventSource { get; private set; }
 
-        public BaseComponent(IPage page, IElementHandle elementHandle, ISpaceOptions spaceOptions)
+        public BaseComponent(IPage page, ILocator locator, ISpaceOptions spaceOptions)
         {
             Page = page;
-            WrappedElementHandle = elementHandle;
+            WrappedLocator = locator;
             SpaceOptions = spaceOptions;
 
             EventSource = spaceOptions.Get<IEventSource>().ComponentEventSource;
         }
 
-        public Task<ElementHandleBoundingBoxResult> BoundingBoxAsync()
+        public ILocator First => WrappedLocator.First;
+
+        public ILocator Last => WrappedLocator.Last;
+
+        IPage ILocator.Page => WrappedLocator.Page;
+
+        public Task<IReadOnlyList<string>> AllInnerTextsAsync()
         {
-            return WrappedElementHandle.BoundingBoxAsync();
+            return WrappedLocator.AllInnerTextsAsync();
         }
 
-        public Task CheckAsync(ElementHandleCheckOptions options = null)
+        public Task<IReadOnlyList<string>> AllTextContentsAsync()
         {
-            return WrappedElementHandle.CheckAsync(options);
+            return WrappedLocator?.AllTextContentsAsync();
         }
 
-        public Task ClickAsync(ElementHandleClickOptions options = null)
+        public Task<LocatorBoundingBoxResult> BoundingBoxAsync(LocatorBoundingBoxOptions options = null)
         {
-            return WrappedElementHandle.ClickAsync(options);
+            return WrappedLocator.BoundingBoxAsync(options);
         }
 
-        public Task<IFrame> ContentFrameAsync()
+        public Task CheckAsync(LocatorCheckOptions options = null)
         {
-            return WrappedElementHandle.ContentFrameAsync();
+            return WrappedLocator.CheckAsync(options);
         }
 
-        public Task DblClickAsync(ElementHandleDblClickOptions options = null)
+        public Task ClickAsync(LocatorClickOptions options = null)
         {
-            return WrappedElementHandle.DblClickAsync(options);
+            return WrappedLocator.ClickAsync(options);
         }
 
-        public Task DispatchEventAsync(string type, object eventInit = null)
+        public Task<int> CountAsync()
         {
-            return WrappedElementHandle.DispatchEventAsync(type, eventInit);
+            return WrappedLocator.CountAsync();
         }
 
-        public Task<T> EvalOnSelectorAsync<T>(string selector, string expression, object arg = null)
+        public Task DblClickAsync(LocatorDblClickOptions options = null)
         {
-            return WrappedElementHandle.EvalOnSelectorAsync<T>(selector, expression, arg);
+            return WrappedLocator.DblClickAsync(options);
         }
 
-        public Task<T> EvalOnSelectorAllAsync<T>(string selector, string expression, object arg = null)
+        public Task DispatchEventAsync(string type, object eventInit = null, LocatorDispatchEventOptions options = null)
         {
-            return WrappedElementHandle.EvalOnSelectorAllAsync<T>(selector, expression, arg);
+            return WrappedLocator.DispatchEventAsync(type, eventInit, options);
         }
 
-        public Task FillAsync(string value, ElementHandleFillOptions options = null)
+        public Task DragToAsync(ILocator target, LocatorDragToOptions options = null)
         {
-            return WrappedElementHandle.FillAsync(value, options);
+            return WrappedLocator.DragToAsync(target, options);
         }
 
-        public Task FocusAsync()
+        public Task<IElementHandle> ElementHandleAsync(LocatorElementHandleOptions options = null)
         {
-            return WrappedElementHandle.FocusAsync();
+            return WrappedLocator.ElementHandleAsync(options);
         }
 
-        public Task<string> GetAttributeAsync(string name)
+        public Task<IReadOnlyList<IElementHandle>> ElementHandlesAsync()
         {
-            return WrappedElementHandle.GetAttributeAsync(name);
+            return WrappedLocator.ElementHandlesAsync();
         }
 
-        public Task HoverAsync(ElementHandleHoverOptions options = null)
+        public Task<T> EvaluateAsync<T>(string expression, object arg = null, LocatorEvaluateOptions options = null)
         {
-            return WrappedElementHandle.HoverAsync(options);
+            return WrappedLocator.EvaluateAsync<T>(expression, arg, options);
         }
 
-        public Task<string> InnerHTMLAsync()
+        public Task<T> EvaluateAllAsync<T>(string expression, object arg = null)
         {
-            return WrappedElementHandle.InnerHTMLAsync();
+            return WrappedLocator.EvaluateAllAsync<T>(expression, arg);
         }
 
-        public Task<string> InnerTextAsync()
+        public Task<IJSHandle> EvaluateHandleAsync(string expression, object arg = null, LocatorEvaluateHandleOptions options = null)
         {
-            return WrappedElementHandle.InnerTextAsync();
+            return WrappedLocator.EvaluateHandleAsync(expression, arg, options);
         }
 
-        public Task<string> InputValueAsync(ElementHandleInputValueOptions options = null)
+        public Task FillAsync(string value, LocatorFillOptions options = null)
         {
-            return WrappedElementHandle.InputValueAsync(options);
+            return WrappedLocator.FillAsync(value, options);
         }
 
-        public Task<bool> IsCheckedAsync()
+        public Task FocusAsync(LocatorFocusOptions options = null)
         {
-            return WrappedElementHandle.IsCheckedAsync();
+            return WrappedLocator.FocusAsync(options);
         }
 
-        public Task<bool> IsDisabledAsync()
+        public IFrameLocator FrameLocator(string selector)
         {
-            return WrappedElementHandle.IsDisabledAsync();
+            return WrappedLocator.FrameLocator(selector);
         }
 
-        public Task<bool> IsEditableAsync()
+        public Task<string> GetAttributeAsync(string name, LocatorGetAttributeOptions options = null)
         {
-            return WrappedElementHandle.IsEditableAsync();
+            return WrappedLocator.GetAttributeAsync(name, options);
         }
 
-        public Task<bool> IsEnabledAsync()
+        public Task HoverAsync(LocatorHoverOptions options = null)
         {
-            return WrappedElementHandle.IsEnabledAsync();
+            return WrappedLocator.HoverAsync(options);
         }
 
-        public Task<bool> IsHiddenAsync()
+        public Task<string> InnerHTMLAsync(LocatorInnerHTMLOptions options = null)
         {
-            return WrappedElementHandle?.IsHiddenAsync();
+            return WrappedLocator.InnerHTMLAsync(options);
         }
 
-        public Task<bool> IsVisibleAsync()
+        public Task<string> InnerTextAsync(LocatorInnerTextOptions options = null)
         {
-            return WrappedElementHandle.IsVisibleAsync();
+            return WrappedLocator.InnerTextAsync(options);
         }
 
-        public Task<IFrame> OwnerFrameAsync()
+        public Task<string> InputValueAsync(LocatorInputValueOptions options = null)
         {
-            return WrappedElementHandle.OwnerFrameAsync();
+            return WrappedLocator.InputValueAsync(options);
         }
 
-        public Task PressAsync(string key, ElementHandlePressOptions options = null)
+        public Task<bool> IsCheckedAsync(LocatorIsCheckedOptions options = null)
         {
-            return WrappedElementHandle.PressAsync(key, options);
+            return WrappedLocator.IsCheckedAsync(options);
         }
 
-        public Task<IElementHandle> QuerySelectorAsync(string selector)
+        public Task<bool> IsDisabledAsync(LocatorIsDisabledOptions options = null)
         {
-            return WrappedElementHandle.QuerySelectorAsync(selector);
+            return WrappedLocator.IsDisabledAsync(options);
         }
 
-        public Task<IReadOnlyList<IElementHandle>> QuerySelectorAllAsync(string selector)
+        public Task<bool> IsEditableAsync(LocatorIsEditableOptions options = null)
         {
-            return WrappedElementHandle.QuerySelectorAllAsync(selector);
+            return WrappedLocator.IsEditableAsync(options);
         }
 
-        public Task<byte[]> ScreenshotAsync(ElementHandleScreenshotOptions options = null)
+        public Task<bool> IsEnabledAsync(LocatorIsEnabledOptions options = null)
         {
-            return WrappedElementHandle.ScreenshotAsync(options);
+            return WrappedLocator.IsEnabledAsync(options);
         }
 
-        public Task ScrollIntoViewIfNeededAsync(ElementHandleScrollIntoViewIfNeededOptions options = null)
+        public Task<bool> IsHiddenAsync(LocatorIsHiddenOptions options = null)
         {
-            return WrappedElementHandle.ScrollIntoViewIfNeededAsync(options);
+            return WrappedLocator.IsHiddenAsync(options);
         }
 
-        public Task<IReadOnlyList<string>> SelectOptionAsync(string values, ElementHandleSelectOptionOptions options = null)
+        public Task<bool> IsVisibleAsync(LocatorIsVisibleOptions options = null)
         {
-            return WrappedElementHandle.SelectOptionAsync(values, options);
+            return WrappedLocator.IsVisibleAsync(options);
         }
 
-        public Task<IReadOnlyList<string>> SelectOptionAsync(IElementHandle values, ElementHandleSelectOptionOptions options = null)
+        public ILocator Locator(string selector, LocatorLocatorOptions options = null)
         {
-            return WrappedElementHandle.SelectOptionAsync(values, options);
+            return WrappedLocator.Locator(selector, options);
         }
 
-        public Task<IReadOnlyList<string>> SelectOptionAsync(IEnumerable<string> values, ElementHandleSelectOptionOptions options = null)
+        public ILocator Nth(int index)
         {
-            return WrappedElementHandle.SelectOptionAsync(values, options);
+            return WrappedLocator.Nth(index);
         }
 
-        public Task<IReadOnlyList<string>> SelectOptionAsync(SelectOptionValue values, ElementHandleSelectOptionOptions options = null)
+        public Task PressAsync(string key, LocatorPressOptions options = null)
         {
-            return WrappedElementHandle.SelectOptionAsync(values, options);
+            return WrappedLocator.PressAsync(key, options);
         }
 
-        public Task<IReadOnlyList<string>> SelectOptionAsync(IEnumerable<IElementHandle> values, ElementHandleSelectOptionOptions options = null)
+        public Task<byte[]> ScreenshotAsync(LocatorScreenshotOptions options = null)
         {
-            return WrappedElementHandle.SelectOptionAsync(values, options);
+            return WrappedLocator.ScreenshotAsync(options);
         }
 
-        public Task<IReadOnlyList<string>> SelectOptionAsync(IEnumerable<SelectOptionValue> values, ElementHandleSelectOptionOptions options = null)
+        public Task ScrollIntoViewIfNeededAsync(LocatorScrollIntoViewIfNeededOptions options = null)
         {
-            return WrappedElementHandle.SelectOptionAsync(values, options);
+            return WrappedLocator.ScrollIntoViewIfNeededAsync(options);
         }
 
-        public Task SelectTextAsync(ElementHandleSelectTextOptions options = null)
+        public Task<IReadOnlyList<string>> SelectOptionAsync(string values, LocatorSelectOptionOptions options = null)
         {
-            return WrappedElementHandle.SelectTextAsync(options);
+            return WrappedLocator.SelectOptionAsync(values, options);
         }
 
-        public Task SetCheckedAsync(bool checkedState, ElementHandleSetCheckedOptions options = null)
+        public Task<IReadOnlyList<string>> SelectOptionAsync(IElementHandle values, LocatorSelectOptionOptions options = null)
         {
-            return WrappedElementHandle.SetCheckedAsync(checkedState, options);
+            return WrappedLocator.SelectOptionAsync(values, options);
         }
 
-        public Task SetInputFilesAsync(string files, ElementHandleSetInputFilesOptions options = null)
+        public Task<IReadOnlyList<string>> SelectOptionAsync(IEnumerable<string> values, LocatorSelectOptionOptions options = null)
         {
-            return WrappedElementHandle.SetInputFilesAsync(files, options);
+            return WrappedLocator.SelectOptionAsync(values, options);
         }
 
-        public Task SetInputFilesAsync(IEnumerable<string> files, ElementHandleSetInputFilesOptions options = null)
+        public Task<IReadOnlyList<string>> SelectOptionAsync(SelectOptionValue values, LocatorSelectOptionOptions options = null)
         {
-            return WrappedElementHandle.SetInputFilesAsync(files, options);
+            return WrappedLocator.SelectOptionAsync(values, options);
         }
 
-        public Task SetInputFilesAsync(FilePayload files, ElementHandleSetInputFilesOptions options = null)
+        public Task<IReadOnlyList<string>> SelectOptionAsync(IEnumerable<IElementHandle> values, LocatorSelectOptionOptions options = null)
         {
-            return WrappedElementHandle.SetInputFilesAsync(files, options);
+            return WrappedLocator.SelectOptionAsync(values, options);
         }
 
-        public Task SetInputFilesAsync(IEnumerable<FilePayload> files, ElementHandleSetInputFilesOptions options = null)
+        public Task<IReadOnlyList<string>> SelectOptionAsync(IEnumerable<SelectOptionValue> values, LocatorSelectOptionOptions options = null)
         {
-            return WrappedElementHandle.SetInputFilesAsync(files, options);
+            return WrappedLocator.SelectOptionAsync(values, options);
         }
 
-        public Task TapAsync(ElementHandleTapOptions options = null)
+        public Task SelectTextAsync(LocatorSelectTextOptions options = null)
         {
-            return WrappedElementHandle.TapAsync(options);
+            return WrappedLocator.SelectTextAsync(options);
         }
 
-        public Task<string> TextContentAsync()
+        public Task SetCheckedAsync(bool checkedState, LocatorSetCheckedOptions options = null)
         {
-            return WrappedElementHandle.TextContentAsync();
+            return WrappedLocator.SetCheckedAsync(checkedState, options);
         }
 
-        public Task TypeAsync(string text, ElementHandleTypeOptions options = null)
+        public Task SetInputFilesAsync(string files, LocatorSetInputFilesOptions options = null)
         {
-            return WrappedElementHandle.TypeAsync(text, options);
+            return WrappedLocator.SetInputFilesAsync(files, options);
         }
 
-        public Task UncheckAsync(ElementHandleUncheckOptions options = null)
+        public Task SetInputFilesAsync(IEnumerable<string> files, LocatorSetInputFilesOptions options = null)
         {
-            return WrappedElementHandle.UncheckAsync(options);
+            return WrappedLocator.SetInputFilesAsync(files, options);
         }
 
-        public Task WaitForElementStateAsync(ElementState state, ElementHandleWaitForElementStateOptions options = null)
+        public Task SetInputFilesAsync(FilePayload files, LocatorSetInputFilesOptions options = null)
         {
-            return WrappedElementHandle.WaitForElementStateAsync(state, options);
+            return WrappedLocator.SetInputFilesAsync(files, options);
         }
 
-        public Task<IElementHandle> WaitForSelectorAsync(string selector, ElementHandleWaitForSelectorOptions options = null)
+        public Task SetInputFilesAsync(IEnumerable<FilePayload> files, LocatorSetInputFilesOptions options = null)
         {
-            return WrappedElementHandle.WaitForSelectorAsync(selector, options);
+            return WrappedLocator.SetInputFilesAsync(files, options);
         }
 
-        public Task<JsonElement?> EvalOnSelectorAsync(string selector, string expression, object arg = null)
+        public Task TapAsync(LocatorTapOptions options = null)
         {
-            return WrappedElementHandle.EvalOnSelectorAsync(selector, expression, arg);
+            return WrappedLocator.TapAsync(options);
         }
 
-        public IElementHandle AsElement()
+        public Task<string> TextContentAsync(LocatorTextContentOptions options = null)
         {
-            return WrappedElementHandle.AsElement();
+            return WrappedLocator.TextContentAsync(options);
         }
 
-        public Task<T> EvaluateAsync<T>(string expression, object arg = null)
+        public Task TypeAsync(string text, LocatorTypeOptions options = null)
         {
-            return WrappedElementHandle.EvaluateAsync<T>(expression, arg);
+            return WrappedLocator.TypeAsync(text, options);
         }
 
-        public Task<IJSHandle> EvaluateHandleAsync(string expression, object arg = null)
+        public Task UncheckAsync(LocatorUncheckOptions options = null)
         {
-            return WrappedElementHandle.EvaluateHandleAsync(expression, arg);
+            return WrappedLocator.UncheckAsync(options);
         }
 
-        public Task<Dictionary<string, IJSHandle>> GetPropertiesAsync()
+        public Task WaitForAsync(LocatorWaitForOptions options = null)
         {
-            return WrappedElementHandle.GetPropertiesAsync();
+            return WrappedLocator.WaitForAsync(options);
         }
 
-        public Task<IJSHandle> GetPropertyAsync(string propertyName)
+        public Task<JsonElement?> EvaluateAsync(string expression, object arg = null, LocatorEvaluateOptions options = null)
         {
-            return WrappedElementHandle.GetPropertyAsync(propertyName);
-        }
-
-        public Task<T> JsonValueAsync<T>()
-        {
-            return WrappedElementHandle.JsonValueAsync<T>();
-        }
-
-        public Task<JsonElement?> EvaluateAsync(string expression, object arg = null)
-        {
-            return WrappedElementHandle.EvaluateAsync(expression, arg);
-        }
-
-        public ValueTask DisposeAsync()
-        {
-            return WrappedElementHandle.DisposeAsync();
+            return WrappedLocator.EvaluateAsync(expression, arg, options);
         }
     }
 }

@@ -1,7 +1,7 @@
 ﻿public class {{$1.name}}Component : Yapoml.Playwright.Component
 {
-  public {{$1.name}}Component(Microsoft.Playwright.IPage page, Microsoft.Playwright.IElementHandle elementHandle, Yapoml.Options.ISpaceOptions spaceOptions)
-    : base(page, elementHandle, spaceOptions)
+  public {{$1.name}}Component(Microsoft.Playwright.IPage page, Microsoft.Playwright.ILocator locator, Yapoml.Options.ISpaceOptions spaceOptions)
+    : base(page, locator, spaceOptions)
   {
 
   }
@@ -15,14 +15,20 @@
         
         {{ if component.is_plural }}
         EventSource.RaiseOnFindingComponents("{{component.name}}", by);
-        var elementHandles = Page.QuerySelectorAllAsync(by).GetAwaiter().GetResult();
-        EventSource.RaiseOnFoundComponents(by, elementHandles);
-        return elementHandles.Select(e => new {{component.name}}Component(Page, e, SpaceOptions)).ToList();
+        var locator = WrappedLocator.Locator(by);
+        var count = locator.CountAsync().GetAwaiter().GetResult();
+        var listLocators = new System.Collections.Generic.List<ILocator>();
+        for(var i = 0; i < count; i++)
+        {
+          listLocators.Add(locator.Nth(i));
+        }
+        EventSource.RaiseOnFoundComponents(by, listLocators);
+        return listLocators.Select(l => new {{component.name}}Component(Page, l, SpaceOptions)).ToList();
         {{ else }}
         EventSource.RaiseOnFindingComponent("{{component.name}}", by);
-        var elementHandle = Page.QuerySelectorAsync(by).GetAwaiter().GetResult();
-        EventSource.RaiseOnFoundComponent(by, Page, elementHandle);
-        return new {{component.name}}Component(Page, elementHandle, SpaceOptions);
+        var locator = WrappedLocator.Locator(by);
+        EventSource.RaiseOnFoundComponent(by, Page, locator);
+        return new {{component.name}}Component(Page, locator, SpaceOptions);
         {{ end }}
       }
     }

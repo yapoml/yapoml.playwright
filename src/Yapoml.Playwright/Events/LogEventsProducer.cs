@@ -35,7 +35,7 @@ namespace Yapoml.Playwright.Events
 
         private void ComponentEventSource_OnFoundComponents(object sender, FoundElementsEventArgs e)
         {
-            _logger.Trace($"Found {e.ElementHandles.Count} components");
+            _logger.Trace($"Found {e.Locators.Count} components");
         }
 
         private void ComponentEventSource_OnFindingComponents(object sender, FindingElementEventArgs e)

@@ -19,8 +19,8 @@ namespace Yapoml.Playwright.Events
 
         void RaiseOnFindingComponents(string componentName, string by);
 
-        void RaiseOnFoundComponents(string by, IReadOnlyList<IElementHandle> elementHandles);
+        void RaiseOnFoundComponents(string by, IReadOnlyList<ILocator> locator);
 
-        void RaiseOnFoundComponent(string by, IPage page, IElementHandle elementHandle);
+        void RaiseOnFoundComponent(string by, IPage page, ILocator locator);
     }
 }

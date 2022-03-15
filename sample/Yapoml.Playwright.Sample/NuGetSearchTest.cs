@@ -31,17 +31,21 @@ namespace Yapoml.Playwright.Sample
         }
 
         [Test]
-        public async Task Search()
+        public async Task SearchWithPlaywright()
         {
-            await _page.TypeAsync("#search", "yaml");
-            await _page.ClickAsync(".btn-search");
+            await _page.Locator("#search").TypeAsync("yaml");
+            await _page.Locator(".btn-search").ClickAsync();
 
-            foreach (var package in await _page.QuerySelectorAllAsync(".package"))
+            var packageLocator = _page.Locator(".package");
+
+            var count = await packageLocator.CountAsync();
+
+            for (int i = 0; i < count; i++)
             {
-                var title = await (await package.QuerySelectorAsync("xpath=.//a")).TextContentAsync();
+                var title = await packageLocator.Nth(i).Locator(".package-title").TextContentAsync();
                 Assert.That(title, Is.Not.Empty);
 
-                var description = await (await package.QuerySelectorAsync(".package-details")).TextContentAsync();
+                var description = await packageLocator.Nth(i).Locator(".package-details").TextContentAsync();
                 Assert.That(description, Is.Not.Empty);
             }
         }
@@ -49,11 +53,11 @@ namespace Yapoml.Playwright.Sample
         [Test]
         public void SearchWithYapoml()
         {
-            var ya = _page.Ya().Pages.NuGet;
+            var nuget = _page.Ya().Pages.NuGet;
 
-            ya.HomePage.Search("yaml");
+            nuget.HomePage.Search("yaml");
 
-            foreach (var package in ya.SearchResultsPage.Packages)
+            foreach (var package in nuget.SearchResultsPage.Packages)
             {
                 Assert.That(package.Title.TextContent, Is.Not.Empty);
                 Assert.That(package.Description.TextContent, Is.Not.Empty);

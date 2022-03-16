@@ -1,10 +1,8 @@
-﻿ya:
-  Packages:
-    by: .package
+﻿Packages:
+  by: .package
 
-    ya:
-      Title:
-        by: .package-title
+  Title:
+    by: .package-title
 
-      Description:
-        by: .package-details
+  Description:
+    by: .package-details

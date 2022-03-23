@@ -3,14 +3,7 @@ Generates page object classes for Microsoft Playwright with ease.
 Given that you have the following `LoginPage.po.yaml` file
 
 ```yaml
-UsernameInput:
-  by: "#username" # search by id
-
-PasswordInput:
-  by: .password # search by css
-
-LoginButton:
-  by: .primary-button
+UsernameInput: "#username"
 ```
 
 Then you are able to immediately interact with web elements

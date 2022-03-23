@@ -12,7 +12,7 @@ namespace {{namespace}}
     }
 
     {{ for component in components}}
-    public {{ if component.is_plural }}System.Collections.Generic.IList<{{component.name}}Component>{{ else }}{{component.name}}Component{{ end }} {{component.name}}
+    public {{ if component.is_plural }}System.Collections.Generic.IList<{{component.singular_name}}Component>{{ else }}{{component.name}}Component{{ end }} {{component.name}}
     {
       get
       {
@@ -28,7 +28,7 @@ namespace {{namespace}}
           listLocators.Add(locator.Nth(i));
         }
         EventSource.RaiseOnFoundComponents(by, listLocators);
-        return listLocators.Select(l => SpaceOptions.Get<Yapoml.Playwright.Factory.IComponentFactory>().Create<{{component.name}}Component>(Page, l, SpaceOptions)).ToList();
+        return listLocators.Select(l => SpaceOptions.Get<Yapoml.Playwright.Factory.IComponentFactory>().Create<{{component.singular_name}}Component>(Page, l, SpaceOptions)).ToList();
         {{ else }}
         EventSource.RaiseOnFindingComponent("{{component.name}}", by);
         var locator = Page.Locator(by);

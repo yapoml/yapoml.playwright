@@ -23,12 +23,12 @@
           listLocators.Add(locator.Nth(i));
         }
         EventSource.RaiseOnFoundComponents(by, listLocators);
-        return listLocators.Select(l => new {{component.name}}Component(Page, l, SpaceOptions)).ToList();
+        return listLocators.Select(l => SpaceOptions.Get<Yapoml.Playwright.Factory.IComponentFactory>().Create<{{component.name}}Component>(Page, l, SpaceOptions)).ToList();
         {{ else }}
         EventSource.RaiseOnFindingComponent("{{component.name}}", by);
         var locator = WrappedLocator.Locator(by);
         EventSource.RaiseOnFoundComponent(by, Page, locator);
-        return new {{component.name}}Component(Page, locator, SpaceOptions);
+        return SpaceOptions.Get<Yapoml.Playwright.Factory.IComponentFactory>().Create<{{component.name}}Component>(Page, locator, SpaceOptions);
         {{ end }}
       }
     }

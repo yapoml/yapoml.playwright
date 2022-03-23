@@ -1,5 +1,4 @@
-﻿SearchInput:
-  by: "#search"
+﻿SearchInput: "#search"
   
 SearchButton:
   by: .btn-search

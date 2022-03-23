@@ -1,8 +1,6 @@
 ﻿Packages:
   by: .package
 
-  Title:
-    by: .package-title
+  Title: .package-title
 
-  Description:
-    by: .package-details
+  Description: .package-details

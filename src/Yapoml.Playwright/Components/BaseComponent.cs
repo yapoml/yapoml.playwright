@@ -287,5 +287,10 @@ namespace Yapoml.Playwright.Components
         {
             return WrappedLocator.EvaluateAsync(expression, arg, options);
         }
+
+        public Task HighlightAsync()
+        {
+            return WrappedLocator.HighlightAsync();
+        }
     }
 }

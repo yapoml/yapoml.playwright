@@ -12,11 +12,17 @@ namespace Yapoml.Playwright.Sample
         private IBrowser _browser;
         private IPlaywright _playwright;
 
+        [OneTimeSetUp]
+        public void DownloadPlaywright()
+        {
+            Program.Main(new string[] { "install" });
+        }
+
         [SetUp]
         public async Task SetUp()
         {
             _playwright = await Microsoft.Playwright.Playwright.CreateAsync();
-            _browser = await _playwright.Firefox.LaunchAsync(new() { Headless = false});
+            _browser = await _playwright.Firefox.LaunchAsync(new() { Headless = false });
             _page = await _browser.NewPageAsync();
 
             await _page.GotoAsync("https://nuget.org");

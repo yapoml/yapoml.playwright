@@ -11,7 +11,21 @@
     {
       get
       {
+        {{ if component.by.method == 'Id' -}}
+        var by = "#{{ component.by.value }}";
+        {{ end -}}
+
+        {{ if component.by.method == 'Css' -}}
         var by = "{{ component.by.value }}";
+        {{ end -}}
+
+        {{ if component.by.method == 'XPath' -}}
+        var by = "xpath={{ component.by.value }}";
+        {{ end -}}
+
+        {{ if component.by.method == 'None' -}}
+        var by = "{{ component.by.value }}";
+        {{ end -}}
         
         {{ if component.is_plural }}
         EventSource.RaiseOnFindingComponents("{{component.name}}", by);

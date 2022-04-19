@@ -5,7 +5,7 @@ namespace Yapoml.Playwright
   /// <inheritdoc/>
   public partial class Page : Yapoml.Playwright.Components.BasePage
   {
-    public Page(IPage page, Yapoml.Options.ISpaceOptions spaceOptions)
+    public Page(IPage page, Yapoml.Framework.Options.ISpaceOptions spaceOptions)
         : base (page, spaceOptions)
     {
 

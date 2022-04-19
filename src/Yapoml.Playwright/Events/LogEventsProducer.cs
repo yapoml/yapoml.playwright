@@ -1,5 +1,5 @@
-﻿using Yapoml.Logging;
-using Yapoml.Options;
+﻿using Yapoml.Framework.Logging;
+using Yapoml.Framework.Options;
 using Yapoml.Playwright.Events.Args.WebElement;
 
 namespace Yapoml.Playwright.Events

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text.Json;
 using System.Threading.Tasks;
-using Yapoml.Options;
+using Yapoml.Framework.Options;
 using Yapoml.Playwright.Events;
 
 namespace Yapoml.Playwright.Components

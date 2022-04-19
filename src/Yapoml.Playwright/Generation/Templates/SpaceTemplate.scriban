@@ -6,9 +6,9 @@ namespace {{namespace}}
   {
     private IPage _page;
 
-    private Yapoml.Options.ISpaceOptions _spaceOptions;
+    private Yapoml.Framework.Options.ISpaceOptions _spaceOptions;
 
-    public {{name}}Space(IPage page, Yapoml.Options.ISpaceOptions spaceOptions)
+    public {{name}}Space(IPage page, Yapoml.Framework.Options.ISpaceOptions spaceOptions)
     {
       _page = page;
       _spaceOptions = spaceOptions;

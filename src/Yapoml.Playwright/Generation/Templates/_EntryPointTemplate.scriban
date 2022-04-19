@@ -8,9 +8,9 @@ namespace Yapoml.Playwright
 	{
 		private IPage _page;
 
-		private Yapoml.Options.ISpaceOptions _spaceOptions;
+		private Yapoml.Framework.Options.ISpaceOptions _spaceOptions;
 
-		public YaSpace(IPage page, Yapoml.Options.ISpaceOptions spaceOptions)
+		public YaSpace(IPage page, Yapoml.Framework.Options.ISpaceOptions spaceOptions)
 		{
 			_page = page;
 			_spaceOptions = spaceOptions;
@@ -42,12 +42,12 @@ namespace Yapoml.Playwright
 			return page.Ya((options) => { });
 		}
 
-		public static YaSpace Ya(this IPage page, System.Action<Yapoml.Options.ISpaceOptions> spaceOptionsCallback)
+		public static YaSpace Ya(this IPage page, System.Action<Yapoml.Framework.Options.ISpaceOptions> spaceOptionsCallback)
 		{
-			var spaceOptions = new Yapoml.Options.SpaceOptions();
+			var spaceOptions = new Yapoml.Framework.Options.SpaceOptions();
 
 			// default logger
-			spaceOptions.Register<Yapoml.Logging.ILogger>(new Yapoml.Logging.ConsoleLogger());
+			spaceOptions.Register<Yapoml.Framework.Logging.ILogger>(new Yapoml.Framework.Logging.ConsoleLogger());
 
 			// default factories
 			spaceOptions.Register<Yapoml.Playwright.Factory.ISpaceFactory>(new Yapoml.Playwright.Factory.DefaultSpaceFactory());

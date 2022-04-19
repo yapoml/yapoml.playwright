@@ -5,7 +5,7 @@ namespace Yapoml.Playwright
   /// <inheritdoc />
   public partial class Component : Yapoml.Playwright.Components.BaseComponent
   {
-    public Component(IPage page, ILocator locator, Yapoml.Options.ISpaceOptions spaceOptions)
+    public Component(IPage page, ILocator locator, Yapoml.Framework.Options.ISpaceOptions spaceOptions)
         : base (page, locator, spaceOptions)
     {
 

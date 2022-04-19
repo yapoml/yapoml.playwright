@@ -5,7 +5,7 @@ namespace {{namespace}}
 {
   public partial class {{name}} : {{ if base_page_context }}{{ base_page_context.namespace }}.{{base_page_context.name}}{{else}}Yapoml.Playwright.Page{{end}}
   {
-    public {{name}}(IPage page, Yapoml.Options.ISpaceOptions spaceOptions)
+    public {{name}}(IPage page, Yapoml.Framework.Options.ISpaceOptions spaceOptions)
         : base(page, spaceOptions)
     {
       

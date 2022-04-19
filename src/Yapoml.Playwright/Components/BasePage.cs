@@ -1,5 +1,5 @@
 ﻿using Microsoft.Playwright;
-using Yapoml.Options;
+using Yapoml.Framework.Options;
 
 namespace Yapoml.Playwright.Components
 {

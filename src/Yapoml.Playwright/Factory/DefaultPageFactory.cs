@@ -1,6 +1,6 @@
 ﻿using Microsoft.Playwright;
 using System;
-using Yapoml.Options;
+using Yapoml.Framework.Options;
 using Yapoml.Playwright.Components;
 
 namespace Yapoml.Playwright.Factory

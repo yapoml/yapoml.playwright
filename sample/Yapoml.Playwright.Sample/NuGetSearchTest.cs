@@ -1,7 +1,6 @@
 using Microsoft.Playwright;
 using NUnit.Framework;
 using System.Threading.Tasks;
-using Yapoml.Playwright;
 
 namespace Yapoml.Playwright.Sample
 {

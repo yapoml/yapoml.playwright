@@ -10,7 +10,7 @@ namespace Yapoml.Playwright.Components
             Page = page;
             SpaceOptions = spaceOptions;
 
-            EventSource = spaceOptions.Get<Events.IEventSource>().ComponentEventSource;
+            EventSource = spaceOptions.Services.Get<Events.IEventSource>().ComponentEventSource;
         }
 
         protected IPage Page { get; }

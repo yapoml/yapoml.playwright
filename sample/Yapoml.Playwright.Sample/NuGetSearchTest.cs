@@ -57,16 +57,16 @@ namespace Yapoml.Playwright.Sample
         }
 
         [Test]
-        public void SearchWithYapoml()
+        public async Task SearchWithYapoml()
         {
             var nuget = _page.Ya().Pages.NuGet;
 
-            nuget.HomePage.Search("yaml");
+            await nuget.HomePage.SearchAsync("yaml");
 
             foreach (var package in nuget.SearchResultsPage.Packages)
             {
-                Assert.That(package.Title.TextContent, Is.Not.Empty);
-                Assert.That(package.Description.TextContent, Is.Not.Empty);
+                Assert.That(await package.Title.TextContentAsync(), Is.Not.Empty);
+                Assert.That(await package.Description.TextContentAsync(), Is.Not.Empty);
             }
         }
     }

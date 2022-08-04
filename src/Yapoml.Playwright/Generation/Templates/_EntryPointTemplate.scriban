@@ -2,8 +2,9 @@
 
 using Microsoft.Playwright;
 
-namespace Yapoml.Playwright
+namespace {{root_namespace}}
 {
+	[System.Runtime.CompilerServices.CompilerGenerated]
 	public partial class YaSpace
 	{
 		private IPage _page;
@@ -15,26 +16,38 @@ namespace Yapoml.Playwright
 			_page = page;
 			_spaceOptions = spaceOptions;
 		}
+
 {{ for space in spaces }}
 		public {{space.namespace}}.{{space.name}}Space {{space.name}}
 		{
 			get
 			{
-				return _spaceOptions.Get<Yapoml.Playwright.Factory.ISpaceFactory>().Create<{{space.namespace}}.{{space.name}}Space>(_page, _spaceOptions);
+				return _spaceOptions.Services.Get<Yapoml.Playwright.Factory.ISpaceFactory>().Create<{{space.namespace}}.{{space.name}}Space>(_page, _spaceOptions);
 			}
 		}
 {{ end }}
 {{ for page in pages }}
+		/// <summary>
+		/// Consists of the following page components:
+		/// <list type="bullet">
+		{{ for c in page.components -}}
+		/// <item>
+		///   <description>{{ if c.is_plural }}List of {{ end }}{{ c.name }}</description>
+		/// </item>
+		{{ end -}}
+		/// </list>
+		/// </summary>
 		public {{page.namespace}}.{{page.name}} {{page.name}}
 		{
 			get
 			{
-				return _spaceOptions.Get<Yapoml.Playwright.Factory.IPageFactory>().Create<{{page.namespace}}.{{page.name}}>(_page, _spaceOptions);
+				return _spaceOptions.Services.Get<Yapoml.Playwright.Factory.IPageFactory>().Create<{{page.namespace}}.{{page.name}}>(_page, _spaceOptions);
 			}
 		}
 {{ end }}
 	}
 
+	[System.Runtime.CompilerServices.CompilerGenerated]
 	public static class YapomlExtensions
 	{
 		public static YaSpace Ya(this IPage page)
@@ -47,15 +60,15 @@ namespace Yapoml.Playwright
 			var spaceOptions = new Yapoml.Framework.Options.SpaceOptions();
 
 			// default logger
-			spaceOptions.Register<Yapoml.Framework.Logging.ILogger>(new Yapoml.Framework.Logging.ConsoleLogger());
+			spaceOptions.Services.Register<Yapoml.Framework.Logging.ILogger>(new Yapoml.Framework.Logging.ConsoleLogger());
 
 			// default factories
-			spaceOptions.Register<Yapoml.Playwright.Factory.ISpaceFactory>(new Yapoml.Playwright.Factory.DefaultSpaceFactory());
-			spaceOptions.Register<Yapoml.Playwright.Factory.IPageFactory>(new Yapoml.Playwright.Factory.DefaultPageFactory());
-			spaceOptions.Register<Yapoml.Playwright.Factory.IComponentFactory>(new Yapoml.Playwright.Factory.DefaultComponentFactory());
+			spaceOptions.Services.Register<Yapoml.Playwright.Factory.ISpaceFactory>(new Yapoml.Playwright.Factory.DefaultSpaceFactory());
+			spaceOptions.Services.Register<Yapoml.Playwright.Factory.IPageFactory>(new Yapoml.Playwright.Factory.DefaultPageFactory());
+			spaceOptions.Services.Register<Yapoml.Playwright.Factory.IComponentFactory>(new Yapoml.Playwright.Factory.DefaultComponentFactory());
 
 			var eventSource = new Yapoml.Playwright.Events.EventSource();
-			spaceOptions.Register<Yapoml.Playwright.Events.IEventSource>(eventSource);
+			spaceOptions.Services.Register<Yapoml.Playwright.Events.IEventSource>(eventSource);
 
 			var logProducer = new Yapoml.Playwright.Events.LogEventsProducer(spaceOptions);
 			logProducer.Init();

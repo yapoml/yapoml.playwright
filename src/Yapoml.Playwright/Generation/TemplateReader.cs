@@ -5,7 +5,7 @@ namespace Yapoml.Playwright.Generation
 {
     internal class TemplateReader
     {
-        private Assembly assembly;
+        private readonly Assembly assembly;
         public TemplateReader()
         {
             assembly = typeof(TemplateReader).Assembly;
@@ -16,7 +16,9 @@ namespace Yapoml.Playwright.Generation
             using (Stream stream = assembly.GetManifestResourceStream(assembly.GetName().Name + ".Generation.Templates." + templateName + ".scriban"))
             using (StreamReader reader = new StreamReader(stream))
             {
-                return reader.ReadToEnd();
+                var content = reader.ReadToEnd();
+
+                return content;
             }
         }
     }

@@ -1,11 +1,13 @@
-﻿namespace Yapoml.Playwright.Sample.Pages.NuGet
+﻿using System.Threading.Tasks;
+
+namespace Yapoml.Playwright.Sample.Pages.NuGet
 {
     public partial class HomePage
     {
-        public void Search(string text)
+        public async Task SearchAsync(string text)
         {
-            SearchInput.Type("yaml");
-            SearchButton.Click();
+            await SearchInput.TypeAsync("yaml");
+            await SearchButton.ClickAsync();
         }
     }
 }

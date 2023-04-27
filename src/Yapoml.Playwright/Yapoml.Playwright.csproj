@@ -12,7 +12,7 @@
 		<PackageProjectUrl>https://yapoml.github.io</PackageProjectUrl>
 		<PackageIcon>Logo.png</PackageIcon>
 		<RepositoryType>GitHub</RepositoryType>
-		<RepositoryUrl>https://github.com/yapoml/playwright</RepositoryUrl>
+		<RepositoryUrl>https://github.com/yapoml/yapoml.playwright</RepositoryUrl>
 		<PackageTags>page generation</PackageTags>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 	</PropertyGroup>

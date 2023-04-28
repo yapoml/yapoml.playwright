@@ -9,7 +9,7 @@
 		<Description>Yet another page object generation for Microsoft Playwright</Description>
 		<Authors>Nikolay Borisenko</Authors>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
-		<PackageProjectUrl>https://yapoml.github.io</PackageProjectUrl>
+		<PackageProjectUrl>https://yapoml.dev</PackageProjectUrl>
 		<PackageIcon>Logo.png</PackageIcon>
 		<RepositoryType>GitHub</RepositoryType>
 		<RepositoryUrl>https://github.com/yapoml/yapoml.playwright</RepositoryUrl>

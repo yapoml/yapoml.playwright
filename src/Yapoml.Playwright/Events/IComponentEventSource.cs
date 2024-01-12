@@ -1,6 +1,7 @@
 ﻿using Microsoft.Playwright;
 using System;
 using System.Collections.Generic;
+using Yapoml.Playwright.Components.Metadata;
 using Yapoml.Playwright.Events.Args.WebElement;
 
 namespace Yapoml.Playwright.Events
@@ -11,16 +12,16 @@ namespace Yapoml.Playwright.Events
 
         event EventHandler<FoundElementEventArgs> OnFoundComponent;
 
-        event EventHandler<FindingElementEventArgs> OnFindingComponents;
+        event EventHandler<FindingElementsEventArgs> OnFindingComponents;
 
         event EventHandler<FoundElementsEventArgs> OnFoundComponents;
 
-        void RaiseOnFindingComponent(string componentName, string by);
+        void RaiseOnFindingComponent(string by, ComponentMetadata componentMetadata);
 
-        void RaiseOnFindingComponents(string componentName, string by);
+        void RaiseOnFindingComponents(string by, ComponentsListMetadata componentsListMetadata);
 
-        void RaiseOnFoundComponents(string by, IReadOnlyList<ILocator> locator);
+        void RaiseOnFoundComponents(string by, IPage webDriver, IReadOnlyList<ILocator> elements, ComponentsListMetadata componentsListMetadata);
 
-        void RaiseOnFoundComponent(string by, IPage page, ILocator locator);
+        void RaiseOnFoundComponent(string by, IPage webDriver, ILocator webElement, ComponentMetadata componentMetadata);
     }
 }

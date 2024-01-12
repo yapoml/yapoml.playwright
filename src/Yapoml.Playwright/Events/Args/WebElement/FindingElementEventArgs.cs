@@ -1,16 +1,18 @@
 ﻿using System;
+using Yapoml.Playwright.Components.Metadata;
 
 namespace Yapoml.Playwright.Events.Args.WebElement
 {
     public class FindingElementEventArgs : EventArgs
     {
-        public FindingElementEventArgs(string componentName, string by)
+        public FindingElementEventArgs(string by, ComponentMetadata componentMetadata)
         {
-            ComponentName = componentName;
             By = by;
+            ComponentMetadata = componentMetadata;
         }
 
-        public string ComponentName { get; }
         public string By { get; }
+
+        public ComponentMetadata ComponentMetadata { get; }
     }
 }

@@ -1,0 +1,9 @@
+﻿{{- if $1.by.method == 'XPath' -}}
+	var by = "xpath=" + byValue;
+{{- else if $1.by.method == 'Css' -}}
+	var by = "css=" + byValue;
+{{- else if $1.by.method == 'Id' -}}
+	var by = "css=#" + byValue;
+{{- else if $1.by.method == 'None' -}}
+	var by = byValue;
+{{- end -}}

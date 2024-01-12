@@ -21,7 +21,7 @@ namespace Yapoml.Playwright.Sample
         public async Task SetUp()
         {
             _playwright = await Microsoft.Playwright.Playwright.CreateAsync();
-            _browser = await _playwright.Firefox.LaunchAsync(new() { Headless = false });
+            _browser = await _playwright.Chromium.LaunchAsync(new() { Headless = false });
             _page = await _browser.NewPageAsync();
 
             await _page.GotoAsync("https://nuget.org");
@@ -38,7 +38,7 @@ namespace Yapoml.Playwright.Sample
         [Test]
         public async Task SearchWithPlaywright()
         {
-            await _page.Locator("#search").TypeAsync("yaml");
+            await _page.Locator("#search").TypeAsync("Yapoml");
             await _page.Locator(".btn-search").ClickAsync();
 
             var packageLocator = _page.Locator(".package");
@@ -47,7 +47,7 @@ namespace Yapoml.Playwright.Sample
 
             for (int i = 0; i < count; i++)
             {
-                var title = await packageLocator.Nth(i).Locator(".package-title").TextContentAsync();
+                var title = await packageLocator.Nth(i).Locator("a.package-title").TextContentAsync();
                 Assert.That(title, Is.Not.Empty);
 
                 var description = await packageLocator.Nth(i).Locator(".package-details").TextContentAsync();
@@ -56,17 +56,29 @@ namespace Yapoml.Playwright.Sample
         }
 
         [Test]
-        public async Task SearchWithYapoml()
+        public void SearchWithYapoml()
         {
-            var nuget = _page.Ya().Pages.NuGet;
+            _page.Ya(opts => opts.WithBaseUrl("https://nuget.org"))
+                .HomePage.Open().Search("Yapoml")
+                .Packages.Expect(its => its.Count.AtLeast(1).Each(package =>
+                    {
+                        package.Title.Contains("Yapoml");
+                        package.Description.IsNotEmpty();
+                        package.Tags.Each(tag => tag.IsNotEmpty());
+                    })
+                );
+        }
 
-            await nuget.HomePage.SearchAsync("yaml");
-
-            foreach (var package in nuget.SearchResultsPage.Packages)
-            {
-                Assert.That(await package.Title.TextContentAsync(), Is.Not.Empty);
-                Assert.That(await package.Description.TextContentAsync(), Is.Not.Empty);
-            }
+        [Test]
+        public void IntroShowcase()
+        {
+            _page.Ya().PackagesPage.Open(q: "yapoml")
+                .Packages.Expect(it => it.IsNotEmpty().Each(package =>
+                    {
+                        package.Description.IsNotEmpty();
+                        package.Tags.IsNotEmpty();
+                    })
+                );
         }
     }
 }

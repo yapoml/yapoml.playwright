@@ -1,0 +1,12 @@
+﻿[global::System.Runtime.CompilerServices.CompilerGenerated]
+public abstract partial class BaseComponent<TComponent, TConditions, TCondition> : {{if parent_space}}global::{{parent_space.namespace}}{{else}}global::{{workspace.root_namespace}}{{end}}.BaseComponent<TComponent, TConditions, TCondition>
+	where TComponent: global::Yapoml.Playwright.Components.BaseComponent<TComponent, TConditions, TCondition>
+	where TConditions: global::Yapoml.Playwright.Components.BaseComponentConditions<TConditions>
+	where TCondition: global::Yapoml.Playwright.Components.BaseComponentConditions<TComponent>
+{
+	public BaseComponent(global::Yapoml.Playwright.Components.BasePage page, global::Yapoml.Playwright.Components.BaseComponent parentComponent, global::Microsoft.Playwright.IPage webDriver, global::Yapoml.Playwright.Services.Locator.IElementHandler elementHandler, global::Yapoml.Playwright.Components.Metadata.ComponentMetadata metadata, global::Yapoml.Framework.Options.ISpaceOptions spaceOptions)
+		: base(page, parentComponent, webDriver, elementHandler, metadata, spaceOptions)
+	{
+		
+	}
+}

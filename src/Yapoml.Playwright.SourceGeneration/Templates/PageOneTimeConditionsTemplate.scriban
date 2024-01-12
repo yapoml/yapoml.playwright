@@ -1,0 +1,47 @@
+﻿[global::System.Runtime.CompilerServices.CompilerGenerated]
+public class OneTimeConditions : global::Yapoml.Playwright.Components.BasePageConditions<{{get_page_class_name $1}}>
+{
+	public OneTimeConditions({{get_page_class_name $1}} self, global::System.TimeSpan timeout, global::System.TimeSpan pollingInterval, global::Microsoft.Playwright.IPage webDriver, global::Yapoml.Playwright.Services.Locator.IElementHandlerRepository elementHandlerRepository, global::Yapoml.Playwright.Services.Locator.IElementLocator elementLocator, global::Yapoml.Playwright.Components.Metadata.PageMetadata pageMetadata, global::Yapoml.Playwright.Events.IEventSource eventSource, global::Yapoml.Framework.Logging.ILogger logger)
+		: base(timeout, pollingInterval, webDriver, elementHandlerRepository, elementLocator, pageMetadata, eventSource, logger)
+	{
+		base._self = self;
+	}
+
+	{{ if $1.url && $1.url.segments == null && $1.url.params == null }}
+	/// <summary>
+	/// Expect that current url contains <c>{{ $1.url.path }}</c>.
+	///
+	/// Evaluates document's state to be <c>complete</c> which means the page is fully loaded.
+	/// It doesn't guarantee that some components on the page are present, they might be rendered dynamically.
+	/// </summary>
+	public override {{get_page_class_name $1}} IsOpened(global::System.TimeSpan? timeout = default)
+	{
+		using (Logger.BeginLogScope("Expect the {{$1.name}} page is opened"))
+		{
+			Url.Contains("{{ $1.url.path }}", timeout);
+
+			return base.IsOpened(timeout);
+		}
+	}
+	{{ end }}
+
+	{{ for component in $1.components }}
+	{{if !component.is_plural && component.by.segments == null }}
+	public {{get_component_return_type component}}.OneTimeConditions {{component.name}}
+	{
+		get
+		{
+			return base._self.{{component.name}}.Expect();
+		}
+	}
+	{{ else if component.is_plural && component.by.segments == null }}
+	public {{get_component_return_type component}}List.OneTimeConditions {{component.name}}
+	{
+		get
+		{
+			return base._self.{{component.name}}.Expect();
+		}
+	}
+	{{ end }}
+	{{ end }}
+}

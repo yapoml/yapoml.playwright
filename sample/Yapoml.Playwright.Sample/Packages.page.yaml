@@ -1,0 +1,12 @@
+﻿url:
+  path: https://www.nuget.org/packages
+  query:
+    - q
+
+packages: 
+  by: .package
+
+  title: a.package-title
+  description: .package-details
+
+  tags: .package-tags a

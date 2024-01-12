@@ -1,0 +1,42 @@
+﻿# pragma warning disable
+namespace {{namespace}}
+{
+	[global::System.Runtime.CompilerServices.CompilerGenerated]
+	public partial class {{name}}Space : global::Yapoml.Playwright.Components.BaseSpace<{{ if parent_space != null }}global::{{parent_space.namespace}}.{{parent_space.name}}Space{{else}}global::{{workspace.root_namespace}}.YaSpace{{end}}>
+	{
+		public {{name}}Space({{ if parent_space != null }}global::{{parent_space.namespace}}.{{parent_space.name}}Space{{else}}global::{{workspace.root_namespace}}.YaSpace{{end}} parentSpace, global::Microsoft.Playwright.IPage webDriver, global::Yapoml.Framework.Options.ISpaceOptions spaceOptions)
+			: base(parentSpace, webDriver, spaceOptions)
+		{
+			
+		}
+
+		{{- for space in spaces }}
+		{{ include 'SpaceTemplate_Desc' space}}
+		public global::{{space.namespace}}.{{space.name}}Space {{space.name}} => _spaceOptions.Services.Get<global::Yapoml.Playwright.Services.Factory.ISpaceFactory>().Create<global::{{space.namespace}}.{{space.name}}Space>(this, _webDriver, _spaceOptions);
+		{{- end }}
+
+		{{- for page in pages }}
+
+		/// <summary>
+		/// Consists of the following page components:
+		/// <list type="bullet">
+		{{- for c in page.components }}
+		/// <item>
+		///   <description>{{ if c.is_plural }}List of {{ end }}{{ c.name }}</description>
+		/// </item>
+		{{- end }}
+		/// </list>
+		/// </summary>
+		public global::{{page.namespace}}.{{get_page_class_name_for_page page}} {{get_page_accessor_name page.name}} => _spaceOptions.Services.Get<global::Yapoml.Playwright.Services.Factory.IPageFactory>().Create<global::{{page.namespace}}.{{get_page_class_name_for_page page}}>(_webDriver, new global::Yapoml.Playwright.Services.Locator.ElementHandlerRepository(), new global::Yapoml.Playwright.Components.Metadata.PageMetadata { Name = "{{ page.name }}"}, _spaceOptions);
+		{{- end }}
+	}
+
+	{{ if !(has_user_defined_base_page this) }}
+	{{ include 'SpaceBasePageTemplate' this }}
+	{{ end }}
+
+	{{ if !(has_user_defined_base_component this) }}
+	{{ include 'SpaceBaseComponentTemplate' this }}
+	{{ end }}
+}
+# pragma warning restore

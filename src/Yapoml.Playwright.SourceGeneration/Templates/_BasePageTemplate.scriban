@@ -1,0 +1,15 @@
+﻿# pragma warning disable
+namespace {{root_namespace}}
+{
+	/// <inheritdoc/>
+	[global::System.Runtime.CompilerServices.CompilerGenerated]
+	public abstract partial class BasePage : global::Yapoml.Playwright.Components.BasePage
+	{
+		public BasePage(global::Microsoft.Playwright.IPage webDriver, global::Yapoml.Playwright.Services.Locator.IElementHandlerRepository elementHandlerRepository, global::Yapoml.Playwright.Components.Metadata.PageMetadata metadata, global::Yapoml.Framework.Options.ISpaceOptions spaceOptions)
+			: base(webDriver, elementHandlerRepository, metadata, spaceOptions)
+		{
+
+		}
+	}
+}
+# pragma warning restore

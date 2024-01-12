@@ -1,6 +1,7 @@
 ﻿using Yapoml.Framework.Logging;
 using Yapoml.Framework.Options;
 using Yapoml.Playwright.Events.Args.WebElement;
+using Yapoml.Playwright.Events.Args.Page;
 
 namespace Yapoml.Playwright.Events
 {
@@ -14,16 +15,6 @@ namespace Yapoml.Playwright.Events
         {
             _logger = spaceOptions.Services.Get<ILogger>();
             _source = spaceOptions.Services.Get<IEventSource>();
-
-            spaceOptions.Services.OnTypeRegistered += SpaceOptions_OnTypeRegistered;
-        }
-
-        private void SpaceOptions_OnTypeRegistered(object sender, TypeRegisteredEventArgs e)
-        {
-            if (e.Type == typeof(ILogger))
-            {
-                _logger = e.Instance as ILogger;
-            }
         }
 
         public void Init()
@@ -35,17 +26,17 @@ namespace Yapoml.Playwright.Events
 
         private void ComponentEventSource_OnFoundComponents(object sender, FoundElementsEventArgs e)
         {
-            _logger.Trace($"Found {e.Locators.Count} components");
+            _logger.Trace($"Found {e.Elements.Count} {e.ComponentsListMetadata.Name}");
         }
 
-        private void ComponentEventSource_OnFindingComponents(object sender, FindingElementEventArgs e)
+        private void ComponentEventSource_OnFindingComponents(object sender, FindingElementsEventArgs e)
         {
-            _logger.Trace($"Finding {e.ComponentName} {e.By}");
+            _logger.Trace($"Finding {e.ComponentsListMetadata.Name} {e.By}");
         }
 
         private void ComponentEventSource_OnFindingComponent(object sender, FindingElementEventArgs e)
         {
-            _logger.Trace($"Finding {e.ComponentName} {e.By}");
+            _logger.Trace($"Finding {e.ComponentMetadata.Name} {e.By}");
         }
     }
 }

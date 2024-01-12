@@ -2,10 +2,24 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <ItemGroup>
-    <AdditionalFiles Include="**\*.po.yaml" />
-    <None Remove="**\*.po.yaml" />
-    <AdditionalFiles Include="**\*.pc.yaml" />
-    <None Remove="**\*.pc.yaml" />
+    <AdditionalFiles Include="**\*.page.yaml" />
+    <None Remove="**\*.page.yaml" />
+    <AdditionalFiles Include="**\*.page.yml" />
+    <None Remove="**\*.page.yml" />
+    <AdditionalFiles Include="**\*.component.yaml" />
+    <None Remove="**\*.component.yaml" />
+    <AdditionalFiles Include="**\*.component.yml" />
+    <None Remove="**\*.component.yml" />
+
+    <Compile Update="**\*.page.cs">
+      <DependentUpon Condition="Exists('%(RecursiveDir)$([System.String]::Copy(%(Filename)).Split(.)[0]).page.yaml')">$([System.String]::Copy(%(Filename)).Split('.')[0]).page.yaml</DependentUpon>
+      <DependentUpon Condition="Exists('%(RecursiveDir)$([System.String]::Copy(%(Filename)).Split(.)[0]).page.yml')">$([System.String]::Copy(%(Filename)).Split('.')[0]).page.yml</DependentUpon>
+    </Compile>
+
+    <Compile Update="**\*.component.cs">
+      <DependentUpon Condition="Exists('%(RecursiveDir)$([System.String]::Copy(%(Filename)).Split(.)[0]).component.yaml')">$([System.String]::Copy(%(Filename)).Split('.')[0]).component.yaml</DependentUpon>
+      <DependentUpon Condition="Exists('%(RecursiveDir)$([System.String]::Copy(%(Filename)).Split(.)[0]).component.yml')">$([System.String]::Copy(%(Filename)).Split('.')[0]).component.yml</DependentUpon>
+    </Compile>
   </ItemGroup>
 
   <ItemGroup Condition="'$(ImplicitUsings)' == 'true' or '$(ImplicitUsings)' == 'enable'">

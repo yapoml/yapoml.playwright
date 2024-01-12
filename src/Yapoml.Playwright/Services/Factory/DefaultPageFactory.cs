@@ -9,9 +9,9 @@ namespace Yapoml.Playwright.Services.Factory
 {
     public class DefaultPageFactory : IPageFactory
     {
-        public TPage Create<TPage>(IPage context, IElementHandlerRepository elementHandlerRepository, PageMetadata metadata, ISpaceOptions spaceOptions) where TPage : BasePage
+        public TPage Create<TPage>(IPage webDriver, IElementHandlerRepository elementHandlerRepository, PageMetadata metadata, ISpaceOptions spaceOptions) where TPage : BasePage
         {
-            var page = (TPage)Activator.CreateInstance(typeof(TPage), context, elementHandlerRepository, metadata, spaceOptions);
+            var page = (TPage)Activator.CreateInstance(typeof(TPage), webDriver, elementHandlerRepository, metadata, spaceOptions);
 
             return page;
         }

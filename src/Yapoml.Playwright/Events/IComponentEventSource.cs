@@ -20,8 +20,8 @@ namespace Yapoml.Playwright.Events
 
         void RaiseOnFindingComponents(string by, ComponentsListMetadata componentsListMetadata);
 
-        void RaiseOnFoundComponents(string by, IPage context, IReadOnlyList<ILocator> elements, ComponentsListMetadata componentsListMetadata);
+        void RaiseOnFoundComponents(string by, IPage webDriver, IReadOnlyList<ILocator> elements, ComponentsListMetadata componentsListMetadata);
 
-        void RaiseOnFoundComponent(string by, IPage context, ILocator webElement, ComponentMetadata componentMetadata);
+        void RaiseOnFoundComponent(string by, IPage webDriver, ILocator webElement, ComponentMetadata componentMetadata);
     }
 }

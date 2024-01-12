@@ -12,10 +12,10 @@ namespace Yapoml.Playwright.Components
 {
     public abstract class BaseComponentConditions<TSelf> : BaseConditions<TSelf>, ITextualConditions<TSelf>
     {
-        public BaseComponentConditions(TimeSpan timeout, TimeSpan pollingInterval, IPage context, IElementHandler elementHandler, IElementLocator elementLocator, IEventSource eventSource, ILogger logger)
+        public BaseComponentConditions(TimeSpan timeout, TimeSpan pollingInterval, IPage webDriver, IElementHandler elementHandler, IElementLocator elementLocator, IEventSource eventSource, ILogger logger)
             : base(timeout, pollingInterval)
         {
-            WebDriver = context;
+            WebDriver = webDriver;
             ElementHandler = elementHandler;
             ElementLocator = elementLocator;
             EventSource = eventSource;

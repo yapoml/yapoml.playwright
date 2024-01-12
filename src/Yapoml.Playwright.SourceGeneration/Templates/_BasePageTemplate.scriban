@@ -5,8 +5,8 @@ namespace {{root_namespace}}
 	[global::System.Runtime.CompilerServices.CompilerGenerated]
 	public abstract partial class BasePage : global::Yapoml.Playwright.Components.BasePage
 	{
-		public BasePage(global::Microsoft.Playwright.IPage context, global::Yapoml.Playwright.Services.Locator.IElementHandlerRepository elementHandlerRepository, global::Yapoml.Playwright.Components.Metadata.PageMetadata metadata, global::Yapoml.Framework.Options.ISpaceOptions spaceOptions)
-			: base(context, elementHandlerRepository, metadata, spaceOptions)
+		public BasePage(global::Microsoft.Playwright.IPage webDriver, global::Yapoml.Playwright.Services.Locator.IElementHandlerRepository elementHandlerRepository, global::Yapoml.Playwright.Components.Metadata.PageMetadata metadata, global::Yapoml.Framework.Options.ISpaceOptions spaceOptions)
+			: base(webDriver, elementHandlerRepository, metadata, spaceOptions)
 		{
 
 		}

@@ -46,9 +46,9 @@
 //            }
 //        }
 
-//        private static void HightlightElement(IWebDriver context, IWebElement webElement)
+//        private static void HightlightElement(IWebDriver webDriver, IWebElement webElement)
 //        {
-//            var jsExecutor = context as IJavaScriptExecutor;
+//            var jsExecutor = webDriver as IJavaScriptExecutor;
 
 //            if (jsExecutor != null)
 //            {

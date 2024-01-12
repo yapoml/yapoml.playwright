@@ -13,17 +13,17 @@ namespace Yapoml.Playwright.Components.Conditions
     /// <typeparam name="TConditions">Fluent original instance for chaining conditions.</typeparam>
     public class TitleConditions<TConditions> : TextualConditions<TConditions>
     {
-        private readonly IPage _context;
+        private readonly IPage _webDriver;
         private readonly PageMetadata _pageMetadata;
 
-        public TitleConditions(IPage context, TConditions conditions, TimeSpan timeout, TimeSpan pollingInterval, PageMetadata pageMetadata, ILogger logger)
+        public TitleConditions(IPage webDriver, TConditions conditions, TimeSpan timeout, TimeSpan pollingInterval, PageMetadata pageMetadata, ILogger logger)
             : base(conditions, timeout, pollingInterval, $"{pageMetadata.Name} page title", logger)
         {
-            _context = context;
+            _webDriver = webDriver;
             _pageMetadata = pageMetadata;
         }
 
-        protected override Func<string> FetchValueFunc => () => _context.TitleAsync().GetAwaiter().GetResult();
+        protected override Func<string> FetchValueFunc => () => _webDriver.TitleAsync().GetAwaiter().GetResult();
 
         public override NumericConditions<TConditions, int> Length
             => new TextualLengthConditons<TConditions>(_conditions, _timeout, _pollingInterval, FetchValueFunc, $"{_pageMetadata.Name} page title", _logger);

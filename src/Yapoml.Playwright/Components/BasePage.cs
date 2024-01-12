@@ -9,9 +9,9 @@ namespace Yapoml.Playwright.Components
 {
     public abstract class BasePage
     {
-        public BasePage(IPage context, IElementHandlerRepository elementHandlerRepository, PageMetadata metadata, ISpaceOptions spaceOptions)
+        public BasePage(IPage webDriver, IElementHandlerRepository elementHandlerRepository, PageMetadata metadata, ISpaceOptions spaceOptions)
         {
-            WebDriver = context;
+            WebDriver = webDriver;
             ElementHandlerRepository = elementHandlerRepository;
             Metadata = metadata;
             SpaceOptions = spaceOptions;

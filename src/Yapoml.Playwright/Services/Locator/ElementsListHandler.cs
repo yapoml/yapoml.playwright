@@ -7,14 +7,14 @@ namespace Yapoml.Playwright.Services.Locator
 {
     public class ElementsListHandler : IElementsListHandler
     {
-        private readonly IPage _context;
+        private readonly IPage _webDriver;
         private readonly IElementHandler _parentElementHandler;
         private readonly IElementLocator _elementLocator;
         private readonly IEventSource _eventSource;
 
-        public ElementsListHandler(IPage context, IElementHandler parentElementHandler, IElementLocator elementLocator, string by, ComponentsListMetadata componentsListMetadata, IElementHandlerRepository elementHandlerRepository, IEventSource eventSource)
+        public ElementsListHandler(IPage webDriver, IElementHandler parentElementHandler, IElementLocator elementLocator, string by, ComponentsListMetadata componentsListMetadata, IElementHandlerRepository elementHandlerRepository, IEventSource eventSource)
         {
-            _context = context;
+            _webDriver = webDriver;
             _parentElementHandler = parentElementHandler;
             _elementLocator = elementLocator;
             By = by;
@@ -57,10 +57,10 @@ namespace Yapoml.Playwright.Services.Locator
                 {
                     _eventSource.ComponentEventSource.RaiseOnFindingComponents(By, ComponentsListMetadata);
 
-                    _webElements = _context.Locator(By).AllAsync().GetAwaiter().GetResult();
+                    _webElements = _webDriver.Locator(By).AllAsync().GetAwaiter().GetResult();
                 }
 
-                _eventSource.ComponentEventSource.RaiseOnFoundComponents(By, _context, _webElements, ComponentsListMetadata);
+                _eventSource.ComponentEventSource.RaiseOnFoundComponents(By, _webDriver, _webElements, ComponentsListMetadata);
             }
 
             return _webElements;

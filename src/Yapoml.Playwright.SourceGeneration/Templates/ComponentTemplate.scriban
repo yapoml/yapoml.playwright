@@ -7,18 +7,18 @@ namespace {{namespace}}
 		where TConditions: global::Yapoml.Playwright.Components.BaseComponentConditions<TConditions>
 		where TCondition: global::Yapoml.Playwright.Components.BaseComponentConditions<TComponent>
 	{
-		public {{singular_name}}Component(global::Yapoml.Playwright.Components.BasePage page, global::Yapoml.Playwright.Components.BaseComponent parentComponent, global::Microsoft.Playwright.IPage context, global::Yapoml.Playwright.Services.Locator.IElementHandler elementHandler, global::Yapoml.Playwright.Components.Metadata.ComponentMetadata metadata, global::Yapoml.Framework.Options.ISpaceOptions spaceOptions)
-			: base(page, parentComponent, context, elementHandler, metadata, spaceOptions)
+		public {{singular_name}}Component(global::Yapoml.Playwright.Components.BasePage page, global::Yapoml.Playwright.Components.BaseComponent parentComponent, global::Microsoft.Playwright.IPage webDriver, global::Yapoml.Playwright.Services.Locator.IElementHandler elementHandler, global::Yapoml.Playwright.Components.Metadata.ComponentMetadata metadata, global::Yapoml.Framework.Options.ISpaceOptions spaceOptions)
+			: base(page, parentComponent, webDriver, elementHandler, metadata, spaceOptions)
 		{
 		
 		}
 
-		public override global::Microsoft.Playwright.ILocator Context
+		public override global::Microsoft.Playwright.ILocator WrappedElement
 		{
 			get
 			{
 				{{ include 'LineDirectiveTemplate' this }}
-				return base.Context;
+				return base.WrappedElement;
 				#line default
 			}
 		}

@@ -22,8 +22,8 @@ namespace Yapoml.Playwright.Components
         protected TConditions conditions;
         protected TCondition oneTimeConditions;
 
-        protected BaseComponent(BasePage page, BaseComponent parentComponent, IPage context, IElementHandler elementHandler, ComponentMetadata metadata, ISpaceOptions spaceOptions)
-            : base(page, parentComponent, context, elementHandler, metadata, spaceOptions)
+        protected BaseComponent(BasePage page, BaseComponent parentComponent, IPage webDriver, IElementHandler elementHandler, ComponentMetadata metadata, ISpaceOptions spaceOptions)
+            : base(page, parentComponent, webDriver, elementHandler, metadata, spaceOptions)
         {
 
         }
@@ -76,7 +76,7 @@ namespace Yapoml.Playwright.Components
         protected TimeSpan _locateTimeout;
         protected TimeSpan _locatePollingInterval;
 
-        public virtual ILocator Context => _elementHandler.Locate(_locateTimeout, _locatePollingInterval);
+        public virtual ILocator WrappedElement => _elementHandler.Locate(_locateTimeout, _locatePollingInterval);
 
         protected ComponentMetadata Metadata { get; }
 
@@ -84,11 +84,11 @@ namespace Yapoml.Playwright.Components
 
         protected IEventSource EventSource { get; private set; }
 
-        public BaseComponent(BasePage page, BaseComponent parentComponent, IPage context, IElementHandler elementHandler, ComponentMetadata metadata, ISpaceOptions spaceOptions)
+        public BaseComponent(BasePage page, BaseComponent parentComponent, IPage webDriver, IElementHandler elementHandler, ComponentMetadata metadata, ISpaceOptions spaceOptions)
         {
             Page = page;
             this.parentComponent = parentComponent;
-            WebDriver = context;
+            WebDriver = webDriver;
             _elementHandler = elementHandler;
             Metadata = metadata;
             SpaceOptions = spaceOptions;
@@ -148,7 +148,7 @@ namespace Yapoml.Playwright.Components
         /// input elements (<c>&lt;input&gt;</c>) do not have any inner text, so they will return an empty string for this property.
         /// To get the value of an input element, you may need to use the <see cref="AttributesCollection.Value"/> property.
         /// </remarks>
-        public virtual string Text => RelocateOnStaleReference(() => Context.TextContentAsync().GetAwaiter().GetResult().Trim());
+        public virtual string Text => RelocateOnStaleReference(() => WrappedElement.TextContentAsync().GetAwaiter().GetResult().Trim());
 
         /// <summary>
         /// Used to indicate whether a component can respond to user interactions or not.
@@ -159,9 +159,9 @@ namespace Yapoml.Playwright.Components
         /// For example, you can use it to check if a checkbox is checked or unchecked, or if a text field is editable or read-only.
         /// </para>
         /// </summary>
-        public virtual bool IsEnabled => RelocateOnStaleReference(() => Context.IsEnabledAsync().GetAwaiter().GetResult());
+        public virtual bool IsEnabled => RelocateOnStaleReference(() => WrappedElement.IsEnabledAsync().GetAwaiter().GetResult());
 
-        public virtual bool IsSelected => RelocateOnStaleReference(() => Context.IsCheckedAsync().GetAwaiter().GetResult());
+        public virtual bool IsSelected => RelocateOnStaleReference(() => WrappedElement.IsCheckedAsync().GetAwaiter().GetResult());
 
         /// <summary>
         /// Indicates whether a component currently is partially visible within viewport or not.
@@ -200,7 +200,7 @@ namespace Yapoml.Playwright.Components
         {
             get
             {
-                return Context.IsVisibleAsync().GetAwaiter().GetResult();
+                return WrappedElement.IsVisibleAsync().GetAwaiter().GetResult();
             }
         }
 
@@ -215,7 +215,7 @@ namespace Yapoml.Playwright.Components
             get
             {
                 //var activeElement = WebDriver.SwitchTo().ActiveElement();
-                //return Context.Equals(activeElement);
+                //return WrappedElement.Equals(activeElement);
                 throw new NotImplementedException();
             }
         }

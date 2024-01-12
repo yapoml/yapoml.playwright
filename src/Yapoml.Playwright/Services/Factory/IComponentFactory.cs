@@ -8,6 +8,6 @@ namespace Yapoml.Playwright.Services.Factory
 {
     public interface IComponentFactory
     {
-        TComponent Create<TComponent, TConditions, TCondition>(BasePage page, BaseComponent parentComponent, IPage context, IElementHandler elementHandler, ComponentMetadata componentMetadata, ISpaceOptions spaceOptions) where TComponent : BaseComponent;
+        TComponent Create<TComponent, TConditions, TCondition>(BasePage page, BaseComponent parentComponent, IPage webDriver, IElementHandler elementHandler, ComponentMetadata componentMetadata, ISpaceOptions spaceOptions) where TComponent : BaseComponent;
     }
 }

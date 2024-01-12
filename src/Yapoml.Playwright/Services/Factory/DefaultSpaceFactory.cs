@@ -7,9 +7,9 @@ namespace Yapoml.Playwright.Services.Factory
 {
     public class DefaultSpaceFactory : ISpaceFactory
     {
-        public TSpace Create<TSpace>(BaseSpace parentSpace, IPage context, ISpaceOptions spaceOptions)
+        public TSpace Create<TSpace>(BaseSpace parentSpace, IPage webDriver, ISpaceOptions spaceOptions)
         {
-            var space = (TSpace)Activator.CreateInstance(typeof(TSpace), parentSpace, context, spaceOptions);
+            var space = (TSpace)Activator.CreateInstance(typeof(TSpace), parentSpace, webDriver, spaceOptions);
 
             return space;
         }

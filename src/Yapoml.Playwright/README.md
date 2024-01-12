@@ -19,5 +19,5 @@ Then you are able to immediately interact with web elements
 ```csharp
 using Yapoml.Playwright;
 
-await context.Ya().LoginPage.UsernameInput.TypeAsync("user01");
+await webDriver.Ya().LoginPage.UsernameInput.TypeAsync("user01");
 ```

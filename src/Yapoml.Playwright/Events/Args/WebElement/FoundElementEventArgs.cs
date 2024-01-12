@@ -6,10 +6,10 @@ namespace Yapoml.Playwright.Events.Args.WebElement
 {
     public class FoundElementEventArgs : EventArgs
     {
-        public FoundElementEventArgs(string by, IPage webDriver, ILocator webElement, ComponentMetadata componentMetadata)
+        public FoundElementEventArgs(string by, IPage context, ILocator webElement, ComponentMetadata componentMetadata)
         {
             By = by;
-            WebDriver = webDriver;
+            WebDriver = context;
             WebElement = webElement;
             ComponentMetadata = componentMetadata;
         }

@@ -17,7 +17,7 @@ namespace Yapoml.Playwright.Components
         {
             using (_logger.BeginLogScope($"Clearing {Metadata.Name}"))
             {
-                RelocateOnStaleReference(() => WrappedElement.ClearAsync().GetAwaiter().GetResult());
+                RelocateOnStaleReference(() => Context.ClearAsync().GetAwaiter().GetResult());
             }
 
             return component;
@@ -56,7 +56,7 @@ namespace Yapoml.Playwright.Components
 
             using (_logger.BeginLogScope(scopeName))
             {
-                RelocateOnStaleReference(() => WrappedElement.TypeAsync(text).GetAwaiter().GetResult());
+                RelocateOnStaleReference(() => Context.TypeAsync(text).GetAwaiter().GetResult());
             }
 
             return component;
@@ -80,7 +80,7 @@ namespace Yapoml.Playwright.Components
         {
             using (_logger.BeginLogScope($"Clicking on {Metadata.Name}"))
             {
-                RelocateOnStaleReference(() => WrappedElement.ClickAsync().GetAwaiter().GetResult());
+                RelocateOnStaleReference(() => Context.ClickAsync().GetAwaiter().GetResult());
             }
 
             return component;
@@ -102,7 +102,7 @@ namespace Yapoml.Playwright.Components
         {
             using (_logger.BeginLogScope($"Clicking on {Metadata.Name} by X: {x}, Y: {y}"))
             {
-                RelocateOnStaleReference(() => WrappedElement.ClickAsync(new Microsoft.Playwright.LocatorClickOptions { Position = new Microsoft.Playwright.Position { X = x, Y = y } }).GetAwaiter().GetResult());
+                RelocateOnStaleReference(() => Context.ClickAsync(new Microsoft.Playwright.LocatorClickOptions { Position = new Microsoft.Playwright.Position { X = x, Y = y } }).GetAwaiter().GetResult());
             }
 
             return component;
@@ -129,7 +129,7 @@ namespace Yapoml.Playwright.Components
         {
             using (_logger.BeginLogScope($"Hovering over {Metadata.Name}"))
             {
-                RelocateOnStaleReference(() => WrappedElement.HoverAsync().GetAwaiter().GetResult());
+                RelocateOnStaleReference(() => Context.HoverAsync().GetAwaiter().GetResult());
             }
 
             return component;
@@ -151,7 +151,7 @@ namespace Yapoml.Playwright.Components
         {
             using (_logger.BeginLogScope($"Hovering on {Metadata.Name} by X: {x}, Y: {y}"))
             {
-                RelocateOnStaleReference(() => WrappedElement.HoverAsync(new Microsoft.Playwright.LocatorHoverOptions { Position = new Microsoft.Playwright.Position { X = x, Y = y } }).GetAwaiter().GetResult());
+                RelocateOnStaleReference(() => Context.HoverAsync(new Microsoft.Playwright.LocatorHoverOptions { Position = new Microsoft.Playwright.Position { X = x, Y = y } }).GetAwaiter().GetResult());
             }
 
             return component;
@@ -184,7 +184,7 @@ namespace Yapoml.Playwright.Components
             {
                 using (_logger.BeginLogScope($"Scrolling {Metadata.Name} into view"))
                 {
-                    RelocateOnStaleReference(() => WrappedElement.ScrollIntoViewIfNeededAsync().GetAwaiter().GetResult());
+                    RelocateOnStaleReference(() => Context.ScrollIntoViewIfNeededAsync().GetAwaiter().GetResult());
                 }
             }
 
@@ -217,7 +217,7 @@ namespace Yapoml.Playwright.Components
 
             using (_logger.BeginLogScope($"Scrolling {Metadata.Name} into view with options {options}"))
             {
-                RelocateOnStaleReference(() => WrappedElement.ScrollIntoViewIfNeededAsync().GetAwaiter().GetResult());
+                RelocateOnStaleReference(() => Context.ScrollIntoViewIfNeededAsync().GetAwaiter().GetResult());
             }
 
             return component;
@@ -250,7 +250,7 @@ namespace Yapoml.Playwright.Components
             {
                 using (_logger.BeginLogScope($"Focusing {Metadata.Name}"))
                 {
-                    RelocateOnStaleReference(() => WrappedElement.FocusAsync().GetAwaiter().GetResult());
+                    RelocateOnStaleReference(() => Context.FocusAsync().GetAwaiter().GetResult());
                 }
             }
 
@@ -281,7 +281,7 @@ namespace Yapoml.Playwright.Components
 
             using (_logger.BeginLogScope($"Focusing {Metadata.Name} with options {options}"))
             {
-                RelocateOnStaleReference(() => WrappedElement.FocusAsync());
+                RelocateOnStaleReference(() => Context.FocusAsync());
             }
 
             return component;
@@ -308,7 +308,7 @@ namespace Yapoml.Playwright.Components
         {
             using (_logger.BeginLogScope($"Bluring {Metadata.Name}"))
             {
-                RelocateOnStaleReference(() => WrappedElement.BlurAsync().GetAwaiter().GetResult());
+                RelocateOnStaleReference(() => Context.BlurAsync().GetAwaiter().GetResult());
             }
 
             return component;
@@ -332,7 +332,7 @@ namespace Yapoml.Playwright.Components
         {
             using (_logger.BeginLogScope($"Context clicking on {Metadata.Name}"))
             {
-                RelocateOnStaleReference(() => WrappedElement.ClickAsync(new Microsoft.Playwright.LocatorClickOptions { Button = Microsoft.Playwright.MouseButton.Right }).GetAwaiter().GetResult());
+                RelocateOnStaleReference(() => Context.ClickAsync(new Microsoft.Playwright.LocatorClickOptions { Button = Microsoft.Playwright.MouseButton.Right }).GetAwaiter().GetResult());
             }
 
             return component;
@@ -356,7 +356,7 @@ namespace Yapoml.Playwright.Components
         {
             using (_logger.BeginLogScope($"Double clicking on {Metadata.Name}"))
             {
-                RelocateOnStaleReference(() => WrappedElement.DblClickAsync().GetAwaiter().GetResult());
+                RelocateOnStaleReference(() => Context.DblClickAsync().GetAwaiter().GetResult());
             }
 
             return component;
@@ -381,7 +381,7 @@ namespace Yapoml.Playwright.Components
         {
             using (_logger.BeginLogScope($"Dragging {Metadata.Name} to {toComponent.Metadata.Name}"))
             {
-                RelocateOnStaleReference(() => WrappedElement.DragToAsync(toComponent.WrappedElement).GetAwaiter().GetResult());
+                RelocateOnStaleReference(() => Context.DragToAsync(toComponent.Context).GetAwaiter().GetResult());
             }
 
             return component;

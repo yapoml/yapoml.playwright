@@ -1,8 +1,8 @@
 ﻿[global::System.Runtime.CompilerServices.CompilerGenerated]
 public partial class BasePage : {{ if base_page }}global::{{ base_page.namespace }}.{{base_page.name}}{{else}}{{if parent_space}}global::{{parent_space.namespace}}{{else}}global::{{workspace.root_namespace}}{{end}}.BasePage{{end}}
 {
-	public BasePage(global::Microsoft.Playwright.IPage webDriver, global::Yapoml.Playwright.Services.Locator.IElementHandlerRepository elementHandlerRepository, global::Yapoml.Playwright.Components.Metadata.PageMetadata metadata, global::Yapoml.Framework.Options.ISpaceOptions spaceOptions)
-		: base(webDriver, elementHandlerRepository, metadata, spaceOptions)
+	public BasePage(global::Microsoft.Playwright.IPage context, global::Yapoml.Playwright.Services.Locator.IElementHandlerRepository elementHandlerRepository, global::Yapoml.Playwright.Components.Metadata.PageMetadata metadata, global::Yapoml.Framework.Options.ISpaceOptions spaceOptions)
+		: base(context, elementHandlerRepository, metadata, spaceOptions)
 	{
 
 	}

@@ -8,6 +8,6 @@ namespace Yapoml.Playwright.Services.Factory
 {
     public interface IPageFactory
     {
-        TPage Create<TPage>(IPage webDriver, IElementHandlerRepository elementHandlerRepository, PageMetadata metadata, ISpaceOptions spaceOptions) where TPage : BasePage;
+        TPage Create<TPage>(IPage context, IElementHandlerRepository elementHandlerRepository, PageMetadata metadata, ISpaceOptions spaceOptions) where TPage : BasePage;
     }
 }

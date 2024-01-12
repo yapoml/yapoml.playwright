@@ -7,8 +7,8 @@ namespace Yapoml.Playwright.Components
     {
         protected TParentSpace _parentSpace;
 
-        public BaseSpace(TParentSpace parentSpace, IPage webDriver, ISpaceOptions spaceOptions)
-            : base(webDriver, spaceOptions)
+        public BaseSpace(TParentSpace parentSpace, IPage context, ISpaceOptions spaceOptions)
+            : base(context, spaceOptions)
         {
             _parentSpace = parentSpace;
 
@@ -17,13 +17,13 @@ namespace Yapoml.Playwright.Components
 
     public abstract class BaseSpace
     {
-        protected IPage _webDriver;
+        protected IPage _context;
 
         protected ISpaceOptions _spaceOptions;
 
-        protected BaseSpace(IPage webDriver, ISpaceOptions spaceOptions)
+        protected BaseSpace(IPage context, ISpaceOptions spaceOptions)
         {
-            _webDriver = webDriver;
+            _context = context;
             _spaceOptions = spaceOptions;
         }
     }

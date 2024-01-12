@@ -6,6 +6,6 @@ namespace Yapoml.Playwright.Services.Factory
 {
     public interface ISpaceFactory
     {
-        TSpace Create<TSpace>(BaseSpace parentSpace, IPage webDriver, ISpaceOptions spaceOptions);
+        TSpace Create<TSpace>(BaseSpace parentSpace, IPage context, ISpaceOptions spaceOptions);
     }
 }

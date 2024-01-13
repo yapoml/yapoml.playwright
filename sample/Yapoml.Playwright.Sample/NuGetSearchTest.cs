@@ -21,23 +21,21 @@ namespace Yapoml.Playwright.Sample
         public async Task SetUp()
         {
             _playwright = await Microsoft.Playwright.Playwright.CreateAsync();
-            _browser = await _playwright.Chromium.LaunchAsync(new() { Headless = false });
+            _browser = await _playwright.Chromium.LaunchAsync(new() { Headless = true });
             _page = await _browser.NewPageAsync();
-
-            await _page.GotoAsync("https://nuget.org");
         }
 
         [TearDown]
         public async Task TearDown()
         {
-            await _page.CloseAsync();
-            await _browser.CloseAsync();
             _playwright.Dispose();
         }
 
         [Test]
         public async Task SearchWithPlaywright()
         {
+            await _page.GotoAsync("https://nuget.org");
+
             await _page.Locator("#search").TypeAsync("Yapoml");
             await _page.Locator(".btn-search").ClickAsync();
 

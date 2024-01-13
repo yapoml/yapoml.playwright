@@ -177,9 +177,25 @@ namespace Yapoml.Playwright.Components
             }
         }
 
-        public virtual Point Location => throw new NotImplementedException();
+        public virtual Point Location
+        {
+            get
+            {
+                var box = RelocateOnStaleReference(() => WrappedElement.BoundingBoxAsync().GetAwaiter().GetResult());
 
-        public virtual Size Size => throw new NotImplementedException();
+                return new Point((int)box.X, (int)box.Y);
+            }
+        }
+
+        public virtual Size Size
+        {
+            get
+            {
+                var box = RelocateOnStaleReference(() => WrappedElement.BoundingBoxAsync().GetAwaiter().GetResult());
+
+                return new Size((int)box.Width, (int)box.Height);
+            }
+        }
 
         /// <summary>
         /// Indicates whether a component is visible on the page or not.
@@ -214,9 +230,9 @@ namespace Yapoml.Playwright.Components
         {
             get
             {
-                //var activeElement = WebDriver.SwitchTo().ActiveElement();
-                //return WrappedElement.Equals(activeElement);
-                throw new NotImplementedException();
+                var isFocusedRes = WrappedElement.EvaluateAsync("node => document.activeElement === node").GetAwaiter().GetResult();
+
+                return bool.Parse(isFocusedRes.ToString());
             }
         }
 

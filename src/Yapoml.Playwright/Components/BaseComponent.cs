@@ -76,7 +76,7 @@ namespace Yapoml.Playwright.Components
         protected TimeSpan _locateTimeout;
         protected TimeSpan _locatePollingInterval;
 
-        public virtual ILocator WrappedElement => _elementHandler.Locate(_locateTimeout, _locatePollingInterval);
+        protected virtual ILocator WrappedElement => _elementHandler.Locate(_locateTimeout, _locatePollingInterval);
 
         protected ComponentMetadata Metadata { get; }
 
@@ -234,6 +234,11 @@ namespace Yapoml.Playwright.Components
 
                 return bool.Parse(isFocusedRes.ToString());
             }
+        }
+
+        public virtual byte[] GetScreenshot()
+        {
+            return RelocateOnStaleReference(() => WrappedElement.ScreenshotAsync().GetAwaiter().GetResult());
         }
 
         public override bool Equals(object obj)

@@ -13,7 +13,7 @@ namespace {{namespace}}
 		
 		}
 
-		public override global::Microsoft.Playwright.ILocator WrappedElement
+		protected override global::Microsoft.Playwright.ILocator WrappedElement
 		{
 			get
 			{

@@ -120,7 +120,6 @@ namespace Yapoml.Playwright.Sample.Basics
             foreach (var package in packagesPage.Packages)
             {
                 Console.WriteLine(package.Title.Text);
-                Console.WriteLine(package.Title.Location.Y);
             }
 
             var myPackage = packagesPage.Packages[p => p.Title == "Yapoml.Playwright"];

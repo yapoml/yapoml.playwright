@@ -1,6 +1,6 @@
 ﻿using Yapoml.Framework.Logging;
 using Yapoml.Framework.Options;
-using Yapoml.Playwright.Events.Args.WebElement;
+using Yapoml.Playwright.Events.Args.Element;
 using Yapoml.Playwright.Events.Args.Page;
 
 namespace Yapoml.Playwright.Events

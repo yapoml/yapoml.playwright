@@ -24,13 +24,13 @@ namespace Yapoml.Playwright.Services.Locator
             _eventSource = eventSource;
         }
 
-        public ElementHandler(IPage driver, IElementHandler parentElementHandler, IElementLocator elementLocator, string by, ILocator webElement, ComponentMetadata componentMetadata, IElementHandlerRepository elementHandlerRepository, IEventSource eventSource)
+        public ElementHandler(IPage driver, IElementHandler parentElementHandler, IElementLocator elementLocator, string by, ILocator element, ComponentMetadata componentMetadata, IElementHandlerRepository elementHandlerRepository, IEventSource eventSource)
             : this(driver, parentElementHandler, elementLocator, by, componentMetadata, elementHandlerRepository, eventSource)
         {
-            _webElement = webElement;
+            _element = element;
         }
 
-        private ILocator _webElement;
+        private ILocator _element;
 
         public string By { get; }
 
@@ -45,7 +45,7 @@ namespace Yapoml.Playwright.Services.Locator
 
         public ILocator Locate(TimeSpan timeout, TimeSpan pollingInterval)
         {
-            if (_webElement == null)
+            if (_element == null)
             {
                 if (_parentElementHandler != null)
                 {
@@ -59,14 +59,14 @@ namespace Yapoml.Playwright.Services.Locator
 
                     do
                     {
-                        _webElement = _elementLocator.FindElement(parentElement, By);
+                        _element = _elementLocator.FindElement(parentElement, By);
 
                         break;
 
                     }
                     while (stopwatch.Elapsed <= timeout);
 
-                    if (_webElement is null)
+                    if (_element is null)
                     {
                         throw lastException;
                     }
@@ -81,27 +81,27 @@ namespace Yapoml.Playwright.Services.Locator
 
                     do
                     {
-                        _webElement = _driver.Locator(By);
+                        _element = _driver.Locator(By);
 
                         break;
                     }
                     while (stopwatch.Elapsed <= timeout);
 
-                    if (_webElement is null)
+                    if (_element is null)
                     {
                         throw lastException;
                     }
                 }
 
-                _eventSource.ComponentEventSource.RaiseOnFoundComponent(By, _driver, _webElement, ComponentMetadata);
+                _eventSource.ComponentEventSource.RaiseOnFoundComponent(By, _driver, _element, ComponentMetadata);
             }
 
-            return _webElement;
+            return _element;
         }
 
         public void Invalidate()
         {
-            _webElement = null;
+            _element = null;
 
             foreach (var elementHandler in ElementHandlerRepository.ElementHandlers)
             {

@@ -1,17 +1,14 @@
 ﻿using System;
 using Yapoml.Framework.Options;
-using System.Drawing;
 using Yapoml.Framework.Logging;
 using Yapoml.Playwright.Events;
 using Yapoml.Playwright.Services.Locator;
 using Yapoml.Playwright.Components.Metadata;
 using Yapoml.Playwright.Options;
-using Yapoml.Playwright.Components;
 using Microsoft.Playwright;
 
 namespace Yapoml.Playwright.Components
 {
-    /// <inheritdoc cref="IWebElement"/>
     public abstract partial class BaseComponent<TComponent, TConditions, TCondition> : BaseComponent
         where TComponent : BaseComponent<TComponent, TConditions, TCondition>
         where TConditions : BaseComponentConditions<TConditions>

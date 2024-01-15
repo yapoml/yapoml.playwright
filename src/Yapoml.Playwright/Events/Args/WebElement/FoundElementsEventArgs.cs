@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using Yapoml.Playwright.Components.Metadata;
 
-namespace Yapoml.Playwright.Events.Args.WebElement
+namespace Yapoml.Playwright.Events.Args.Element
 {
     public class FoundElementsEventArgs : EventArgs
     {

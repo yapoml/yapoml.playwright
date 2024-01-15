@@ -31,7 +31,7 @@ namespace Yapoml.Playwright.Services.Locator
 
         public void Invalidate()
         {
-            _webElements = null;
+            _elements = null;
 
             foreach (var elementHandler in ElementHandlerRepository.ElementHandlers)
             {
@@ -39,11 +39,11 @@ namespace Yapoml.Playwright.Services.Locator
             }
         }
 
-        IReadOnlyList<ILocator> _webElements;
+        IReadOnlyList<ILocator> _elements;
 
         public IReadOnlyList<ILocator> LocateMany()
         {
-            if (_webElements == null)
+            if (_elements == null)
             {
                 if (_parentElementHandler != null)
                 {
@@ -51,19 +51,19 @@ namespace Yapoml.Playwright.Services.Locator
 
                     _eventSource.ComponentEventSource.RaiseOnFindingComponents(By, ComponentsListMetadata);
 
-                    _webElements = _elementLocator.FindElements(parentElement, By);
+                    _elements = _elementLocator.FindElements(parentElement, By);
                 }
                 else
                 {
                     _eventSource.ComponentEventSource.RaiseOnFindingComponents(By, ComponentsListMetadata);
 
-                    _webElements = _driver.Locator(By).AllAsync().GetAwaiter().GetResult();
+                    _elements = _driver.Locator(By).AllAsync().GetAwaiter().GetResult();
                 }
 
-                _eventSource.ComponentEventSource.RaiseOnFoundComponents(By, _driver, _webElements, ComponentsListMetadata);
+                _eventSource.ComponentEventSource.RaiseOnFoundComponents(By, _driver, _elements, ComponentsListMetadata);
             }
 
-            return _webElements;
+            return _elements;
         }
     }
 }

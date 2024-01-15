@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 using Yapoml.Playwright.Components.Metadata;
-using Yapoml.Playwright.Events.Args.WebElement;
+using Yapoml.Playwright.Events.Args.Element;
 
 namespace Yapoml.Playwright.Events
 {
@@ -23,9 +23,9 @@ namespace Yapoml.Playwright.Events
             OnFindingComponents?.Invoke(this, new FindingElementsEventArgs(by, componentsListMetadata));
         }
 
-        public void RaiseOnFoundComponent(string by, IPage driver, ILocator webElement, ComponentMetadata componentMetadata)
+        public void RaiseOnFoundComponent(string by, IPage driver, ILocator element, ComponentMetadata componentMetadata)
         {
-            OnFoundComponent?.Invoke(this, new FoundElementEventArgs(by, driver, webElement, componentMetadata));
+            OnFoundComponent?.Invoke(this, new FoundElementEventArgs(by, driver, element, componentMetadata));
         }
 
         public void RaiseOnFoundComponents(string by, IPage driver, IReadOnlyList<ILocator> elements, ComponentsListMetadata componentsListMetadata)

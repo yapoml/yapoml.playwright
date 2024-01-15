@@ -3,7 +3,7 @@
 //using System.Drawing;
 //using Yapoml.Framework.Options;
 //using Yapoml.Playwright.Events;
-//using Yapoml.Playwright.Events.Args.WebElement;
+//using Yapoml.Playwright.Events.Args.Element;
 
 //namespace Yapoml.Playwright
 //{
@@ -35,7 +35,7 @@
 
 //        private static void ComponentEventSource_OnFoundComponent(object sender, FoundElementEventArgs e)
 //        {
-//            HightlightElement(e.Driver, e.WebElement);
+//            HightlightElement(e.Driver, e.Element);
 //        }
 
 //        private static void ComponentEventSource_OnFoundComponents(object sender, FoundElementsEventArgs e)
@@ -46,7 +46,7 @@
 //            }
 //        }
 
-//        private static void HightlightElement(IWebDriver driver, IWebElement webElement)
+//        private static void HightlightElement(IWebDriver driver, IElement element)
 //        {
 //            var jsExecutor = driver as IJavaScriptExecutor;
 
@@ -54,13 +54,13 @@
 //            {
 //                try
 //                {
-//                    var backgroundColor = webElement.GetCssValue("background-color");
+//                    var backgroundColor = element.GetCssValue("background-color");
 
-//                    jsExecutor.ExecuteScript($"arguments[0].setAttribute('style', 'background: rgba({_color.R}, {_color.G}, {_color.B}, {(float)_color.A / 100});');", webElement);
+//                    jsExecutor.ExecuteScript($"arguments[0].setAttribute('style', 'background: rgba({_color.R}, {_color.G}, {_color.B}, {(float)_color.A / 100});');", element);
 
 //                    System.Threading.Thread.Sleep(_delay);
 
-//                    jsExecutor.ExecuteScript($"arguments[0].setAttribute('style', 'background: {backgroundColor}; transition: all {_fadeOutSpeed}ms ease-in-out;');", webElement);
+//                    jsExecutor.ExecuteScript($"arguments[0].setAttribute('style', 'background: {backgroundColor}; transition: all {_fadeOutSpeed}ms ease-in-out;');", element);
 
 
 //                }

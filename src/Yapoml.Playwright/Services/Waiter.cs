@@ -25,6 +25,10 @@ namespace Yapoml.Playwright.Services
                     {
                         return;
                     }
+                    else
+                    {
+                        Thread.Sleep(pollingInterval);
+                    }
                 }
                 catch (Exception ex)
                 {

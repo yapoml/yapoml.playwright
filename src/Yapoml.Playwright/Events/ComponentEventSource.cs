@@ -23,14 +23,14 @@ namespace Yapoml.Playwright.Events
             OnFindingComponents?.Invoke(this, new FindingElementsEventArgs(by, componentsListMetadata));
         }
 
-        public void RaiseOnFoundComponent(string by, IPage webDriver, ILocator webElement, ComponentMetadata componentMetadata)
+        public void RaiseOnFoundComponent(string by, IPage driver, ILocator webElement, ComponentMetadata componentMetadata)
         {
-            OnFoundComponent?.Invoke(this, new FoundElementEventArgs(by, webDriver, webElement, componentMetadata));
+            OnFoundComponent?.Invoke(this, new FoundElementEventArgs(by, driver, webElement, componentMetadata));
         }
 
-        public void RaiseOnFoundComponents(string by, IPage webDriver, IReadOnlyList<ILocator> elements, ComponentsListMetadata componentsListMetadata)
+        public void RaiseOnFoundComponents(string by, IPage driver, IReadOnlyList<ILocator> elements, ComponentsListMetadata componentsListMetadata)
         {
-            OnFoundComponents?.Invoke(this, new FoundElementsEventArgs(by, webDriver, elements, componentsListMetadata));
+            OnFoundComponents?.Invoke(this, new FoundElementsEventArgs(by, driver, elements, componentsListMetadata));
         }
     }
 }

@@ -13,18 +13,18 @@ namespace Yapoml.Playwright.Components.Conditions
     /// <typeparam name="TConditions">Fluent original instance for chaining conditions.</typeparam>
     public class UrlPathConditions<TConditions> : TextualConditions<TConditions>
     {
-        private readonly IPage _webDriver;
+        private readonly IPage _driver;
 
         private readonly PageMetadata _pageMetadata;
 
-        public UrlPathConditions(IPage webDriver, TConditions conditions, TimeSpan timeout, TimeSpan pollingInterval, PageMetadata pageMetadata, ILogger logger)
+        public UrlPathConditions(IPage driver, TConditions conditions, TimeSpan timeout, TimeSpan pollingInterval, PageMetadata pageMetadata, ILogger logger)
             : base(conditions, timeout, pollingInterval, $"{pageMetadata.Name} page url path", logger)
         {
-            _webDriver = webDriver;
+            _driver = driver;
             _pageMetadata = pageMetadata;
         }
 
-        protected override Func<string> FetchValueFunc => () => new Uri(_webDriver.Url).AbsolutePath;
+        protected override Func<string> FetchValueFunc => () => new Uri(_driver.Url).AbsolutePath;
 
         public override NumericConditions<TConditions, int> Length
             => new TextualLengthConditons<TConditions>(_conditions, _timeout, _pollingInterval, FetchValueFunc, $"{_pageMetadata.Name} page url", _logger);

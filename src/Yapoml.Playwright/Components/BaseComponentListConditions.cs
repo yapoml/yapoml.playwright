@@ -15,17 +15,17 @@ namespace Yapoml.Playwright.Components
 {
     public class BaseComponentListConditions<TSelf, TComponentConditions> : BaseConditions<TSelf>
     {
-        public BaseComponentListConditions(TimeSpan timeout, TimeSpan pollingInterval, IPage webDriver, IElementsListHandler elementsListHandler, IElementLocator elementLocator, IEventSource eventSource, ILogger logger)
+        public BaseComponentListConditions(TimeSpan timeout, TimeSpan pollingInterval, IPage driver, IElementsListHandler elementsListHandler, IElementLocator elementLocator, IEventSource eventSource, ILogger logger)
             : base(timeout, pollingInterval)
         {
-            WebDriver = webDriver;
+            Driver = driver;
             ElementsListHandler = elementsListHandler;
             ElementLocator = elementLocator;
             EventSource = eventSource;
             Logger = logger;
         }
 
-        protected IPage WebDriver { get; }
+        protected IPage Driver { get; }
         protected IElementsListHandler ElementsListHandler { get; }
         protected IElementLocator ElementLocator { get; }
         protected IEventSource EventSource { get; }
@@ -47,8 +47,8 @@ namespace Yapoml.Playwright.Components
 
                 for (int i = 0; i < elements.Count; i++)
                 {
-                    var elementHandler = new ElementHandler(WebDriver, null, ElementLocator, ElementsListHandler.By, elements[i], ElementsListHandler.ComponentsListMetadata.ComponentMetadata, ElementsListHandler.ElementHandlerRepository.CreateNestedRepository(), EventSource);
-                    var elementCondition = (TComponentConditions)Activator.CreateInstance(typeof(TComponentConditions), TimeSpan.FromMilliseconds(-1), PollingInterval, WebDriver, elementHandler, ElementLocator, EventSource, Logger);
+                    var elementHandler = new ElementHandler(Driver, null, ElementLocator, ElementsListHandler.By, elements[i], ElementsListHandler.ComponentsListMetadata.ComponentMetadata, ElementsListHandler.ElementHandlerRepository.CreateNestedRepository(), EventSource);
+                    var elementCondition = (TComponentConditions)Activator.CreateInstance(typeof(TComponentConditions), TimeSpan.FromMilliseconds(-1), PollingInterval, Driver, elementHandler, ElementLocator, EventSource, Logger);
 
                     try
                     {
@@ -105,8 +105,8 @@ namespace Yapoml.Playwright.Components
                 {
                     try
                     {
-                        var elementHandler = new ElementHandler(WebDriver, null, ElementLocator, ElementsListHandler.By, element, ElementsListHandler.ComponentsListMetadata.ComponentMetadata, ElementsListHandler.ElementHandlerRepository.CreateNestedRepository(), EventSource);
-                        var elementCondition = (TComponentConditions)Activator.CreateInstance(typeof(TComponentConditions), TimeSpan.FromMilliseconds(-1), PollingInterval, WebDriver, elementHandler, ElementLocator, EventSource);
+                        var elementHandler = new ElementHandler(Driver, null, ElementLocator, ElementsListHandler.By, element, ElementsListHandler.ComponentsListMetadata.ComponentMetadata, ElementsListHandler.ElementHandlerRepository.CreateNestedRepository(), EventSource);
+                        var elementCondition = (TComponentConditions)Activator.CreateInstance(typeof(TComponentConditions), TimeSpan.FromMilliseconds(-1), PollingInterval, Driver, elementHandler, ElementLocator, EventSource);
 
                         predicate(elementCondition);
 
@@ -155,8 +155,8 @@ namespace Yapoml.Playwright.Components
                 {
                     try
                     {
-                        var elementHandler = new ElementHandler(WebDriver, null, ElementLocator, ElementsListHandler.By, element, ElementsListHandler.ComponentsListMetadata.ComponentMetadata, ElementsListHandler.ElementHandlerRepository.CreateNestedRepository(), EventSource);
-                        var elementCondition = (TComponentConditions)Activator.CreateInstance(typeof(TComponentConditions), TimeSpan.FromMilliseconds(-1), PollingInterval, WebDriver, elementHandler, ElementLocator, EventSource);
+                        var elementHandler = new ElementHandler(Driver, null, ElementLocator, ElementsListHandler.By, element, ElementsListHandler.ComponentsListMetadata.ComponentMetadata, ElementsListHandler.ElementHandlerRepository.CreateNestedRepository(), EventSource);
+                        var elementCondition = (TComponentConditions)Activator.CreateInstance(typeof(TComponentConditions), TimeSpan.FromMilliseconds(-1), PollingInterval, Driver, elementHandler, ElementLocator, EventSource);
 
                         predicate(elementCondition);
 

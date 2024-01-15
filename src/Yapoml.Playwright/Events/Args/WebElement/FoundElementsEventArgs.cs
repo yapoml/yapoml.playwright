@@ -7,16 +7,16 @@ namespace Yapoml.Playwright.Events.Args.WebElement
 {
     public class FoundElementsEventArgs : EventArgs
     {
-        public FoundElementsEventArgs(string by, IPage webDriver, IReadOnlyList<ILocator> elements, ComponentsListMetadata componentsListMetadata)
+        public FoundElementsEventArgs(string by, IPage driver, IReadOnlyList<ILocator> elements, ComponentsListMetadata componentsListMetadata)
         {
             By = by;
-            WebDriver = webDriver;
+            Driver = driver;
             Elements = elements;
             ComponentsListMetadata = componentsListMetadata;
         }
 
         public string By { get; }
-        public IPage WebDriver { get; }
+        public IPage Driver { get; }
         public IReadOnlyList<ILocator> Elements { get; }
         public ComponentsListMetadata ComponentsListMetadata { get; }
     }

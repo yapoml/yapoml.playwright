@@ -8,14 +8,14 @@ namespace Yapoml.Playwright.Services.Locator
 {
     public class ElementHandler : IElementHandler
     {
-        private readonly IPage _webDriver;
+        private readonly IPage _driver;
         private readonly IElementHandler _parentElementHandler;
         private readonly IElementLocator _elementLocator;
         private readonly IEventSource _eventSource;
 
-        public ElementHandler(IPage webDriver, IElementHandler parentElementHandler, IElementLocator elementLocator, string by, ComponentMetadata componentMetadata, IElementHandlerRepository elementHandlerRepository, IEventSource eventSource)
+        public ElementHandler(IPage driver, IElementHandler parentElementHandler, IElementLocator elementLocator, string by, ComponentMetadata componentMetadata, IElementHandlerRepository elementHandlerRepository, IEventSource eventSource)
         {
-            _webDriver = webDriver;
+            _driver = driver;
             _parentElementHandler = parentElementHandler;
             _elementLocator = elementLocator;
             By = by;
@@ -24,8 +24,8 @@ namespace Yapoml.Playwright.Services.Locator
             _eventSource = eventSource;
         }
 
-        public ElementHandler(IPage webDriver, IElementHandler parentElementHandler, IElementLocator elementLocator, string by, ILocator webElement, ComponentMetadata componentMetadata, IElementHandlerRepository elementHandlerRepository, IEventSource eventSource)
-            : this(webDriver, parentElementHandler, elementLocator, by, componentMetadata, elementHandlerRepository, eventSource)
+        public ElementHandler(IPage driver, IElementHandler parentElementHandler, IElementLocator elementLocator, string by, ILocator webElement, ComponentMetadata componentMetadata, IElementHandlerRepository elementHandlerRepository, IEventSource eventSource)
+            : this(driver, parentElementHandler, elementLocator, by, componentMetadata, elementHandlerRepository, eventSource)
         {
             _webElement = webElement;
         }
@@ -81,7 +81,7 @@ namespace Yapoml.Playwright.Services.Locator
 
                     do
                     {
-                        _webElement = _webDriver.Locator(By);
+                        _webElement = _driver.Locator(By);
 
                         break;
                     }
@@ -93,7 +93,7 @@ namespace Yapoml.Playwright.Services.Locator
                     }
                 }
 
-                _eventSource.ComponentEventSource.RaiseOnFoundComponent(By, _webDriver, _webElement, ComponentMetadata);
+                _eventSource.ComponentEventSource.RaiseOnFoundComponent(By, _driver, _webElement, ComponentMetadata);
             }
 
             return _webElement;

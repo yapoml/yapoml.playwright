@@ -12,17 +12,17 @@ namespace Yapoml.Playwright.Components
 {
     public abstract class BaseComponentConditions<TSelf> : BaseConditions<TSelf>, ITextualConditions<TSelf>
     {
-        public BaseComponentConditions(TimeSpan timeout, TimeSpan pollingInterval, IPage webDriver, IElementHandler elementHandler, IElementLocator elementLocator, IEventSource eventSource, ILogger logger)
+        public BaseComponentConditions(TimeSpan timeout, TimeSpan pollingInterval, IPage driver, IElementHandler elementHandler, IElementLocator elementLocator, IEventSource eventSource, ILogger logger)
             : base(timeout, pollingInterval)
         {
-            WebDriver = webDriver;
+            Driver = driver;
             ElementHandler = elementHandler;
             ElementLocator = elementLocator;
             EventSource = eventSource;
             Logger = logger;
         }
 
-        protected IPage WebDriver { get; }
+        protected IPage Driver { get; }
         protected IElementHandler ElementHandler { get; }
         protected IElementLocator ElementLocator { get; }
         protected IEventSource EventSource { get; }

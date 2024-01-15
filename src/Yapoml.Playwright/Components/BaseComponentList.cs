@@ -32,7 +32,7 @@ namespace Yapoml.Playwright.Components
 
         private readonly BasePage _page;
         private readonly BaseComponent _parentComponent;
-        private readonly IPage _webDriver;
+        private readonly IPage _driver;
         protected readonly IElementsListHandler _elementsListHandler;
         private readonly ComponentsListMetadata _componentsListMetadata;
         private readonly IEventSource _eventSource;
@@ -40,11 +40,11 @@ namespace Yapoml.Playwright.Components
 
         protected readonly ILogger _logger;
 
-        public BaseComponentList(BasePage page, BaseComponent parentComponent, IPage webDriver, IElementsListHandler elementsListHandler, ComponentsListMetadata componentsListMetadata, IEventSource eventSource, ISpaceOptions spaceOptions)
+        public BaseComponentList(BasePage page, BaseComponent parentComponent, IPage driver, IElementsListHandler elementsListHandler, ComponentsListMetadata componentsListMetadata, IEventSource eventSource, ISpaceOptions spaceOptions)
         {
             _page = page;
             _parentComponent = parentComponent;
-            _webDriver = webDriver;
+            _driver = driver;
             _elementsListHandler = elementsListHandler;
             _componentsListMetadata = componentsListMetadata;
             _eventSource = eventSource;
@@ -64,7 +64,7 @@ namespace Yapoml.Playwright.Components
                 {
                     var elements = _elementsListHandler.LocateMany();
 
-                    _list = new List<TComponent>(elements.Select(e => factory.Create<TComponent, TListConditions, TComponentConditions>(_page, _parentComponent, _webDriver, new ElementHandler(_webDriver, null, locator, _elementsListHandler.By, e, _componentsListMetadata.ComponentMetadata, _elementsListHandler.ElementHandlerRepository.CreateNestedRepository(), _eventSource), _componentsListMetadata.ComponentMetadata, _spaceOptions)));
+                    _list = new List<TComponent>(elements.Select(e => factory.Create<TComponent, TListConditions, TComponentConditions>(_page, _parentComponent, _driver, new ElementHandler(_driver, null, locator, _elementsListHandler.By, e, _componentsListMetadata.ComponentMetadata, _elementsListHandler.ElementHandlerRepository.CreateNestedRepository(), _eventSource), _componentsListMetadata.ComponentMetadata, _spaceOptions)));
 
                     if (elements.Count > index)
                     {
@@ -107,7 +107,7 @@ namespace Yapoml.Playwright.Components
                 {
                     var elements = _elementsListHandler.LocateMany();
 
-                    _list = new List<TComponent>(elements.Select(e => factory.Create<TComponent, TListConditions, TComponentConditions>(_page, _parentComponent, _webDriver, new ElementHandler(_webDriver, null, locator, _elementsListHandler.By, e, _componentsListMetadata.ComponentMetadata, _elementsListHandler.ElementHandlerRepository.CreateNestedRepository(), _eventSource), _componentsListMetadata.ComponentMetadata, _spaceOptions)));
+                    _list = new List<TComponent>(elements.Select(e => factory.Create<TComponent, TListConditions, TComponentConditions>(_page, _parentComponent, _driver, new ElementHandler(_driver, null, locator, _elementsListHandler.By, e, _componentsListMetadata.ComponentMetadata, _elementsListHandler.ElementHandlerRepository.CreateNestedRepository(), _eventSource), _componentsListMetadata.ComponentMetadata, _spaceOptions)));
 
                     component = _list.FirstOrDefault(c => c.Text == text);
 
@@ -156,7 +156,7 @@ namespace Yapoml.Playwright.Components
                 {
                     var elements = _elementsListHandler.LocateMany();
 
-                    _list = new List<TComponent>(elements.Select(e => factory.Create<TComponent, TListConditions, TComponentConditions>(_page, _parentComponent, _webDriver, new ElementHandler(_webDriver, null, locator, _elementsListHandler.By, e, _componentsListMetadata.ComponentMetadata, _elementsListHandler.ElementHandlerRepository.CreateNestedRepository(), _eventSource), _componentsListMetadata.ComponentMetadata, _spaceOptions)));
+                    _list = new List<TComponent>(elements.Select(e => factory.Create<TComponent, TListConditions, TComponentConditions>(_page, _parentComponent, _driver, new ElementHandler(_driver, null, locator, _elementsListHandler.By, e, _componentsListMetadata.ComponentMetadata, _elementsListHandler.ElementHandlerRepository.CreateNestedRepository(), _eventSource), _componentsListMetadata.ComponentMetadata, _spaceOptions)));
 
                     component = _list.FirstOrDefault(predicate);
 
@@ -255,7 +255,7 @@ namespace Yapoml.Playwright.Components
 
                 var elements = _elementsListHandler.LocateMany();
 
-                _list = new List<TComponent>(elements.Select(e => factory.Create<TComponent, TListConditions, TComponentConditions>(_page, _parentComponent, _webDriver, new ElementHandler(_webDriver, null, locator, _elementsListHandler.By, e, _componentsListMetadata.ComponentMetadata, _elementsListHandler.ElementHandlerRepository.CreateNestedRepository(), _eventSource), _componentsListMetadata.ComponentMetadata, _spaceOptions)));
+                _list = new List<TComponent>(elements.Select(e => factory.Create<TComponent, TListConditions, TComponentConditions>(_page, _parentComponent, _driver, new ElementHandler(_driver, null, locator, _elementsListHandler.By, e, _componentsListMetadata.ComponentMetadata, _elementsListHandler.ElementHandlerRepository.CreateNestedRepository(), _eventSource), _componentsListMetadata.ComponentMetadata, _spaceOptions)));
             }
         }
     }

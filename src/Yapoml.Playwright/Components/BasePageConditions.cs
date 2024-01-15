@@ -11,10 +11,10 @@ namespace Yapoml.Playwright.Components
 {
     public abstract class BasePageConditions<TSelf> : BaseConditions<TSelf>
     {
-        public BasePageConditions(TimeSpan timeout, TimeSpan pollingInterval, IPage webDriver, IElementHandlerRepository elementHandlerRepository, IElementLocator elementLocator, PageMetadata pageMetadata, IEventSource eventSource, ILogger logger)
+        public BasePageConditions(TimeSpan timeout, TimeSpan pollingInterval, IPage driver, IElementHandlerRepository elementHandlerRepository, IElementLocator elementLocator, PageMetadata pageMetadata, IEventSource eventSource, ILogger logger)
             : base(timeout, pollingInterval)
         {
-            WebDriver = webDriver;
+            Driver = driver;
             ElementHandlerRepository = elementHandlerRepository;
             ElementLocator = elementLocator;
             PageMetadata = pageMetadata;
@@ -22,7 +22,7 @@ namespace Yapoml.Playwright.Components
             Logger = logger;
         }
 
-        protected IPage WebDriver { get; }
+        protected IPage Driver { get; }
         protected IElementHandlerRepository ElementHandlerRepository { get; }
         protected IElementLocator ElementLocator { get; }
         protected PageMetadata PageMetadata { get; }
@@ -45,7 +45,7 @@ namespace Yapoml.Playwright.Components
             {
                 using (Logger.BeginLogScope($"Expect the {PageMetadata.Name} document state is complete"))
                 {
-                    WebDriver.WaitForLoadStateAsync(LoadState.Load, new PageWaitForLoadStateOptions { Timeout = (float)timeout.Value.TotalSeconds}).GetAwaiter().GetResult();
+                    Driver.WaitForLoadStateAsync(LoadState.Load, new PageWaitForLoadStateOptions { Timeout = (float)timeout.Value.TotalSeconds}).GetAwaiter().GetResult();
                 }
             }
             catch (TimeoutException ex)
@@ -63,7 +63,7 @@ namespace Yapoml.Playwright.Components
         {
             get
             {
-                return new UrlConditions<TSelf>(WebDriver, _self, Timeout, PollingInterval, PageMetadata, Logger);
+                return new UrlConditions<TSelf>(Driver, _self, Timeout, PollingInterval, PageMetadata, Logger);
             }
         }
 
@@ -74,7 +74,7 @@ namespace Yapoml.Playwright.Components
         {
             get
             {
-                return new TitleConditions<TSelf>(WebDriver, _self, Timeout, PollingInterval, PageMetadata, Logger);
+                return new TitleConditions<TSelf>(Driver, _self, Timeout, PollingInterval, PageMetadata, Logger);
             }
         }
 

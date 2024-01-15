@@ -35,20 +35,20 @@
 
 //        private static void ComponentEventSource_OnFoundComponent(object sender, FoundElementEventArgs e)
 //        {
-//            HightlightElement(e.WebDriver, e.WebElement);
+//            HightlightElement(e.Driver, e.WebElement);
 //        }
 
 //        private static void ComponentEventSource_OnFoundComponents(object sender, FoundElementsEventArgs e)
 //        {
 //            foreach (var element in e.Elements)
 //            {
-//                HightlightElement(e.WebDriver, element);
+//                HightlightElement(e.Driver, element);
 //            }
 //        }
 
-//        private static void HightlightElement(IWebDriver webDriver, IWebElement webElement)
+//        private static void HightlightElement(IWebDriver driver, IWebElement webElement)
 //        {
-//            var jsExecutor = webDriver as IJavaScriptExecutor;
+//            var jsExecutor = driver as IJavaScriptExecutor;
 
 //            if (jsExecutor != null)
 //            {

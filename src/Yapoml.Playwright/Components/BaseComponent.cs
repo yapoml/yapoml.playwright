@@ -22,8 +22,8 @@ namespace Yapoml.Playwright.Components
         protected TConditions conditions;
         protected TCondition oneTimeConditions;
 
-        protected BaseComponent(BasePage page, BaseComponent parentComponent, IPage webDriver, IElementHandler elementHandler, ComponentMetadata metadata, ISpaceOptions spaceOptions)
-            : base(page, parentComponent, webDriver, elementHandler, metadata, spaceOptions)
+        protected BaseComponent(BasePage page, BaseComponent parentComponent, IPage driver, IElementHandler elementHandler, ComponentMetadata metadata, ISpaceOptions spaceOptions)
+            : base(page, parentComponent, driver, elementHandler, metadata, spaceOptions)
         {
 
         }
@@ -66,7 +66,7 @@ namespace Yapoml.Playwright.Components
     {
         protected BaseComponent parentComponent;
         protected BasePage Page { get; }
-        protected IPage WebDriver { get; private set; }
+        protected IPage Driver { get; private set; }
 
         protected IElementHandler _elementHandler;
         private readonly Lazy<AttributesCollection> _attributes;
@@ -84,11 +84,11 @@ namespace Yapoml.Playwright.Components
 
         protected IEventSource EventSource { get; private set; }
 
-        public BaseComponent(BasePage page, BaseComponent parentComponent, IPage webDriver, IElementHandler elementHandler, ComponentMetadata metadata, ISpaceOptions spaceOptions)
+        public BaseComponent(BasePage page, BaseComponent parentComponent, IPage driver, IElementHandler elementHandler, ComponentMetadata metadata, ISpaceOptions spaceOptions)
         {
             Page = page;
             this.parentComponent = parentComponent;
-            WebDriver = webDriver;
+            Driver = driver;
             _elementHandler = elementHandler;
             Metadata = metadata;
             SpaceOptions = spaceOptions;

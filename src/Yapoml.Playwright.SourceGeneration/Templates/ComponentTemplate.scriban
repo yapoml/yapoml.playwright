@@ -7,8 +7,8 @@ namespace {{namespace}}
 		where TConditions: global::Yapoml.Playwright.Components.BaseComponentConditions<TConditions>
 		where TCondition: global::Yapoml.Playwright.Components.BaseComponentConditions<TComponent>
 	{
-		public {{singular_name}}Component(global::Yapoml.Playwright.Components.BasePage page, global::Yapoml.Playwright.Components.BaseComponent parentComponent, global::Microsoft.Playwright.IPage webDriver, global::Yapoml.Playwright.Services.Locator.IElementHandler elementHandler, global::Yapoml.Playwright.Components.Metadata.ComponentMetadata metadata, global::Yapoml.Framework.Options.ISpaceOptions spaceOptions)
-			: base(page, parentComponent, webDriver, elementHandler, metadata, spaceOptions)
+		public {{singular_name}}Component(global::Yapoml.Playwright.Components.BasePage page, global::Yapoml.Playwright.Components.BaseComponent parentComponent, global::Microsoft.Playwright.IPage driver, global::Yapoml.Playwright.Services.Locator.IElementHandler elementHandler, global::Yapoml.Playwright.Components.Metadata.ComponentMetadata metadata, global::Yapoml.Framework.Options.ISpaceOptions spaceOptions)
+			: base(page, parentComponent, driver, elementHandler, metadata, spaceOptions)
 		{
 		
 		}
@@ -41,15 +41,15 @@ namespace {{namespace}}
 				var metadata = new global::Yapoml.Playwright.Components.Metadata.ComponentMetadata() { Name = "{{singularize(component.original_name)}}" };
 				var listMetadata = new global::Yapoml.Playwright.Components.Metadata.ComponentsListMetadata() { Name = "{{component.original_name}}", ComponentMetadata = metadata };
 				var elementLocator = SpaceOptions.Services.Get<global::Yapoml.Playwright.Services.Locator.IElementLocator>();
-				var elementsListHandler = new global::Yapoml.Playwright.Services.Locator.ElementsListHandler(WebDriver, _elementHandler, elementLocator, by, listMetadata, _elementHandler.ElementHandlerRepository.CreateNestedRepository(), EventSource);
+				var elementsListHandler = new global::Yapoml.Playwright.Services.Locator.ElementsListHandler(Driver, _elementHandler, elementLocator, by, listMetadata, _elementHandler.ElementHandlerRepository.CreateNestedRepository(), EventSource);
 
-				var webElements = new {{component.singular_name}}ComponentList(Page, this, WebDriver, elementsListHandler, listMetadata, EventSource, SpaceOptions);
+				var webElements = new {{component.singular_name}}ComponentList(Page, this, Driver, elementsListHandler, listMetadata, EventSource, SpaceOptions);
 				return webElements;
 				{{ else }}
 				if (_elementHandler.ElementHandlerRepository.TryGet("{{component.name}}", out var cachedElementHandler))
 				{
 					var metadata = new global::Yapoml.Playwright.Components.Metadata.ComponentMetadata() { Name = "{{component.original_name}}" };
-					return SpaceOptions.Services.Get<global::Yapoml.Playwright.Services.Factory.IComponentFactory>().Create<{{get_component_return_type component}}, {{get_component_return_type component}}.ChainConditions, {{get_component_return_type component}}.OneTimeConditions>(Page, this, WebDriver, cachedElementHandler, metadata, SpaceOptions);
+					return SpaceOptions.Services.Get<global::Yapoml.Playwright.Services.Factory.IComponentFactory>().Create<{{get_component_return_type component}}, {{get_component_return_type component}}.ChainConditions, {{get_component_return_type component}}.OneTimeConditions>(Page, this, Driver, cachedElementHandler, metadata, SpaceOptions);
 				}
 				else
 				{
@@ -59,11 +59,11 @@ namespace {{namespace}}
 					
 					var metadata = new global::Yapoml.Playwright.Components.Metadata.ComponentMetadata() { Name = "{{component.original_name}}" };
 					var elementLocator = SpaceOptions.Services.Get<global::Yapoml.Playwright.Services.Locator.IElementLocator>();
-					var elementHandler = new global::Yapoml.Playwright.Services.Locator.ElementHandler(WebDriver, _elementHandler, elementLocator, by, metadata, _elementHandler.ElementHandlerRepository.CreateNestedRepository(), EventSource);
+					var elementHandler = new global::Yapoml.Playwright.Services.Locator.ElementHandler(Driver, _elementHandler, elementLocator, by, metadata, _elementHandler.ElementHandlerRepository.CreateNestedRepository(), EventSource);
 
 					_elementHandler.ElementHandlerRepository.Set("{{component.name}}", elementHandler);
 
-					return SpaceOptions.Services.Get<global::Yapoml.Playwright.Services.Factory.IComponentFactory>().Create<{{get_component_return_type component}}, {{get_component_return_type component}}.ChainConditions, {{get_component_return_type component}}.OneTimeConditions>(Page, this, WebDriver, elementHandler, metadata, SpaceOptions);
+					return SpaceOptions.Services.Get<global::Yapoml.Playwright.Services.Factory.IComponentFactory>().Create<{{get_component_return_type component}}, {{get_component_return_type component}}.ChainConditions, {{get_component_return_type component}}.OneTimeConditions>(Page, this, Driver, elementHandler, metadata, SpaceOptions);
 				}
 				{{- end }}
 			}
@@ -84,13 +84,13 @@ namespace {{namespace}}
 			{{- if component.is_plural }}
 			var metadata = new global::Yapoml.Playwright.Components.Metadata.ComponentMetadata() { Name = "{{singularize(component.original_name)}}" };
 			var listMetadata = new global::Yapoml.Playwright.Components.Metadata.ComponentsListMetadata() { Name = "{{component.original_name}}", ComponentMetadata = metadata };
-			var elementsListHandler = new global::Yapoml.Playwright.Services.Locator.ElementsListHandler(WebDriver, _elementHandler, elementLocator, by, listMetadata, _elementHandler.ElementHandlerRepository.CreateNestedRepository(), EventSource);
-			var webElements = new {{component.singular_name}}ComponentList(Page, this, WebDriver, elementsListHandler, listMetadata, EventSource, SpaceOptions);
+			var elementsListHandler = new global::Yapoml.Playwright.Services.Locator.ElementsListHandler(Driver, _elementHandler, elementLocator, by, listMetadata, _elementHandler.ElementHandlerRepository.CreateNestedRepository(), EventSource);
+			var webElements = new {{component.singular_name}}ComponentList(Page, this, Driver, elementsListHandler, listMetadata, EventSource, SpaceOptions);
 			return webElements;
 			{{ else }}
 			var metadata = new global::Yapoml.Playwright.Components.Metadata.ComponentMetadata() { Name = "{{component.original_name}}" };
-			var elementHandler = new global::Yapoml.Playwright.Services.Locator.ElementHandler(WebDriver, _elementHandler, elementLocator, by, metadata, _elementHandler.ElementHandlerRepository.CreateNestedRepository(), EventSource);
-			return SpaceOptions.Services.Get<global::Yapoml.Playwright.Services.Factory.IComponentFactory>().Create<{{get_component_return_type component}}, {{get_component_return_type component}}.ChainConditions, {{get_component_return_type component}}.OneTimeConditions>(Page, this, WebDriver, elementHandler, metadata, SpaceOptions);
+			var elementHandler = new global::Yapoml.Playwright.Services.Locator.ElementHandler(Driver, _elementHandler, elementLocator, by, metadata, _elementHandler.ElementHandlerRepository.CreateNestedRepository(), EventSource);
+			return SpaceOptions.Services.Get<global::Yapoml.Playwright.Services.Factory.IComponentFactory>().Create<{{get_component_return_type component}}, {{get_component_return_type component}}.ChainConditions, {{get_component_return_type component}}.OneTimeConditions>(Page, this, Driver, elementHandler, metadata, SpaceOptions);
 			{{- end }}
 		}
 		{{ end }}

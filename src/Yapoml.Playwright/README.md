@@ -1,23 +1,15 @@
 Generates page object classes for Microsoft Playwright with ease.
 
-Given that you have the following `LoginPage.po.yaml` file
+Given that you have the following `Login.page.yaml` file
 
 ```yaml
-UsernameInput:
-  by: id username
+username: id username
 
-PasswordInput:
-  by:
-    css: .password
-
-LoginButton:
-  by: css .primary-button
+login: .//button
 ```
 
 Then you are able to immediately interact with web elements
 
 ```csharp
-using Yapoml.Playwright;
-
-await driver.Ya().LoginPage.UsernameInput.TypeAsync("user01");
+driver.Ya().LoginPage.Username.Type("user01");
 ```

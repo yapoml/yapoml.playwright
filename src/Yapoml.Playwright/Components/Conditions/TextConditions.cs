@@ -43,7 +43,7 @@ namespace Yapoml.Playwright.Components.Conditions
 
         protected override string GetStartsWithError(string latestValue, string expectedValue)
         {
-            return $"Text '{latestValue}' of the {_elementHandler.ComponentMetadata.Name} component is not '{latestValue}' yet.";
+            return $"Text '{latestValue}' of the {_elementHandler.ComponentMetadata.Name} component does not '{expectedValue}' yet.";
         }
 
         protected override string GetDoesNotStartWithError(string latestValue, string expectedValue)
@@ -53,7 +53,7 @@ namespace Yapoml.Playwright.Components.Conditions
 
         protected override string GetEndsWithError(string latestValue, string expectedValue)
         {
-            return $"Text '{latestValue}' of the {_elementHandler.ComponentMetadata.Name} component is not '{expectedValue}' yet.";
+            return $"Text '{latestValue}' of the {_elementHandler.ComponentMetadata.Name} component does not end '{expectedValue}' yet.";
         }
 
         protected override string GetDoesNotEndWithError(string latestValue, string expectedValue)

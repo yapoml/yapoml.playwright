@@ -125,5 +125,13 @@ namespace Yapoml.Playwright.Sample.Basics
             var myPackage = packagesPage.Packages[p => p.Title == "Yapoml.Playwright"];
             Console.Write(myPackage);
         }
+
+        [Test]
+        public void CustomExpectation()
+        {
+            var page = _page.Ya().Basics.Pages.HomePage.Expect(its => its.SearchButton.IsNotWhite());
+
+            page.SearchButton.Click(when => when.IsNotWhite());
+        }
     }
 }

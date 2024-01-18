@@ -13,6 +13,15 @@ namespace {{root_namespace}}
 		
 		}
 
+		[global::System.Runtime.CompilerServices.CompilerGenerated]
+		public abstract partial class Conditions<TSelf> : global::Yapoml.Playwright.Components.BaseComponentConditions<TSelf>
+		{
+			public Conditions(global::System.TimeSpan timeout, global::System.TimeSpan pollingInterval, global::Microsoft.Playwright.IPage page, global::Yapoml.Playwright.Services.Locator.IElementHandler elementHandler, global::Yapoml.Playwright.Services.Locator.IElementLocator elementLocator, global::Yapoml.Playwright.Events.IEventSource eventSource, global::Yapoml.Framework.Logging.ILogger logger)
+				: base(timeout, pollingInterval, page, elementHandler, elementLocator, eventSource, logger)
+			{
+						
+			}
+		}
 	}
 }
 # pragma warning restore

@@ -10,5 +10,16 @@ namespace Yapoml.Playwright.Sample.Basics.Pages
 
             return base.ScrollIntoView();
         }
+
+        partial class Conditions<TSelf>
+        {
+            public TSelf IsNotWhite()
+            {
+                using (this.Logger.BeginLogScope($"Expect {this.ElementHandler.ComponentMetadata.Name} color is not white"))
+                {
+                    return Styles.BackgroundColor.DoesNotContain("255, 255, 255");
+                }
+            }
+        }
     }
 }

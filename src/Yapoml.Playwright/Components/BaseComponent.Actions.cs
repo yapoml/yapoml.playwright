@@ -72,6 +72,30 @@ namespace Yapoml.Playwright.Components
         }
 
         /// <summary>
+        /// Clears and types a text in the component.
+        /// </summary>
+        /// <param name="text">A text to typed.</param>
+        /// <returns>The same instance of the component to continue interaction with it.</returns>
+        public virtual TComponent Fill(string text)
+        {
+            using (_logger.BeginLogScope($"Filling in {component.Metadata.Name} within '{text}'"))
+            {
+                RelocateOnStaleReference(() => WrappedElement.FillAsync(text).GetAwaiter().GetResult());
+            }
+
+            return component;
+        }
+
+        /// <inheritdoc cref="Fill(string)"/>
+        /// <param name="when">Condition to be satisfied before simulating a mouse click.</param>
+        public virtual TComponent Fill(string text, Action<TConditions> when)
+        {
+            when(conditions);
+
+            return Fill(text);
+        }
+
+        /// <summary>
         /// Simulates a mouse click on a component. It can be used to interact with buttons, links,
         /// checkboxes, radio buttons, and other clickable components on a page.
         /// </summary>

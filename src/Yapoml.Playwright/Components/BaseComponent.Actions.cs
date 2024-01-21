@@ -423,5 +423,23 @@ namespace Yapoml.Playwright.Components
 
             return DragAndDrop(toComponent);
         }
+
+        /// <summary>
+        /// Gets a screenshot of visible area of the component.
+        /// </summary>
+        /// <returns>Array of bytes encoded in PNG format.</returns>
+        public virtual byte[] GetScreenshot()
+        {
+            return RelocateOnStaleReference(() => WrappedElement.ScreenshotAsync().GetAwaiter().GetResult());
+        }
+
+        /// <inheritdoc cref="DoubleClick()"/>
+        /// <param name="when">Condition to be satisfied before taking a screenshot.</param>
+        public virtual byte[] GetScreenshot(Action<TConditions> when)
+        {
+            when(conditions);
+
+            return GetScreenshot();
+        }
     }
 }

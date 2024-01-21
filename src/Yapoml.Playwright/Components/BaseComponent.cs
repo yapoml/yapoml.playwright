@@ -213,15 +213,6 @@ namespace Yapoml.Playwright.Components
             }
         }
 
-        /// <summary>
-        /// Gets a screenshot of visible area of the component.
-        /// </summary>
-        /// <returns>Array of bytes encoded in PNG format.</returns>
-        public virtual byte[] GetScreenshot()
-        {
-            return RelocateOnStaleReference(() => WrappedElement.ScreenshotAsync().GetAwaiter().GetResult());
-        }
-
         public override bool Equals(object obj)
         {
             var str = obj as string;

@@ -6,7 +6,7 @@
         {
             using (_logger.BeginLogScope($"Searching for packages by '{text}' query"))
             {
-                SearchInput.Type(text);
+                SearchInput.Fill(text);
                 SearchButton.Click();
 
                 return SpaceOptions.Services.Get<YaSpace>().PackagesPage;

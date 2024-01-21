@@ -425,15 +425,15 @@ namespace Yapoml.Playwright.Components
         }
 
         /// <summary>
-        /// Gets a screenshot of visible area of the component.
+        /// Gets a screenshot of the current state of the component in PNG format.
         /// </summary>
-        /// <returns>Array of bytes encoded in PNG format.</returns>
+        /// <returns>A byte array representing the PNG screenshot image.</returns>
         public virtual byte[] GetScreenshot()
         {
             return RelocateOnStaleReference(() => WrappedElement.ScreenshotAsync().GetAwaiter().GetResult());
         }
 
-        /// <inheritdoc cref="DoubleClick()"/>
+        /// <inheritdoc cref="GetScreenshot()"/>
         /// <param name="when">Condition to be satisfied before taking a screenshot.</param>
         public virtual byte[] GetScreenshot(Action<TConditions> when)
         {

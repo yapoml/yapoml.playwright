@@ -20,7 +20,7 @@ namespace Yapoml.Playwright.Sample
         }
 
         [TearDown]
-        public async Task TearDown()
+        public void TearDown()
         {
             _playwright.Dispose();
         }

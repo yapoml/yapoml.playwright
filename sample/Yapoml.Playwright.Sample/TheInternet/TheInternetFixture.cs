@@ -23,7 +23,7 @@ namespace Yapoml.Playwright.Sample.TheInternet
         public async Task SetUp()
         {
             _playwright = await Microsoft.Playwright.Playwright.CreateAsync();
-            _browser = await _playwright.Chromium.LaunchAsync(new() { Headless = false });
+            _browser = await _playwright.Chromium.LaunchAsync(new() { Headless = true });
             _page = await _browser.NewPageAsync();
 
             _ya = _page.Ya(opts => opts.WithBaseUrl("https://the-internet.herokuapp.com")).TheInternet.Pages;

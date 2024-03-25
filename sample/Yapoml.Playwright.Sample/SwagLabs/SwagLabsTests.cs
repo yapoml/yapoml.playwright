@@ -14,7 +14,7 @@ namespace Yapoml.Playwright.Sample.SwagLabs
         public async Task SetUp()
         {
             _playwright = await Microsoft.Playwright.Playwright.CreateAsync();
-            var browser = await _playwright.Chromium.LaunchAsync(new() { Headless = false });
+            var browser = await _playwright.Chromium.LaunchAsync(new() { Headless = true });
             var page = await browser.NewPageAsync();
 
             _ya = page.Ya(opts => opts.WithBaseUrl("https://www.saucedemo.com")).SwagLabs.Pages;

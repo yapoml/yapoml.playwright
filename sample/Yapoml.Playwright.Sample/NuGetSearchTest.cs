@@ -11,12 +11,6 @@ namespace Yapoml.Playwright.Sample
         private IBrowser _browser;
         private IPlaywright _playwright;
 
-        [OneTimeSetUp]
-        public void DownloadPlaywright()
-        {
-            Program.Main(new string[] { "install" });
-        }
-
         [SetUp]
         public async Task SetUp()
         {

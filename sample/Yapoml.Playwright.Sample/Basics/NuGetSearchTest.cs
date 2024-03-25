@@ -16,7 +16,7 @@ namespace Yapoml.Playwright.Sample.Basics
         public async Task SetUp()
         {
             _playwright = await Microsoft.Playwright.Playwright.CreateAsync();
-            _browser = await _playwright.Chromium.LaunchAsync(new() { Headless = false });
+            _browser = await _playwright.Chromium.LaunchAsync(new() { Headless = true });
             _page = await _browser.NewPageAsync();
 
             await _page.GotoAsync("https://nuget.org");

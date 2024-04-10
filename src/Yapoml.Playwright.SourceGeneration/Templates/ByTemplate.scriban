@@ -4,6 +4,8 @@
 	var by = "css=" + byValue;
 {{- else if $1.by.method == 'Id' -}}
 	var by = "css=#" + byValue;
+{{- else if $1.by.method == 'TestId' -}}
+	var by = $"css=[data-testid='{byValue}']";
 {{- else if $1.by.method == 'None' -}}
 	var by = byValue;
 {{- end -}}

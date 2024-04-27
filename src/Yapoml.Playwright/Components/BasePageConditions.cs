@@ -43,9 +43,12 @@ namespace Yapoml.Playwright.Components
 
             try
             {
-                using (Logger.BeginLogScope($"Expect the {PageMetadata.Name} document state is complete"))
+                using (var scope = Logger.BeginLogScope($"Expect the {PageMetadata.Name} document state is complete"))
                 {
-                    Driver.WaitForLoadStateAsync(LoadState.Load, new PageWaitForLoadStateOptions { Timeout = (float)timeout.Value.TotalSeconds}).GetAwaiter().GetResult();
+                    scope.Execute(() =>
+                    {
+                        Driver.WaitForLoadStateAsync(LoadState.Load, new PageWaitForLoadStateOptions { Timeout = (float)timeout.Value.TotalSeconds }).GetAwaiter().GetResult();
+                    });
                 }
             }
             catch (TimeoutException ex)

@@ -35,10 +35,14 @@ namespace {{namespace}}
 
 			EventSource.PageEventSource.RaiseOnPageNavigating(this, url, Metadata);
 
-			using (_logger.BeginLogScope($"Opening {Metadata.Name} page by {url}"))
+			using (var scope = _logger.BeginLogScope($"Opening {Metadata.Name} page by {url}"))
 			{
-				Driver.GotoAsync(url.ToString()).GetAwaiter().GetResult();
+				scope.Execute(async () =>
+				{
+					await Driver.GotoAsync(url.ToString());
+				});
 			}
+
 			return this;
 		}
 		{{ end }}

@@ -6,6 +6,7 @@ using Yapoml.Playwright.Services.Locator;
 using Yapoml.Playwright.Components.Metadata;
 using Yapoml.Playwright.Options;
 using Microsoft.Playwright;
+using System.Threading.Tasks;
 
 namespace Yapoml.Playwright.Components
 {

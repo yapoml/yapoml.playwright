@@ -15,10 +15,12 @@ namespace Yapoml.Playwright.Sample.Basics.Pages
         {
             public TSelf IsNotWhite()
             {
-                using (this.Logger.BeginLogScope($"Expect {this.ElementHandler.ComponentMetadata.Name} color is not white"))
+                using var logScope = Logger.BeginLogScope($"Expect {this.ElementHandler.ComponentMetadata.Name} color is not white");
+
+                return logScope.Execute(() =>
                 {
                     return Styles.BackgroundColor.DoesNotContain("255, 255, 255");
-                }
+                });
             }
         }
     }

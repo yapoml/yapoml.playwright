@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Yapoml.Playwright.Sample", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Yapoml.Playwright", "src\Yapoml.Playwright\Yapoml.Playwright.csproj", "{95C372C4-6BC3-4F29-B92E-FF71F1D74369}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yapoml.Playwright.SourceGeneration", "src\Yapoml.Playwright.SourceGeneration\Yapoml.Playwright.SourceGeneration.csproj", "{8DEAB4F2-8951-4B94-81E5-537CE4E65DE7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Yapoml.Playwright.SourceGeneration", "src\Yapoml.Playwright.SourceGeneration\Yapoml.Playwright.SourceGeneration.csproj", "{8DEAB4F2-8951-4B94-81E5-537CE4E65DE7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

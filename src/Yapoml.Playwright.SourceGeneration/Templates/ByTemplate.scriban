@@ -8,4 +8,6 @@
 	var by = $"css=[data-testid='{byValue}']";
 {{- else if $1.by.method == 'None' -}}
 	var by = byValue;
-{{- end -}}
+{{- end }}
+
+var byFrom = {{ if $1.by.scope == 'Parent' }}global::Yapoml.Playwright.Services.Locator.ElementLocatorContext.Parent{{ else }}global::Yapoml.Playwright.Services.Locator.ElementLocatorContext.Root{{ end }};

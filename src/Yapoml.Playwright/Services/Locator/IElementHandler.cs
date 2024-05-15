@@ -14,6 +14,8 @@ namespace Yapoml.Playwright.Services.Locator
 
         string By { get; }
 
+        ElementLocatorContext From { get; }
+
         ComponentMetadata ComponentMetadata { get; }
 
         IElementHandlerRepository ElementHandlerRepository { get; }

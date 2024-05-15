@@ -13,19 +13,20 @@ namespace Yapoml.Playwright.Services.Locator
         private readonly IElementLocator _elementLocator;
         private readonly IEventSource _eventSource;
 
-        public ElementHandler(IPage driver, IElementHandler parentElementHandler, IElementLocator elementLocator, string by, ComponentMetadata componentMetadata, IElementHandlerRepository elementHandlerRepository, IEventSource eventSource)
+        public ElementHandler(IPage driver, IElementHandler parentElementHandler, IElementLocator elementLocator, string by, ElementLocatorContext from, ComponentMetadata componentMetadata, IElementHandlerRepository elementHandlerRepository, IEventSource eventSource)
         {
             _driver = driver;
             _parentElementHandler = parentElementHandler;
             _elementLocator = elementLocator;
             By = by;
+            From = from;
             ComponentMetadata = componentMetadata;
             ElementHandlerRepository = elementHandlerRepository;
             _eventSource = eventSource;
         }
 
-        public ElementHandler(IPage driver, IElementHandler parentElementHandler, IElementLocator elementLocator, string by, ILocator element, ComponentMetadata componentMetadata, IElementHandlerRepository elementHandlerRepository, IEventSource eventSource)
-            : this(driver, parentElementHandler, elementLocator, by, componentMetadata, elementHandlerRepository, eventSource)
+        public ElementHandler(IPage driver, IElementHandler parentElementHandler, IElementLocator elementLocator, string by, ElementLocatorContext from, ILocator element, ComponentMetadata componentMetadata, IElementHandlerRepository elementHandlerRepository, IEventSource eventSource)
+            : this(driver, parentElementHandler, elementLocator, by, from, componentMetadata, elementHandlerRepository, eventSource)
         {
             _element = element;
         }
@@ -33,6 +34,8 @@ namespace Yapoml.Playwright.Services.Locator
         private ILocator _element;
 
         public string By { get; }
+
+        public ElementLocatorContext From { get; }
 
         public ComponentMetadata ComponentMetadata { get; }
 
@@ -47,31 +50,55 @@ namespace Yapoml.Playwright.Services.Locator
         {
             if (_element == null)
             {
-                if (_parentElementHandler != null)
+                if (From == ElementLocatorContext.Parent)
                 {
-                    var parentElement = _parentElementHandler.Locate(timeout, pollingInterval);
-
-                    _eventSource.ComponentEventSource.RaiseOnFindingComponent(By, ComponentMetadata);
-
-                    var stopwatch = Stopwatch.StartNew();
-
-                    Exception lastException = null;
-
-                    do
+                    if (_parentElementHandler != null)
                     {
-                        _element = _elementLocator.FindElement(parentElement, By);
+                        var parentElement = _parentElementHandler.Locate(timeout, pollingInterval);
 
-                        break;
+                        _eventSource.ComponentEventSource.RaiseOnFindingComponent(By, ComponentMetadata);
 
+                        var stopwatch = Stopwatch.StartNew();
+
+                        Exception lastException = null;
+
+                        do
+                        {
+                            _element = _elementLocator.FindElement(parentElement, By);
+
+                            break;
+
+                        }
+                        while (stopwatch.Elapsed <= timeout);
+
+                        if (_element is null)
+                        {
+                            throw lastException;
+                        }
                     }
-                    while (stopwatch.Elapsed <= timeout);
-
-                    if (_element is null)
+                    else
                     {
-                        throw lastException;
+                        _eventSource.ComponentEventSource.RaiseOnFindingComponent(By, ComponentMetadata);
+
+                        var stopwatch = Stopwatch.StartNew();
+
+                        Exception lastException = null;
+
+                        do
+                        {
+                            _element = _driver.Locator(By);
+
+                            break;
+                        }
+                        while (stopwatch.Elapsed <= timeout);
+
+                        if (_element is null)
+                        {
+                            throw lastException;
+                        }
                     }
                 }
-                else
+                else if (From == ElementLocatorContext.Root)
                 {
                     _eventSource.ComponentEventSource.RaiseOnFindingComponent(By, ComponentMetadata);
 
@@ -91,6 +118,10 @@ namespace Yapoml.Playwright.Services.Locator
                     {
                         throw lastException;
                     }
+                }
+                else
+                {
+                    throw new NotImplementedException($"Element locator context {From} is not supported yet.");
                 }
 
                 _eventSource.ComponentEventSource.RaiseOnFoundComponent(By, _driver, _element, ComponentMetadata);

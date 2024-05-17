@@ -6,7 +6,6 @@ using Yapoml.Playwright.Services.Locator;
 using Yapoml.Playwright.Components.Metadata;
 using Yapoml.Playwright.Options;
 using Microsoft.Playwright;
-using System.Threading.Tasks;
 
 namespace Yapoml.Playwright.Components
 {
@@ -159,7 +158,13 @@ namespace Yapoml.Playwright.Components
         /// </summary>
         public virtual bool IsEnabled => RelocateOnStaleReference(() => WrappedElement.IsEnabledAsync().GetAwaiter().GetResult());
 
-        public virtual bool IsSelected => RelocateOnStaleReference(() => WrappedElement.IsCheckedAsync().GetAwaiter().GetResult());
+        /// <summary>
+        /// Indicates whether a component currently is checked or not.
+        /// <para>
+        /// It returns a boolean value: <c>true</c> if the component is checked, and <c>false</c> if the component is unchecked.
+        /// </para>
+        /// </summary>
+        public virtual bool IsChecked => RelocateOnStaleReference(() => WrappedElement.IsCheckedAsync().GetAwaiter().GetResult());
 
         /// <summary>
         /// Indicates whether a component currently is partially visible within viewport or not.

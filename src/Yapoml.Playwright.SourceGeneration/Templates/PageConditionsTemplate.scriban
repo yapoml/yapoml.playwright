@@ -1,8 +1,8 @@
 ﻿[global::System.Runtime.CompilerServices.CompilerGenerated]
 public partial class Conditions : global::Yapoml.Playwright.Components.BasePageConditions<Conditions>
 {
-	public Conditions(global::System.TimeSpan timeout, global::System.TimeSpan pollingInterval, global::Microsoft.Playwright.IPage driver, global::Yapoml.Playwright.Services.Locator.IElementHandlerRepository elementHandlerRepository, global::Yapoml.Playwright.Services.Locator.IElementLocator elementLocator, global::Yapoml.Playwright.Components.Metadata.PageMetadata pageMetadata, global::Yapoml.Playwright.Events.IEventSource eventSource, global::Yapoml.Framework.Logging.ILogger logger)
-		: base(timeout, pollingInterval, driver, elementHandlerRepository, elementLocator, pageMetadata, eventSource, logger)
+	public Conditions(global::System.TimeSpan timeout, global::System.TimeSpan pollingInterval, global::Microsoft.Playwright.IPage driver, global::Yapoml.Playwright.Services.Locator.IElementHandlerRepository elementHandlerRepository, global::Yapoml.Playwright.Services.Locator.IElementLocator elementLocator, global::Yapoml.Playwright.Components.Metadata.PageMetadata pageMetadata, global::Yapoml.Playwright.Events.IEventSource eventSource, global::Yapoml.Framework.Logging.ILogger logger, global::Yapoml.Framework.Options.ISpaceOptions spaceOptions)
+		: base(timeout, pollingInterval, driver, elementHandlerRepository, elementLocator, pageMetadata, eventSource, logger, spaceOptions)
 	{
 		base._self = this;
 	}
@@ -36,7 +36,7 @@ public partial class Conditions : global::Yapoml.Playwright.Components.BasePageC
 		{
 			if (ElementHandlerRepository.TryGet("{{component.name}}", out var cachedElementHandler))
 			{
-				return new {{get_component_return_type component}}.ChainConditions(Timeout, PollingInterval, Driver, cachedElementHandler, ElementLocator, EventSource, Logger);
+				return new {{get_component_return_type component}}.ChainConditions(Timeout, PollingInterval, Driver, cachedElementHandler, ElementLocator, EventSource, Logger, SpaceOptions);
 			}
 			else
 			{
@@ -49,7 +49,7 @@ public partial class Conditions : global::Yapoml.Playwright.Components.BasePageC
 			
 				ElementHandlerRepository.Set("{{component.name}}", elementHandler);
 
-				return new {{get_component_return_type component}}.ChainConditions(Timeout, PollingInterval, Driver, elementHandler, ElementLocator, EventSource, Logger);
+				return new {{get_component_return_type component}}.ChainConditions(Timeout, PollingInterval, Driver, elementHandler, ElementLocator, EventSource, Logger, SpaceOptions);
 			}
 		}
 	}
@@ -64,9 +64,10 @@ public partial class Conditions : global::Yapoml.Playwright.Components.BasePageC
 				
 			var metadata = new global::Yapoml.Playwright.Components.Metadata.ComponentMetadata() { Name = "{{singularize(component.original_name)}}" };
 			var listMetadata = new global::Yapoml.Playwright.Components.Metadata.ComponentsListMetadata() { Name = "{{component.original_name}}", ComponentMetadata = metadata };
-			var elementsListHandler = new global::Yapoml.Playwright.Services.Locator.ElementsListHandler(Driver, null, ElementLocator, by, byFrom, listMetadata, ElementHandlerRepository.CreateNestedRepository(), EventSource);
+			var elementsListHandlerFactory = SpaceOptions.Services.Get<global::Yapoml.Playwright.Services.Factory.IElementsListHandlerFactory>();
+			var elementsListHandler = elementsListHandlerFactory.Create(Driver, null, ElementLocator, by, byFrom, listMetadata, ElementHandlerRepository.CreateNestedRepository(), EventSource);
 			
-			return new {{component.singular_name}}ComponentList.Conditions(Timeout, PollingInterval, Driver, elementsListHandler, ElementLocator, EventSource, Logger);
+			return new {{component.singular_name}}ComponentList.Conditions(Timeout, PollingInterval, Driver, elementsListHandler, ElementLocator, EventSource, Logger, SpaceOptions);
 		}
 	}
 	{{ end }}

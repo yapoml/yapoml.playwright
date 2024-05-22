@@ -6,7 +6,7 @@ public {{get_component_return_type component}}.ChainConditions {{component.name}
 	{
 		if (ElementHandler.ElementHandlerRepository.TryGet("{{component.name}}", out var cachedElementHandler))
 		{
-			return new {{get_component_return_type component}}.ChainConditions(Timeout, PollingInterval, Driver, cachedElementHandler, ElementLocator, EventSource, Logger);
+			return new {{get_component_return_type component}}.ChainConditions(Timeout, PollingInterval, Driver, cachedElementHandler, ElementLocator, EventSource, Logger, SpaceOptions);
 		}
 		else
 		{
@@ -19,7 +19,7 @@ public {{get_component_return_type component}}.ChainConditions {{component.name}
 
 			ElementHandler.ElementHandlerRepository.Set("{{component.name}}", elementHandler);
 
-			return new {{get_component_return_type component}}.ChainConditions(Timeout, PollingInterval, Driver, elementHandler, ElementLocator, EventSource, Logger);
+			return new {{get_component_return_type component}}.ChainConditions(Timeout, PollingInterval, Driver, elementHandler, ElementLocator, EventSource, Logger, SpaceOptions);
 		}
 	}
 }
@@ -34,9 +34,10 @@ public {{get_component_return_type component}}List.Conditions {{component.name}}
 			
 		var metadata = new global::Yapoml.Playwright.Components.Metadata.ComponentMetadata() { Name = "{{singularize(component.original_name)}}" };
 		var listMetadata = new global::Yapoml.Playwright.Components.Metadata.ComponentsListMetadata() { Name = "{{component.original_name}}", ComponentMetadata = metadata };
-		var elementsListHandler = new global::Yapoml.Playwright.Services.Locator.ElementsListHandler(Driver, ElementHandler, ElementLocator, by, byFrom, listMetadata, ElementHandler.ElementHandlerRepository.CreateNestedRepository(), EventSource);
+		var elementsListHandlerFactory = SpaceOptions.Services.Get<global::Yapoml.Playwright.Services.Factory.IElementsListHandlerFactory>();
+		var elementsListHandler = elementsListHandlerFactory.Create(Driver, ElementHandler, ElementLocator, by, byFrom, listMetadata, ElementHandler.ElementHandlerRepository.CreateNestedRepository(), EventSource);
 
-		return new {{component.singular_name}}ComponentList.Conditions(Timeout, PollingInterval, Driver, elementsListHandler, ElementLocator, EventSource, Logger);
+		return new {{component.singular_name}}ComponentList.Conditions(Timeout, PollingInterval, Driver, elementsListHandler, ElementLocator, EventSource, Logger, SpaceOptions);
 	}
 }
 {{ end }}

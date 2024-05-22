@@ -66,6 +66,7 @@ namespace {{root_namespace}}
 			spaceOptions.Services.Register<global::Yapoml.Playwright.Services.Factory.ISpaceFactory>(new global::Yapoml.Playwright.Services.Factory.DefaultSpaceFactory());
 			spaceOptions.Services.Register<global::Yapoml.Playwright.Services.Factory.IPageFactory>(new global::Yapoml.Playwright.Services.Factory.DefaultPageFactory());
 			spaceOptions.Services.Register<global::Yapoml.Playwright.Services.Factory.IComponentFactory>(new global::Yapoml.Playwright.Services.Factory.DefaultComponentFactory());
+			spaceOptions.Services.Register<global::Yapoml.Playwright.Services.Factory.IElementsListHandlerFactory>(new global::Yapoml.Playwright.Services.Factory.DefaultElementsListHandlerFactory());
 
 			spaceOptions.Services.Register<global::Yapoml.Playwright.Options.TimeoutOptions>(new global::Yapoml.Playwright.Options.TimeoutOptions(global::System.TimeSpan.FromSeconds(30), global::System.TimeSpan.FromMilliseconds(200)));
 

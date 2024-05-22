@@ -2,6 +2,7 @@
 using System;
 using System.Threading;
 using Yapoml.Framework.Logging;
+using Yapoml.Framework.Options;
 using Yapoml.Playwright.Components.Conditions;
 using Yapoml.Playwright.Components.Metadata;
 using Yapoml.Playwright.Events;
@@ -11,7 +12,7 @@ namespace Yapoml.Playwright.Components
 {
     public abstract class BasePageConditions<TSelf> : BaseConditions<TSelf>
     {
-        public BasePageConditions(TimeSpan timeout, TimeSpan pollingInterval, IPage driver, IElementHandlerRepository elementHandlerRepository, IElementLocator elementLocator, PageMetadata pageMetadata, IEventSource eventSource, ILogger logger)
+        public BasePageConditions(TimeSpan timeout, TimeSpan pollingInterval, IPage driver, IElementHandlerRepository elementHandlerRepository, IElementLocator elementLocator, PageMetadata pageMetadata, IEventSource eventSource, ILogger logger, ISpaceOptions spaceOptions)
             : base(timeout, pollingInterval)
         {
             Driver = driver;
@@ -20,6 +21,7 @@ namespace Yapoml.Playwright.Components
             PageMetadata = pageMetadata;
             EventSource = eventSource;
             Logger = logger;
+            SpaceOptions = spaceOptions;
         }
 
         protected IPage Driver { get; }
@@ -28,6 +30,7 @@ namespace Yapoml.Playwright.Components
         protected PageMetadata PageMetadata { get; }
         protected IEventSource EventSource { get; }
         protected ILogger Logger { get; }
+        protected ISpaceOptions SpaceOptions { get; }
 
         /// <summary>
         /// Evaluates document's state to be <c>complete</c> which means the page is fully loaded.

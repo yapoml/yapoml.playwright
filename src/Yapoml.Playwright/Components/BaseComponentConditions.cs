@@ -3,6 +3,7 @@ using System;
 using System.Text.RegularExpressions;
 using System.Threading;
 using Yapoml.Framework.Logging;
+using Yapoml.Framework.Options;
 using Yapoml.Playwright.Components.Conditions;
 using Yapoml.Playwright.Components.Conditions.Generic;
 using Yapoml.Playwright.Events;
@@ -12,7 +13,7 @@ namespace Yapoml.Playwright.Components
 {
     public abstract class BaseComponentConditions<TSelf> : BaseConditions<TSelf>, ITextualConditions<TSelf>
     {
-        public BaseComponentConditions(TimeSpan timeout, TimeSpan pollingInterval, IPage driver, IElementHandler elementHandler, IElementLocator elementLocator, IEventSource eventSource, ILogger logger)
+        public BaseComponentConditions(TimeSpan timeout, TimeSpan pollingInterval, IPage driver, IElementHandler elementHandler, IElementLocator elementLocator, IEventSource eventSource, ILogger logger, ISpaceOptions spaceOptions)
             : base(timeout, pollingInterval)
         {
             Driver = driver;
@@ -20,6 +21,7 @@ namespace Yapoml.Playwright.Components
             ElementLocator = elementLocator;
             EventSource = eventSource;
             Logger = logger;
+            SpaceOptions = spaceOptions;
         }
 
         protected IPage Driver { get; }
@@ -27,6 +29,7 @@ namespace Yapoml.Playwright.Components
         protected IElementLocator ElementLocator { get; }
         protected IEventSource EventSource { get; }
         protected ILogger Logger { get; }
+        protected ISpaceOptions SpaceOptions { get; }
 
         /// <summary>
         /// Waits until the component is displayed.

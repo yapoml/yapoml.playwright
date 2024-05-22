@@ -10,12 +10,13 @@ using Yapoml.Playwright.Components.Conditions;
 using Yapoml.Playwright.Events;
 using Yapoml.Playwright.Services.Locator;
 using Yapoml.Playwright.Services;
+using Yapoml.Framework.Options;
 
 namespace Yapoml.Playwright.Components
 {
     public class BaseComponentListConditions<TSelf, TComponentConditions> : BaseConditions<TSelf>
     {
-        public BaseComponentListConditions(TimeSpan timeout, TimeSpan pollingInterval, IPage driver, IElementsListHandler elementsListHandler, IElementLocator elementLocator, IEventSource eventSource, ILogger logger)
+        public BaseComponentListConditions(TimeSpan timeout, TimeSpan pollingInterval, IPage driver, IElementsListHandler elementsListHandler, IElementLocator elementLocator, IEventSource eventSource, ILogger logger, ISpaceOptions spaceOptions)
             : base(timeout, pollingInterval)
         {
             Driver = driver;
@@ -23,6 +24,7 @@ namespace Yapoml.Playwright.Components
             ElementLocator = elementLocator;
             EventSource = eventSource;
             Logger = logger;
+            SpaceOptions = spaceOptions;
         }
 
         protected IPage Driver { get; }
@@ -30,6 +32,7 @@ namespace Yapoml.Playwright.Components
         protected IElementLocator ElementLocator { get; }
         protected IEventSource EventSource { get; }
         protected ILogger Logger { get; }
+        protected ISpaceOptions SpaceOptions { get; }
 
         public CountCollectionConditions<TSelf> Count => new CountCollectionConditions<TSelf>(_self, ElementsListHandler, Timeout, PollingInterval, Logger);
 
@@ -48,7 +51,7 @@ namespace Yapoml.Playwright.Components
                 for (int i = 0; i < elements.Count; i++)
                 {
                     var elementHandler = new ElementHandler(Driver, null, ElementLocator, ElementsListHandler.By, ElementsListHandler.From, elements[i], ElementsListHandler.ComponentsListMetadata.ComponentMetadata, ElementsListHandler.ElementHandlerRepository.CreateNestedRepository(), EventSource);
-                    var elementCondition = (TComponentConditions)Activator.CreateInstance(typeof(TComponentConditions), TimeSpan.FromMilliseconds(-1), PollingInterval, Driver, elementHandler, ElementLocator, EventSource, Logger);
+                    var elementCondition = (TComponentConditions)Activator.CreateInstance(typeof(TComponentConditions), TimeSpan.FromMilliseconds(-1), PollingInterval, Driver, elementHandler, ElementLocator, EventSource, Logger, SpaceOptions);
 
                     try
                     {
@@ -109,7 +112,7 @@ namespace Yapoml.Playwright.Components
                     try
                     {
                         var elementHandler = new ElementHandler(Driver, null, ElementLocator, ElementsListHandler.By, ElementsListHandler.From, element, ElementsListHandler.ComponentsListMetadata.ComponentMetadata, ElementsListHandler.ElementHandlerRepository.CreateNestedRepository(), EventSource);
-                        var elementCondition = (TComponentConditions)Activator.CreateInstance(typeof(TComponentConditions), TimeSpan.FromMilliseconds(-1), PollingInterval, Driver, elementHandler, ElementLocator, EventSource);
+                        var elementCondition = (TComponentConditions)Activator.CreateInstance(typeof(TComponentConditions), TimeSpan.FromMilliseconds(-1), PollingInterval, Driver, elementHandler, ElementLocator, EventSource, SpaceOptions);
 
                         predicate(elementCondition);
 
@@ -159,7 +162,7 @@ namespace Yapoml.Playwright.Components
                     try
                     {
                         var elementHandler = new ElementHandler(Driver, null, ElementLocator, ElementsListHandler.By, ElementsListHandler.From, element, ElementsListHandler.ComponentsListMetadata.ComponentMetadata, ElementsListHandler.ElementHandlerRepository.CreateNestedRepository(), EventSource);
-                        var elementCondition = (TComponentConditions)Activator.CreateInstance(typeof(TComponentConditions), TimeSpan.FromMilliseconds(-1), PollingInterval, Driver, elementHandler, ElementLocator, EventSource);
+                        var elementCondition = (TComponentConditions)Activator.CreateInstance(typeof(TComponentConditions), TimeSpan.FromMilliseconds(-1), PollingInterval, Driver, elementHandler, ElementLocator, EventSource, SpaceOptions);
 
                         predicate(elementCondition);
 

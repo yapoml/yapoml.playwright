@@ -33,7 +33,7 @@ namespace Yapoml.Playwright.Services.Locator
 
         public IElementHandlerRepository ElementHandlerRepository { get; }
 
-        public void Invalidate()
+        public virtual void Invalidate()
         {
             _elements = null;
 
@@ -45,7 +45,7 @@ namespace Yapoml.Playwright.Services.Locator
 
         IReadOnlyList<ILocator> _elements;
 
-        public IReadOnlyList<ILocator> LocateMany()
+        public virtual IReadOnlyList<ILocator> LocateMany()
         {
             if (_elements == null)
             {
@@ -57,20 +57,20 @@ namespace Yapoml.Playwright.Services.Locator
 
                         _eventSource.ComponentEventSource.RaiseOnFindingComponents(By, ComponentsListMetadata);
 
-                        _elements = _elementLocator.FindElements(parentElement, By);
+                        _elements = FindAllFrom(parentElement.Locator(By));
                     }
                     else
                     {
                         _eventSource.ComponentEventSource.RaiseOnFindingComponents(By, ComponentsListMetadata);
 
-                        _elements = _driver.Locator(By).AllAsync().GetAwaiter().GetResult();
+                        _elements = FindAllFrom(_driver.Locator(By));
                     }
                 }
                 else if (From == ElementLocatorContext.Root)
                 {
                     _eventSource.ComponentEventSource.RaiseOnFindingComponents(By, ComponentsListMetadata);
 
-                    _elements = _driver.Locator(By).AllAsync().GetAwaiter().GetResult();
+                    _elements = FindAllFrom(_driver.Locator(By));
                 }
                 else
                 {
@@ -81,6 +81,11 @@ namespace Yapoml.Playwright.Services.Locator
             }
 
             return _elements;
+        }
+
+        protected virtual IReadOnlyList<ILocator> FindAllFrom(ILocator locator)
+        {
+            return locator.AllAsync().GetAwaiter().GetResult();
         }
     }
 }

@@ -16,8 +16,7 @@ using Yapoml.Playwright.Events;
 using Yapoml.Playwright.Options;
 using Yapoml.Playwright.Services.Factory;
 using Yapoml.Playwright.Services.Locator;
-using Yapoml.Playwright.Components;
-using Yapoml.Playwright.Services;
+using Yapoml.Framework;
 
 namespace Yapoml.Playwright.Components
 {

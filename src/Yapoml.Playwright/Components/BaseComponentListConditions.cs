@@ -9,8 +9,8 @@ using Yapoml.Framework.Logging;
 using Yapoml.Playwright.Components.Conditions;
 using Yapoml.Playwright.Events;
 using Yapoml.Playwright.Services.Locator;
-using Yapoml.Playwright.Services;
 using Yapoml.Framework.Options;
+using Yapoml.Framework;
 
 namespace Yapoml.Playwright.Components
 {

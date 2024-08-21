@@ -8,7 +8,7 @@
             
             return scope.Execute(() =>
             {
-                SearchInput.Fill(text).Expect().Value.Is(text + "qwe");
+                SearchInput.Fill(text).Expect().Value.Is(text);
                 SearchButton.Click();
 
                 return SpaceOptions.Services.Get<YaSpace>().PackagesPage;

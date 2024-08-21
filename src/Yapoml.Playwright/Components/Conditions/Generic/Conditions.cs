@@ -22,13 +22,6 @@ namespace Yapoml.Playwright.Components.Conditions.Generic
         {
             if (first is not null && second is not null)
             {
-
-                /* Unmerged change from project 'Yapoml.Playwright (net6.0)'
-                Before:
-                                return Environment.NewLine + Formatters.StringFormatter.Format($"  {phrase} ", new string(' ', phrase.Length + 3), first, second) + Environment.NewLine;
-                After:
-                                return Environment.NewLine + StringFormatter.Format($"  {phrase} ", new string(' ', phrase.Length + 3), first, second) + Environment.NewLine;
-                */
                 return Environment.NewLine + Formatters.StringFormatter.Format($"  {phrase} ", new string(' ', phrase.Length + 3), first, second) + Environment.NewLine;
             }
             else

@@ -357,6 +357,14 @@ namespace Yapoml.Playwright.Components
             }
         }
 
+        public virtual ValueConditions<TSelf> Value
+        {
+            get
+            {
+                return new ValueConditions<TSelf>(_self, ElementHandler, Timeout, PollingInterval, $"value of the {ElementHandler.ComponentMetadata.Name}", Logger);
+            }
+        }
+
         /// <summary>
         /// Waits specified amount of time.
         /// </summary>

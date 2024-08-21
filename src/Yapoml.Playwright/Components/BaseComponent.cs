@@ -219,6 +219,17 @@ namespace Yapoml.Playwright.Components
             }
         }
 
+        /// <summary>
+        /// Returns a value of the component.
+        /// </summary>
+        public virtual string Value
+        {
+            get
+            {
+                return WrappedElement.InputValueAsync().GetAwaiter().GetResult();
+            }
+        }
+
         public override bool Equals(object obj)
         {
             var str = obj as string;

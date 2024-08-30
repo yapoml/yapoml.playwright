@@ -26,7 +26,7 @@
     </PackageReference>
 
     <PackageReference Include="Microsoft.Playwright" Version="1.40.0" />
-    <PackageReference Include="Yapoml.Framework" Version="0.16.0" />
+    <PackageReference Include="Yapoml.Framework" Version="0.17.0" />
   </ItemGroup>
 
   <ItemGroup>

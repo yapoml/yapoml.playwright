@@ -499,9 +499,9 @@ namespace Yapoml.Playwright.Components
         {
             using (var scope = _logger.BeginLogScope($"Dragging {Metadata.Name} to {toComponent.Metadata.Name}"))
             {
-                scope.Execute(() =>
+                scope.Execute(async () =>
                 {
-                    RelocateOnStaleReference(async () => await WrappedElement.DragToAsync(toComponent.WrappedElement));
+                    await RelocateOnStaleReference(async () => await WrappedElement.DragToAsync(toComponent.WrappedElement));
                 });
             }
 
@@ -531,9 +531,9 @@ namespace Yapoml.Playwright.Components
         {
             using (var scope = _logger.BeginLogScope($"Dragging {Metadata.Name} to {toComponent.Metadata.Name}"))
             {
-                scope.Execute(() =>
+                scope.Execute(async () =>
                 {
-                    RelocateOnStaleReference(async () => await WrappedElement.DragToAsync(toComponent.WrappedElement, new() { TargetPosition = new() { X = x, Y = y } }));
+                    await RelocateOnStaleReference(async () => await WrappedElement.DragToAsync(toComponent.WrappedElement, new() { TargetPosition = new() { X = x, Y = y } }));
                 });
             }
 

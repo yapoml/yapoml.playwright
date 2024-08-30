@@ -499,7 +499,7 @@ namespace Yapoml.Playwright.Components
         {
             using (var scope = _logger.BeginLogScope($"Dragging {Metadata.Name} to {toComponent.Metadata.Name}"))
             {
-                scope.Execute(async () =>
+                scope.Execute(() =>
                 {
                     RelocateOnStaleReference(async () => await WrappedElement.DragToAsync(toComponent.WrappedElement));
                 });
@@ -519,6 +519,38 @@ namespace Yapoml.Playwright.Components
             when(conditions);
 
             return DragAndDrop(toComponent);
+        }
+
+        /// <summary>
+        /// Performs a drag and drop operation to another component.
+        /// </summary>
+        public virtual TComponent DragAndDrop<TToComponent, TToConditions, TToCondition>(BaseComponent<TToComponent, TToConditions, TToCondition> toComponent, int x, int y)
+            where TToComponent : BaseComponent<TToComponent, TToConditions, TToCondition>
+            where TToConditions : BaseComponentConditions<TToConditions>
+            where TToCondition : BaseComponentConditions<TToComponent>
+        {
+            using (var scope = _logger.BeginLogScope($"Dragging {Metadata.Name} to {toComponent.Metadata.Name}"))
+            {
+                scope.Execute(() =>
+                {
+                    RelocateOnStaleReference(async () => await WrappedElement.DragToAsync(toComponent.WrappedElement, new() { TargetPosition = new() { X = x, Y = y } }));
+                });
+            }
+
+            return component;
+        }
+
+        /// <summary>
+        /// Performs a drag and drop operation to another component.
+        /// </summary>
+        public virtual TComponent DragAndDrop<TToComponent, TToConditions, TToCondition>(BaseComponent<TToComponent, TToConditions, TToCondition> toComponent, int x, int y, Action<TConditions> when)
+            where TToComponent : BaseComponent<TToComponent, TToConditions, TToCondition>
+            where TToConditions : BaseComponentConditions<TToConditions>
+            where TToCondition : BaseComponentConditions<TToComponent>
+        {
+            when(conditions);
+
+            return DragAndDrop(toComponent, x, y);
         }
 
         /// <summary>

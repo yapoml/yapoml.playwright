@@ -1,5 +1,4 @@
 ﻿using Yapoml.Framework.Logging;
-using Yapoml.Framework.Options;
 using Yapoml.Playwright.Events.Args.Element;
 using Yapoml.Playwright.Events.Args.Page;
 
@@ -11,10 +10,10 @@ namespace Yapoml.Playwright.Events
 
         private readonly IEventSource _source;
 
-        public LogEventsProducer(ISpaceOptions spaceOptions)
+        public LogEventsProducer(ILogger logger, IEventSource eventSource)
         {
-            _logger = spaceOptions.Services.Get<ILogger>();
-            _source = spaceOptions.Services.Get<IEventSource>();
+            _logger = logger;
+            _source = eventSource;
         }
 
         public void Init()

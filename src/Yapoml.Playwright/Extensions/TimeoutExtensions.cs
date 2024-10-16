@@ -8,17 +8,9 @@ namespace Yapoml.Playwright
     {
         public static ISpaceOptions WithTimeout(this ISpaceOptions spaceOptions, TimeSpan? timeout = null, TimeSpan? pollingInterval = null)
         {
-            var timeoutOptions = spaceOptions.Services.Get<TimeoutOptions>();
+            var timeoutOptions = new TimeoutOptions(timeout, pollingInterval);
 
-            if (timeout.HasValue)
-            {
-                timeoutOptions.Timeout = timeout.Value;
-            }
-
-            if (pollingInterval.HasValue)
-            {
-                timeoutOptions.PollingInterval = pollingInterval.Value;
-            }
+            spaceOptions.WithService(timeoutOptions);
 
             return spaceOptions;
         }

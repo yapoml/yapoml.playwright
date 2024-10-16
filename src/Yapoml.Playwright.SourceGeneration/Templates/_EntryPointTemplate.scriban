@@ -62,15 +62,11 @@ namespace {{root_namespace}}
 			var eventSource = new global::Yapoml.Playwright.Events.EventSource();
 			spaceOptions.Services.Register<global::Yapoml.Playwright.Events.IEventSource>(eventSource);
 
+			var logger = new global::Yapoml.Framework.Logging.Logger();
+			spaceOptions.Services.Register<global::Yapoml.Framework.Logging.ILogger>(logger);
+
 			spaceOptionsCallback?.Invoke(spaceOptions);
 
-			// default logger
-			global::Yapoml.Framework.Logging.ILogger logger;
-			if (!spaceOptions.Services.TryGet<global::Yapoml.Framework.Logging.ILogger>(out logger))
-			{
-				logger = new global::Yapoml.Framework.Logging.Logger();
-				spaceOptions.Services.Register<global::Yapoml.Framework.Logging.ILogger>(logger);
-			}
 			var consoleLoggerSink = new global::Yapoml.Framework.Logging.Sinks.ConsoleLoggerSink(logger);
 
 			// default factories

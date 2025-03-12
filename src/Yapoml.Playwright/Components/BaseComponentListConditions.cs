@@ -112,7 +112,7 @@ namespace Yapoml.Playwright.Components
                     try
                     {
                         var elementHandler = new ElementHandler(Driver, null, ElementLocator, ElementsListHandler.By, ElementsListHandler.From, element, ElementsListHandler.ComponentsListMetadata.ComponentMetadata, ElementsListHandler.ElementHandlerRepository.CreateNestedRepository(), EventSource);
-                        var elementCondition = (TComponentConditions)Activator.CreateInstance(typeof(TComponentConditions), TimeSpan.FromMilliseconds(-1), PollingInterval, Driver, elementHandler, ElementLocator, EventSource, SpaceOptions);
+                        var elementCondition = (TComponentConditions)Activator.CreateInstance(typeof(TComponentConditions), TimeSpan.FromMilliseconds(-1), PollingInterval, Driver, elementHandler, ElementLocator, EventSource, Logger, SpaceOptions);
 
                         predicate(elementCondition);
 
@@ -162,7 +162,7 @@ namespace Yapoml.Playwright.Components
                     try
                     {
                         var elementHandler = new ElementHandler(Driver, null, ElementLocator, ElementsListHandler.By, ElementsListHandler.From, element, ElementsListHandler.ComponentsListMetadata.ComponentMetadata, ElementsListHandler.ElementHandlerRepository.CreateNestedRepository(), EventSource);
-                        var elementCondition = (TComponentConditions)Activator.CreateInstance(typeof(TComponentConditions), TimeSpan.FromMilliseconds(-1), PollingInterval, Driver, elementHandler, ElementLocator, EventSource, SpaceOptions);
+                        var elementCondition = (TComponentConditions)Activator.CreateInstance(typeof(TComponentConditions), TimeSpan.FromMilliseconds(-1), PollingInterval, Driver, elementHandler, ElementLocator, EventSource, Logger, SpaceOptions);
 
                         predicate(elementCondition);
 

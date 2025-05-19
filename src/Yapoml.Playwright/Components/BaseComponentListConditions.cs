@@ -118,9 +118,9 @@ namespace Yapoml.Playwright.Components
 
                         return true;
                     }
-                    catch (TimeoutException)
+                    catch (ExpectException)
                     {
-                        return false;
+                        continue;
                     }
                 }
 
@@ -169,7 +169,7 @@ namespace Yapoml.Playwright.Components
                         // this one still satisfy condition, so returning false for reiterating
                         result = false;
                     }
-                    catch (TimeoutException)
+                    catch (ExpectException)
                     {
                         // do noting and leave result true b default, proceding next item
                     }

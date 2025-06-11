@@ -1,6 +1,6 @@
 ﻿{{ for component in $1.components }}
 {{if !component.is_plural && component.by.segments == null }}
-public {{get_component_return_type component}}.OneTimeConditions {{component.name}}
+public global::{{component.namespace}}.{{get_component_return_type component}}.OneTimeConditions {{component.name}}
 {
 	get
 	{
@@ -8,7 +8,7 @@ public {{get_component_return_type component}}.OneTimeConditions {{component.nam
 	}
 }
 {{ else if component.is_plural && component.by.segments == null }}
-public {{get_component_return_type component}}List.OneTimeConditions {{component.name}}
+public global::{{component.namespace}}.{{get_component_return_type component}}List.OneTimeConditions {{component.name}}
 {
 	get
 	{
@@ -20,7 +20,7 @@ public {{get_component_return_type component}}List.OneTimeConditions {{component
 
 {{ for component in $1.base_component?.components}}
 {{if !component.is_plural && component.by.segments == null }}
-public {{get_component_return_type component}}.OneTimeConditions {{component.name}}
+public global::{{component.namespace}}.{{get_component_return_type component}}.OneTimeConditions {{component.name}}
 {
 	get
 	{
@@ -28,7 +28,7 @@ public {{get_component_return_type component}}.OneTimeConditions {{component.nam
 	}
 }
 {{ else if component.is_plural && component.by.segments == null }}
-public {{get_component_return_type component}}List.OneTimeConditions {{component.name}}
+public global::{{component.namespace}}.{{get_component_return_type component}}List.OneTimeConditions {{component.name}}
 {
 	get
 	{

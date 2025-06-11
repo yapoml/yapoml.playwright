@@ -53,7 +53,7 @@ namespace {{namespace}}
 		{{ include 'NestedComponentTemplate_Desc' component }}
 		/// </summary>
 		{{- if component.by.segments == null }}
-		public {{ if component.is_plural }}{{component.singular_name}}ComponentList{{ else }}{{get_component_return_type component}}{{ end }} {{component.name}}
+		public global::{{component.namespace}}.{{ if component.is_plural }}{{component.singular_name}}ComponentList{{ else }}{{get_component_return_type component}}{{ end }} {{component.name}}
 		{
 			get
 			{
@@ -68,13 +68,13 @@ namespace {{namespace}}
 				var elementsListHandlerFactory = SpaceOptions.Services.Get<global::Yapoml.Playwright.Services.Factory.IElementsListHandlerFactory>();
 				var elementsListHandler = elementsListHandlerFactory.Create(Driver, null, elementLocator, by, byFrom, listMetadata, ElementHandlerRepository.CreateNestedRepository(), EventSource);
 				
-				var elements = new {{component.singular_name}}ComponentList(this, null, Driver, elementsListHandler, listMetadata, EventSource, SpaceOptions);
+				var elements = new global::{{component.namespace}}.{{component.singular_name}}ComponentList(this, null, Driver, elementsListHandler, listMetadata, EventSource, SpaceOptions);
 				return elements;
 				{{- else -}}
 				if (ElementHandlerRepository.TryGet("{{component.name}}", out var cachedElementHandler))
 				{
 					var metadata = new global::Yapoml.Playwright.Components.Metadata.ComponentMetadata() { Name = "{{component.original_name}}" };
-					return SpaceOptions.Services.Get<global::Yapoml.Playwright.Services.Factory.IComponentFactory>().Create<{{get_component_return_type component}}, {{get_component_return_type component}}.ChainConditions, {{get_component_return_type component}}.OneTimeConditions>(this, null, Driver, cachedElementHandler, metadata, SpaceOptions);
+					return SpaceOptions.Services.Get<global::Yapoml.Playwright.Services.Factory.IComponentFactory>().Create<global::{{component.namespace}}.{{get_component_return_type component}}, global::{{component.namespace}}.{{get_component_return_type component}}.ChainConditions, global::{{component.namespace}}.{{get_component_return_type component}}.OneTimeConditions>(this, null, Driver, cachedElementHandler, metadata, SpaceOptions);
 				}
 				else
 				{
@@ -88,7 +88,7 @@ namespace {{namespace}}
 				
 					ElementHandlerRepository.Set("{{component.name}}", elementHandler);
 
-					return SpaceOptions.Services.Get<global::Yapoml.Playwright.Services.Factory.IComponentFactory>().Create<{{get_component_return_type component}}, {{get_component_return_type component}}.ChainConditions, {{get_component_return_type component}}.OneTimeConditions>(this, null, Driver, elementHandler, metadata, SpaceOptions);
+					return SpaceOptions.Services.Get<global::Yapoml.Playwright.Services.Factory.IComponentFactory>().Create<global::{{component.namespace}}.{{get_component_return_type component}}, global::{{component.namespace}}.{{get_component_return_type component}}.ChainConditions, global::{{component.namespace}}.{{get_component_return_type component}}.OneTimeConditions>(this, null, Driver, elementHandler, metadata, SpaceOptions);
 				}
 				{{- end}}
 			}
@@ -111,18 +111,14 @@ namespace {{namespace}}
 			var listMetadata = new global::Yapoml.Playwright.Components.Metadata.ComponentsListMetadata() { Name = "{{component.original_name}}", ComponentMetadata = metadata };
 			var elementsListHandlerFactory = SpaceOptions.Services.Get<global::Yapoml.Playwright.Services.Factory.IElementsListHandlerFactory>();
 			var elementsListHandler = elementsListHandlerFactory.Create(Driver, null, elementLocator, by, byFrom, listMetadata, ElementHandlerRepository.CreateNestedRepository(), EventSource);
-			var elements = new {{component.singular_name}}ComponentList(this, null, Driver, elementsListHandler, listMetadata, EventSource, SpaceOptions);
+			var elements = new global::{{component.namespace}}.{{component.singular_name}}ComponentList(this, null, Driver, elementsListHandler, listMetadata, EventSource, SpaceOptions);
 			return elements;
 			{{ else }}
 			var metadata = new global::Yapoml.Playwright.Components.Metadata.ComponentMetadata() { Name = "{{component.original_name}}" };
 			var elementHandler = new global::Yapoml.Playwright.Services.Locator.ElementHandler(Driver, null, elementLocator, by, byFrom, metadata, ElementHandlerRepository.CreateNestedRepository(), EventSource);
-			return SpaceOptions.Services.Get<global::Yapoml.Playwright.Services.Factory.IComponentFactory>().Create<{{get_component_return_type component}}, {{get_component_return_type component}}.ChainConditions, {{get_component_return_type component}}.OneTimeConditions>(this, null, Driver, elementHandler, metadata, SpaceOptions);
+			return SpaceOptions.Services.Get<global::Yapoml.Playwright.Services.Factory.IComponentFactory>().Create<global::{{component.namespace}}.{{get_component_return_type component}}, global::{{component.namespace}}.{{get_component_return_type component}}.ChainConditions, global::{{component.namespace}}.{{get_component_return_type component}}.OneTimeConditions>(this, null, Driver, elementHandler, metadata, SpaceOptions);
 			{{- end }}
 		}
-		{{ end }}
-
-		{{- if component.referenced_component == null }}
-		{{ include 'NestedComponentTemplate' component }}
 		{{ end }}
 		{{ end }}
 
@@ -157,5 +153,14 @@ namespace {{namespace}}
 
 		{{ include 'PageOneTimeConditionsTemplate' this }}
 	}
+
+	{{- for component in components }}
+	namespace {{ name }}
+	{
+		{{- if component.referenced_component == null }}
+		{{ include 'NestedComponentTemplate' component }}
+		{{ end }}
+	}
+	{{ end }}
 }
 # pragma warning restore

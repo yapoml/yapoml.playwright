@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using Yapoml.Framework.Logging;
 using Yapoml.Playwright.Components.Conditions.Generic;
 using Yapoml.Playwright.Services.Locator;
@@ -18,7 +19,7 @@ namespace Yapoml.Playwright.Components.Conditions
 
         public override NumericConditions<TConditions, int> Length => new TextualLengthConditons<TConditions>(_conditions, _timeout, _pollingInterval, FetchValueFunc, $"value of {_elementHandler.ComponentMetadata.Name}", _logger);
 
-        protected override Func<string> FetchValueFunc => () => _elementHandler.Locate().InputValueAsync().GetAwaiter().GetResult();
+        protected override Func<string> FetchValueFunc => () => Task.Run(() => _elementHandler.Locate().InputValueAsync()).GetAwaiter().GetResult();
 
         protected override string GetIsError(string latestValue, string expectedValue)
         {

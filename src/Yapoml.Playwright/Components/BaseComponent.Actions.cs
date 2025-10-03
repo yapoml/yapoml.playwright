@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Yapoml.Playwright.Options;
 
 namespace Yapoml.Playwright.Components
@@ -19,7 +20,7 @@ namespace Yapoml.Playwright.Components
             {
                 scope.Execute(() =>
                 {
-                    RelocateOnStaleReference(() => WrappedElement.ClearAsync().GetAwaiter().GetResult());
+                    RelocateOnStaleReference(() => Task.Run(() => WrappedElement.ClearAsync()).GetAwaiter().GetResult());
                 });
             }
 
@@ -88,7 +89,7 @@ namespace Yapoml.Playwright.Components
             {
                 scope.Execute(() =>
                 {
-                    RelocateOnStaleReference(() => WrappedElement.FillAsync(text).GetAwaiter().GetResult());
+                    RelocateOnStaleReference(() => Task.Run(() => WrappedElement.FillAsync(text)).GetAwaiter().GetResult());
                 });
             }
 
@@ -559,7 +560,7 @@ namespace Yapoml.Playwright.Components
         /// <returns>A byte array representing the PNG screenshot image.</returns>
         public virtual byte[] GetScreenshot()
         {
-            return RelocateOnStaleReference(() => WrappedElement.ScreenshotAsync().GetAwaiter().GetResult());
+            return RelocateOnStaleReference(() => Task.Run(() => WrappedElement.ScreenshotAsync()).GetAwaiter().GetResult());
         }
 
         /// <inheritdoc cref="GetScreenshot()"/>

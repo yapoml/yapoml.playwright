@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using System.Xml.Linq;
 using Yapoml.Framework.Logging;
 using Yapoml.Playwright.Components.Conditions.Generic;
@@ -21,7 +22,7 @@ namespace Yapoml.Playwright.Components.Conditions
 
         protected override Func<TNumber?> FetchValueFunc => () =>
         {
-            var value = _elementHandler.Locate().EvaluateAsync($"node => window.getComputedStyle(node).getPropertyValue('{_styleName}')").GetAwaiter().GetResult().ToString();
+            var value = Task.Run(() => _elementHandler.Locate().EvaluateAsync($"node => window.getComputedStyle(node).getPropertyValue('{_styleName}')")).GetAwaiter().GetResult().ToString();
 
             if (string.IsNullOrEmpty(value))
             {

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Yapoml.Framework.Options;
 using Yapoml.Playwright.Options;
 using Yapoml.Playwright.Services.Locator;
@@ -24,7 +25,7 @@ namespace Yapoml.Playwright.Components
         {
             get
             {
-                var style = _elementHandler.Locate().EvaluateAsync($"node => window.getComputedStyle(node).getPropertyValue('{name}')").GetAwaiter().GetResult();
+                var style = Task.Run(() => _elementHandler.Locate().EvaluateAsync($"node => window.getComputedStyle(node).getPropertyValue('{name}')")).GetAwaiter().GetResult();
 
                 return style.ToString();
             }

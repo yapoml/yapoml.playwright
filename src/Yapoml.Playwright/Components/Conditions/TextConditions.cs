@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using Yapoml.Framework.Logging;
 using Yapoml.Playwright.Components.Conditions.Generic;
 using Yapoml.Playwright.Services.Locator;
@@ -16,7 +17,7 @@ namespace Yapoml.Playwright.Components.Conditions
             _elementHandler = elementHandler;
         }
 
-        protected override Func<string> FetchValueFunc => () => RelocateOnStaleReference(() => _elementHandler.Locate().TextContentAsync().GetAwaiter().GetResult().Trim());
+        protected override Func<string> FetchValueFunc => () => RelocateOnStaleReference(() => Task.Run(() => _elementHandler.Locate().TextContentAsync()).GetAwaiter().GetResult().Trim());
 
         public override NumericConditions<TConditions, int> Length
             => new TextualLengthConditons<TConditions>(_conditions, _timeout, _pollingInterval, FetchValueFunc, $"text of {_elementHandler.ComponentMetadata.Name}", _logger);

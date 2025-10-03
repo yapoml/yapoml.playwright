@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using Yapoml.Framework.Logging;
 using Yapoml.Playwright.Components.Conditions.Generic;
 using Yapoml.Playwright.Services.Locator;
@@ -18,7 +19,7 @@ namespace Yapoml.Playwright.Components.Conditions
             _styleName = styleName;
         }
 
-        protected override Func<string> FetchValueFunc => () => RelocateOnStaleReference(() => _elementHandler.Locate().EvaluateAsync($"node => window.getComputedStyle(node).getPropertyValue('{_styleName}')").GetAwaiter().GetResult().ToString());
+        protected override Func<string> FetchValueFunc => () => RelocateOnStaleReference(() => Task.Run(() => _elementHandler.Locate().EvaluateAsync($"node => window.getComputedStyle(node).getPropertyValue('{_styleName}')")).GetAwaiter().GetResult().ToString());
 
         public override NumericConditions<TConditions, int> Length
             => new TextualLengthConditons<TConditions>(_conditions, _timeout, _pollingInterval, FetchValueFunc, $"{_styleName} style of {_elementHandler.ComponentMetadata.Name}", _logger);

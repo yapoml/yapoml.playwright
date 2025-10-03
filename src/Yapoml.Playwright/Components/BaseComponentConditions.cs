@@ -46,7 +46,7 @@ namespace Yapoml.Playwright.Components
                 {
                     scope.Execute(() =>
                     {
-                        Assertions.Expect(ElementHandler.Locate()).ToBeVisibleAsync(new LocatorAssertionsToBeVisibleOptions { Timeout = (float)timeout.Value.TotalMilliseconds }).GetAwaiter().GetResult();
+                        Assertions.Expect(ElementHandler.Locate()).ToBeVisibleAsync(new LocatorAssertionsToBeVisibleOptions { Timeout = (float)timeout.Value.TotalMilliseconds });
                     });
                 }
             }
@@ -74,7 +74,7 @@ namespace Yapoml.Playwright.Components
                 {
                     scope.Execute(() =>
                     {
-                        Assertions.Expect(ElementHandler.Locate()).ToBeHiddenAsync(new LocatorAssertionsToBeHiddenOptions { Timeout = (float)timeout.Value.TotalMilliseconds }).GetAwaiter().GetResult();
+                        Assertions.Expect(ElementHandler.Locate()).ToBeHiddenAsync(new LocatorAssertionsToBeHiddenOptions { Timeout = (float)timeout.Value.TotalMilliseconds });
                     });
                 }
             }
@@ -101,7 +101,7 @@ namespace Yapoml.Playwright.Components
                 {
                     scope.Execute(() =>
                     {
-                        Assertions.Expect(ElementHandler.Locate()).ToBeAttachedAsync(new LocatorAssertionsToBeAttachedOptions { Timeout = (float)timeout.Value.TotalMilliseconds }).GetAwaiter().GetResult();
+                        Assertions.Expect(ElementHandler.Locate()).ToBeAttachedAsync(new LocatorAssertionsToBeAttachedOptions { Timeout = (float)timeout.Value.TotalMilliseconds });
                     });
                 }
             }
@@ -128,7 +128,7 @@ namespace Yapoml.Playwright.Components
                 {
                     scope.Execute(() =>
                     {
-                        Assertions.Expect(ElementHandler.Locate()).ToBeAttachedAsync(new LocatorAssertionsToBeAttachedOptions { Attached = false, Timeout = (float)timeout.Value.TotalMilliseconds }).GetAwaiter().GetResult();
+                        Assertions.Expect(ElementHandler.Locate()).ToBeAttachedAsync(new LocatorAssertionsToBeAttachedOptions { Attached = false, Timeout = (float)timeout.Value.TotalMilliseconds });
                     });
                 }
             }
@@ -155,7 +155,7 @@ namespace Yapoml.Playwright.Components
                 {
                     scope.Execute(() =>
                     {
-                        Assertions.Expect(ElementHandler.Locate()).ToBeEnabledAsync(new LocatorAssertionsToBeEnabledOptions { Timeout = (float)timeout.Value.TotalMilliseconds }).GetAwaiter().GetResult();
+                        Assertions.Expect(ElementHandler.Locate()).ToBeEnabledAsync(new LocatorAssertionsToBeEnabledOptions { Timeout = (float)timeout.Value.TotalMilliseconds });
                     });
                 }
             }
@@ -182,7 +182,7 @@ namespace Yapoml.Playwright.Components
                 {
                     scope.Execute(() =>
                     {
-                        Assertions.Expect(ElementHandler.Locate()).ToBeDisabledAsync(new LocatorAssertionsToBeDisabledOptions { Timeout = (float)timeout.Value.TotalMilliseconds }).GetAwaiter().GetResult();
+                        Assertions.Expect(ElementHandler.Locate()).ToBeDisabledAsync(new LocatorAssertionsToBeDisabledOptions { Timeout = (float)timeout.Value.TotalMilliseconds });
                     });
                 }
             }
@@ -220,7 +220,7 @@ namespace Yapoml.Playwright.Components
                 {
                     scope.Execute(() =>
                     {
-                        Assertions.Expect(ElementHandler.Locate()).ToBeCheckedAsync(new LocatorAssertionsToBeCheckedOptions { Timeout = (float)timeout.Value.TotalMilliseconds }).GetAwaiter().GetResult();
+                        Assertions.Expect(ElementHandler.Locate()).ToBeCheckedAsync(new LocatorAssertionsToBeCheckedOptions { Timeout = (float)timeout.Value.TotalMilliseconds });
                     });
                 }
             }
@@ -248,7 +248,7 @@ namespace Yapoml.Playwright.Components
                 {
                     scope.Execute(() =>
                     {
-                        Assertions.Expect(ElementHandler.Locate()).ToBeCheckedAsync(new LocatorAssertionsToBeCheckedOptions { Checked = false, Timeout = (float)timeout.Value.TotalMilliseconds }).GetAwaiter().GetResult();
+                        Assertions.Expect(ElementHandler.Locate()).ToBeCheckedAsync(new LocatorAssertionsToBeCheckedOptions { Checked = false, Timeout = (float)timeout.Value.TotalMilliseconds });
                     });
                 }
             }
@@ -285,7 +285,7 @@ namespace Yapoml.Playwright.Components
                 {
                     scope.Execute(() =>
                     {
-                        Assertions.Expect(ElementHandler.Locate()).ToBeInViewportAsync(new LocatorAssertionsToBeInViewportOptions { Timeout = (float)timeout.Value.TotalMilliseconds }).GetAwaiter().GetResult();
+                        Assertions.Expect(ElementHandler.Locate()).ToBeInViewportAsync(new LocatorAssertionsToBeInViewportOptions { Timeout = (float)timeout.Value.TotalMilliseconds });
                     });
                 }
             }
@@ -312,7 +312,7 @@ namespace Yapoml.Playwright.Components
                 {
                     scope.Execute(() =>
                     {
-                        Assertions.Expect(ElementHandler.Locate()).Not.ToBeInViewportAsync(new LocatorAssertionsToBeInViewportOptions { Timeout = (float)timeout.Value.TotalMilliseconds }).GetAwaiter().GetResult();
+                        Assertions.Expect(ElementHandler.Locate()).Not.ToBeInViewportAsync(new LocatorAssertionsToBeInViewportOptions { Timeout = (float)timeout.Value.TotalMilliseconds });
                     });
                 }
             }

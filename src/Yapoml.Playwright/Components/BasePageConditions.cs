@@ -50,7 +50,7 @@ namespace Yapoml.Playwright.Components
                 {
                     scope.Execute(() =>
                     {
-                        Driver.WaitForLoadStateAsync(LoadState.Load, new PageWaitForLoadStateOptions { Timeout = (float)timeout.Value.TotalSeconds }).GetAwaiter().GetResult();
+                        Driver.WaitForLoadStateAsync(LoadState.Load, new PageWaitForLoadStateOptions { Timeout = (float)timeout.Value.TotalSeconds });
                     });
                 }
             }

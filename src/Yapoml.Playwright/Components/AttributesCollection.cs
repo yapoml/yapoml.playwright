@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Yapoml.Framework.Options;
 using Yapoml.Playwright.Options;
 using Yapoml.Playwright.Services.Locator;
@@ -24,7 +25,7 @@ namespace Yapoml.Playwright.Components
         {
             get
             {
-                return RelocateOnStaleReference(() => _elementHandler.Locate().GetAttributeAsync(name).GetAwaiter().GetResult());
+                return RelocateOnStaleReference(() => Task.Run(() => _elementHandler.Locate().GetAttributeAsync(name)).GetAwaiter().GetResult());
             }
         }
 

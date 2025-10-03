@@ -1,6 +1,7 @@
 ﻿using Microsoft.Playwright;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Yapoml.Playwright.Components.Metadata;
 using Yapoml.Playwright.Events;
 
@@ -85,7 +86,7 @@ namespace Yapoml.Playwright.Services.Locator
 
         protected virtual IReadOnlyList<ILocator> FindAllFrom(ILocator locator)
         {
-            return locator.AllAsync().GetAwaiter().GetResult();
+            return Task.Run(() => locator.AllAsync()).GetAwaiter().GetResult();
         }
     }
 }

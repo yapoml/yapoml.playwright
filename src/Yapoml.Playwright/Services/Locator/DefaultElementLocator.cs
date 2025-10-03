@@ -1,6 +1,7 @@
 ﻿using Microsoft.Playwright;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Threading.Tasks;
 
 namespace Yapoml.Playwright.Services.Locator
 {
@@ -15,7 +16,7 @@ namespace Yapoml.Playwright.Services.Locator
         [DebuggerHidden]
         public IReadOnlyList<ILocator> FindElements(ILocator searchContext, string by)
         {
-            return searchContext.Locator(by).AllAsync().GetAwaiter().GetResult();
+            return Task.Run(() => searchContext.Locator(by).AllAsync()).GetAwaiter().GetResult();
         }
     }
 }

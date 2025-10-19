@@ -57,13 +57,12 @@ namespace Yapoml.Playwright.Sample.Basics
         {
             _page.Ya().Basics.Pages
                 .HomePage.Search("selenium")
-                .Packages.Expect(its => its.Count.Is(20))
-                .ForEach(package =>
-                    {
-                        package.Title.Expect(it => it.Text.IsNot(""));
-                        package.Description.Expect(it => it.Text.IsNot(""));
-                        package.Tags.ForEach(tag => tag.Expect(it => it.Text.IsNot("")));
-                    });
+                .Packages.Expect(its => its.Count.Is(20).Each(package =>
+                {
+                    package.Title.IsNotEmpty();
+                    package.Description.IsNotEmpty();
+                    package.Tags.Each(tag => tag.IsNotEmpty());
+                }));
         }
 
         [Test]

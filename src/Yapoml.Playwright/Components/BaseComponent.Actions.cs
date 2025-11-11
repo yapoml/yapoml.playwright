@@ -18,9 +18,9 @@ namespace Yapoml.Playwright.Components
         {
             using (var scope = _logger.BeginLogScope($"Clearing {Metadata.Name}"))
             {
-                scope.Execute(() =>
+                scope.Execute(async () =>
                 {
-                    RelocateOnStaleReference(() => Task.Run(() => WrappedElement.ClearAsync()).GetAwaiter().GetResult());
+                    await RelocateOnStaleReferenceAsync(async () => await WrappedElement.ClearAsync());
                 });
             }
 
@@ -62,7 +62,7 @@ namespace Yapoml.Playwright.Components
             {
                 scope.Execute(async () =>
                 {
-                    await RelocateOnStaleReference(async () => await WrappedElement.TypeAsync(text));
+                    await RelocateOnStaleReferenceAsync(async () => await WrappedElement.TypeAsync(text));
                 });
             }
 
@@ -87,9 +87,9 @@ namespace Yapoml.Playwright.Components
         {
             using (var scope = _logger.BeginLogScope($"Filling in {component.Metadata.Name} within '{text}'"))
             {
-                scope.Execute(() =>
+                scope.Execute(async () =>
                 {
-                    RelocateOnStaleReference(() => Task.Run(() => WrappedElement.FillAsync(text)).GetAwaiter().GetResult());
+                    await RelocateOnStaleReferenceAsync(async () => await WrappedElement.FillAsync(text));
                 });
             }
 
@@ -116,7 +116,7 @@ namespace Yapoml.Playwright.Components
             {
                 scope.Execute(async () =>
                 {
-                    await RelocateOnStaleReference(async () => await WrappedElement.ClickAsync());
+                    await RelocateOnStaleReferenceAsync(async () => await WrappedElement.ClickAsync());
                 });
             }
 
@@ -141,7 +141,7 @@ namespace Yapoml.Playwright.Components
             {
                 scope.Execute(async () =>
                 {
-                    await RelocateOnStaleReference(async () => await WrappedElement.ClickAsync(new Microsoft.Playwright.LocatorClickOptions { Position = new Microsoft.Playwright.Position { X = x, Y = y } }));
+                    await RelocateOnStaleReferenceAsync(async () => await WrappedElement.ClickAsync(new Microsoft.Playwright.LocatorClickOptions { Position = new Microsoft.Playwright.Position { X = x, Y = y } }));
                 });
             }
 
@@ -171,7 +171,7 @@ namespace Yapoml.Playwright.Components
             {
                 scope.Execute(async () =>
                 {
-                    await RelocateOnStaleReference(async () => await WrappedElement.HoverAsync());
+                    await RelocateOnStaleReferenceAsync(async () => await WrappedElement.HoverAsync());
                 });
             }
 
@@ -196,9 +196,10 @@ namespace Yapoml.Playwright.Components
             {
                 scope.Execute(async () =>
                 {
-                    await RelocateOnStaleReference(async () => await WrappedElement.HoverAsync(new Microsoft.Playwright.LocatorHoverOptions { Position = new Microsoft.Playwright.Position { X = x, Y = y } }));
+                    await RelocateOnStaleReferenceAsync(async () => await WrappedElement.HoverAsync(new Microsoft.Playwright.LocatorHoverOptions { Position = new Microsoft.Playwright.Position { X = x, Y = y } }));
                 });
-            };
+            }
+            ;
 
             return component;
         }
@@ -232,7 +233,7 @@ namespace Yapoml.Playwright.Components
                 {
                     scope.Execute(async () =>
                     {
-                        await RelocateOnStaleReference(async () => await WrappedElement.ScrollIntoViewIfNeededAsync());
+                        await RelocateOnStaleReferenceAsync(async () => await WrappedElement.ScrollIntoViewIfNeededAsync());
                     });
                 }
             }
@@ -268,7 +269,7 @@ namespace Yapoml.Playwright.Components
             {
                 scope.Execute(async () =>
                 {
-                    await RelocateOnStaleReference(async () => await WrappedElement.ScrollIntoViewIfNeededAsync());
+                    await RelocateOnStaleReferenceAsync(async () => await WrappedElement.ScrollIntoViewIfNeededAsync());
                 });
             }
 
@@ -304,7 +305,7 @@ namespace Yapoml.Playwright.Components
                 {
                     scope.Execute(async () =>
                     {
-                        await RelocateOnStaleReference(async () => await WrappedElement.FocusAsync());
+                        await RelocateOnStaleReferenceAsync(async () => await WrappedElement.FocusAsync());
                     });
                 }
             }
@@ -338,7 +339,7 @@ namespace Yapoml.Playwright.Components
             {
                 scope.Execute(async () =>
                 {
-                    await RelocateOnStaleReference(async () => await WrappedElement.FocusAsync());
+                    await RelocateOnStaleReferenceAsync(async () => await WrappedElement.FocusAsync());
                 });
             }
 
@@ -368,7 +369,7 @@ namespace Yapoml.Playwright.Components
             {
                 scope.Execute(async () =>
                 {
-                    await RelocateOnStaleReference(async () => await WrappedElement.BlurAsync());
+                    await RelocateOnStaleReferenceAsync(async () => await WrappedElement.BlurAsync());
                 });
             }
 
@@ -395,7 +396,7 @@ namespace Yapoml.Playwright.Components
             {
                 scope.Execute(async () =>
                 {
-                    await RelocateOnStaleReference(async () => await WrappedElement.ClickAsync(new Microsoft.Playwright.LocatorClickOptions { Button = Microsoft.Playwright.MouseButton.Right }));
+                    await RelocateOnStaleReferenceAsync(async () => await WrappedElement.ClickAsync(new Microsoft.Playwright.LocatorClickOptions { Button = Microsoft.Playwright.MouseButton.Right }));
                 });
             }
 
@@ -422,7 +423,7 @@ namespace Yapoml.Playwright.Components
             {
                 scope.Execute(async () =>
                 {
-                    await RelocateOnStaleReference(async () => await WrappedElement.DblClickAsync());
+                    await RelocateOnStaleReferenceAsync(async () => await WrappedElement.DblClickAsync());
                 });
 
                 return component;
@@ -448,7 +449,7 @@ namespace Yapoml.Playwright.Components
             {
                 scope.Execute(async () =>
                 {
-                    await RelocateOnStaleReference(async () => await WrappedElement.CheckAsync());
+                    await RelocateOnStaleReferenceAsync(async () => await WrappedElement.CheckAsync());
                 });
             }
 
@@ -474,7 +475,7 @@ namespace Yapoml.Playwright.Components
             {
                 scope.Execute(async () =>
                 {
-                    await RelocateOnStaleReference(async () => await WrappedElement.UncheckAsync());
+                    await RelocateOnStaleReferenceAsync(async () => await WrappedElement.UncheckAsync());
                 });
             }
 
@@ -502,7 +503,7 @@ namespace Yapoml.Playwright.Components
             {
                 scope.Execute(async () =>
                 {
-                    await RelocateOnStaleReference(async () => await WrappedElement.DragToAsync(toComponent.WrappedElement));
+                    await RelocateOnStaleReferenceAsync(async () => await WrappedElement.DragToAsync(toComponent.WrappedElement));
                 });
             }
 
@@ -534,7 +535,7 @@ namespace Yapoml.Playwright.Components
             {
                 scope.Execute(async () =>
                 {
-                    await RelocateOnStaleReference(async () => await WrappedElement.DragToAsync(toComponent.WrappedElement, new() { TargetPosition = new() { X = x, Y = y } }));
+                    await RelocateOnStaleReferenceAsync(async () => await WrappedElement.DragToAsync(toComponent.WrappedElement, new() { TargetPosition = new() { X = x, Y = y } }));
                 });
             }
 
@@ -560,7 +561,7 @@ namespace Yapoml.Playwright.Components
         /// <returns>A byte array representing the PNG screenshot image.</returns>
         public virtual byte[] GetScreenshot()
         {
-            return RelocateOnStaleReference(() => Task.Run(() => WrappedElement.ScreenshotAsync()).GetAwaiter().GetResult());
+            return Task.Run(() => RelocateOnStaleReferenceAsync(async () => await WrappedElement.ScreenshotAsync())).GetAwaiter().GetResult();
         }
 
         /// <inheritdoc cref="GetScreenshot()"/>

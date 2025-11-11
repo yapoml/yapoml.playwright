@@ -1,12 +1,12 @@
-﻿using System;
-using Yapoml.Framework.Options;
-using Yapoml.Framework.Logging;
-using Yapoml.Playwright.Events;
-using Yapoml.Playwright.Services.Locator;
-using Yapoml.Playwright.Components.Metadata;
-using Yapoml.Playwright.Options;
-using Microsoft.Playwright;
+﻿using Microsoft.Playwright;
+using System;
 using System.Threading.Tasks;
+using Yapoml.Framework.Logging;
+using Yapoml.Framework.Options;
+using Yapoml.Playwright.Components.Metadata;
+using Yapoml.Playwright.Events;
+using Yapoml.Playwright.Options;
+using Yapoml.Playwright.Services.Locator;
 
 namespace Yapoml.Playwright.Components
 {
@@ -146,7 +146,7 @@ namespace Yapoml.Playwright.Components
         /// input elements (<c>&lt;input&gt;</c>) do not have any inner text, so they will return an empty string for this property.
         /// To get the value of an input element, you may need to use the <see cref="AttributesCollection.Value"/> property.
         /// </remarks>
-        public virtual string Text => RelocateOnStaleReference(() => Task.Run(() => WrappedElement.TextContentAsync()).GetAwaiter().GetResult().Trim());
+        public virtual string Text => Task.Run(() => RelocateOnStaleReferenceAsync(() => WrappedElement.TextContentAsync())).GetAwaiter().GetResult().Trim();
 
         /// <summary>
         /// Used to indicate whether a component can respond to user interactions or not.
@@ -157,7 +157,7 @@ namespace Yapoml.Playwright.Components
         /// For example, you can use it to check if a checkbox is checked or unchecked, or if a text field is editable or read-only.
         /// </para>
         /// </summary>
-        public virtual bool IsEnabled => RelocateOnStaleReference(() => Task.Run(() => WrappedElement.IsEnabledAsync()).GetAwaiter().GetResult());
+        public virtual bool IsEnabled => Task.Run(() => RelocateOnStaleReferenceAsync(() => WrappedElement.IsEnabledAsync())).GetAwaiter().GetResult();
 
         /// <summary>
         /// Indicates whether a component currently is checked or not.
@@ -165,7 +165,7 @@ namespace Yapoml.Playwright.Components
         /// It returns a boolean value: <c>true</c> if the component is checked, and <c>false</c> if the component is unchecked.
         /// </para>
         /// </summary>
-        public virtual bool IsChecked => RelocateOnStaleReference(() => Task.Run(() => WrappedElement.IsCheckedAsync()).GetAwaiter().GetResult());
+        public virtual bool IsChecked => Task.Run(() => RelocateOnStaleReferenceAsync(() => WrappedElement.IsCheckedAsync())).GetAwaiter().GetResult();
 
         /// <summary>
         /// Indicates whether a component currently is partially visible within viewport or not.
@@ -252,14 +252,14 @@ namespace Yapoml.Playwright.Components
             return Text;
         }
 
-        protected T RelocateOnStaleReference<T>(Func<T> act)
+        protected async Task RelocateOnStaleReferenceAsync(Func<Task> func)
         {
-            return act();
+            await func().ConfigureAwait(false);
         }
 
-        protected void RelocateOnStaleReference(Action act)
+        protected async Task<T> RelocateOnStaleReferenceAsync<T>(Func<Task<T>> func)
         {
-            act();
+            return await func().ConfigureAwait(false);
         }
     }
 }

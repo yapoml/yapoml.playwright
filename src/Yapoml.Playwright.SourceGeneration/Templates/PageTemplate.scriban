@@ -37,9 +37,9 @@ namespace {{namespace}}
 
 			using (var scope = _logger.BeginLogScope($"Opening {Metadata.Name} page by {url}"))
 			{
-				scope.Execute(async () =>
+				scope.Execute(() =>
 				{
-					await Driver.GotoAsync(url.ToString());
+					Driver.GotoAsync(url.ToString()).GetAwaiter().GetResult();
 				});
 			}
 

@@ -252,11 +252,6 @@ namespace Yapoml.Playwright.Components
             return Text;
         }
 
-        protected async Task RelocateOnStaleReferenceAsync(Func<Task> func)
-        {
-            await func().ConfigureAwait(false);
-        }
-
         protected async Task<T> RelocateOnStaleReferenceAsync<T>(Func<Task<T>> func)
         {
             return await func().ConfigureAwait(false);

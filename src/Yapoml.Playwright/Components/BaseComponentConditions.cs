@@ -42,13 +42,12 @@ namespace Yapoml.Playwright.Components
 
             try
             {
-                using (var scope = Logger.BeginLogScope($"Expect {ElementHandler.ComponentMetadata.Name} is displayed"))
+                using var scope = Logger.BeginLogScope($"Expect {ElementHandler.ComponentMetadata.Name} is displayed");
+
+                scope.Execute(() =>
                 {
-                    scope.Execute(async () =>
-                    {
-                        await Assertions.Expect(ElementHandler.Locate()).ToBeVisibleAsync(new LocatorAssertionsToBeVisibleOptions { Timeout = (float)timeout.Value.TotalMilliseconds });
-                    });
-                }
+                    Assertions.Expect(ElementHandler.Locate()).ToBeVisibleAsync(new LocatorAssertionsToBeVisibleOptions { Timeout = (float)timeout.Value.TotalMilliseconds }).GetAwaiter().GetResult();
+                });
             }
             catch (TimeoutException ex)
             {
@@ -72,9 +71,9 @@ namespace Yapoml.Playwright.Components
             {
                 using (var scope = Logger.BeginLogScope($"Expect {ElementHandler.ComponentMetadata.Name} is not displayed"))
                 {
-                    scope.Execute(async () =>
+                    scope.Execute(() =>
                     {
-                        await Assertions.Expect(ElementHandler.Locate()).ToBeHiddenAsync(new LocatorAssertionsToBeHiddenOptions { Timeout = (float)timeout.Value.TotalMilliseconds });
+                        Assertions.Expect(ElementHandler.Locate()).ToBeHiddenAsync(new LocatorAssertionsToBeHiddenOptions { Timeout = (float)timeout.Value.TotalMilliseconds }).GetAwaiter().GetResult();
                     });
                 }
             }
@@ -99,9 +98,9 @@ namespace Yapoml.Playwright.Components
             {
                 using (var scope = Logger.BeginLogScope($"Expect {ElementHandler.ComponentMetadata.Name} exists"))
                 {
-                    scope.Execute(async () =>
+                    scope.Execute(() =>
                     {
-                        await Assertions.Expect(ElementHandler.Locate()).ToBeAttachedAsync(new LocatorAssertionsToBeAttachedOptions { Timeout = (float)timeout.Value.TotalMilliseconds });
+                        Assertions.Expect(ElementHandler.Locate()).ToBeAttachedAsync(new LocatorAssertionsToBeAttachedOptions { Timeout = (float)timeout.Value.TotalMilliseconds }).GetAwaiter().GetResult();
                     });
                 }
             }
@@ -126,9 +125,9 @@ namespace Yapoml.Playwright.Components
             {
                 using (var scope = Logger.BeginLogScope($"Expect {ElementHandler.ComponentMetadata.Name} does not exist"))
                 {
-                    scope.Execute(async () =>
+                    scope.Execute(() =>
                     {
-                        await Assertions.Expect(ElementHandler.Locate()).ToBeAttachedAsync(new LocatorAssertionsToBeAttachedOptions { Attached = false, Timeout = (float)timeout.Value.TotalMilliseconds });
+                        Assertions.Expect(ElementHandler.Locate()).ToBeAttachedAsync(new LocatorAssertionsToBeAttachedOptions { Attached = false, Timeout = (float)timeout.Value.TotalMilliseconds }).GetAwaiter().GetResult();
                     });
                 }
             }
@@ -153,9 +152,9 @@ namespace Yapoml.Playwright.Components
             {
                 using (var scope = Logger.BeginLogScope($"Expect {ElementHandler.ComponentMetadata.Name} is enabled"))
                 {
-                    scope.Execute(async () =>
+                    scope.Execute(() =>
                     {
-                        await Assertions.Expect(ElementHandler.Locate()).ToBeEnabledAsync(new LocatorAssertionsToBeEnabledOptions { Timeout = (float)timeout.Value.TotalMilliseconds });
+                        Assertions.Expect(ElementHandler.Locate()).ToBeEnabledAsync(new LocatorAssertionsToBeEnabledOptions { Timeout = (float)timeout.Value.TotalMilliseconds }).GetAwaiter().GetResult();
                     });
                 }
             }
@@ -180,9 +179,9 @@ namespace Yapoml.Playwright.Components
             {
                 using (var scope = Logger.BeginLogScope($"Expect {ElementHandler.ComponentMetadata.Name} is disabled"))
                 {
-                    scope.Execute(async () =>
+                    scope.Execute(() =>
                     {
-                        await Assertions.Expect(ElementHandler.Locate()).ToBeDisabledAsync(new LocatorAssertionsToBeDisabledOptions { Timeout = (float)timeout.Value.TotalMilliseconds });
+                        Assertions.Expect(ElementHandler.Locate()).ToBeDisabledAsync(new LocatorAssertionsToBeDisabledOptions { Timeout = (float)timeout.Value.TotalMilliseconds }).GetAwaiter().GetResult();
                     });
                 }
             }
@@ -218,9 +217,9 @@ namespace Yapoml.Playwright.Components
             {
                 using (var scope = Logger.BeginLogScope($"Expect {ElementHandler.ComponentMetadata.Name} is checked"))
                 {
-                    scope.Execute(async () =>
+                    scope.Execute(() =>
                     {
-                        await Assertions.Expect(ElementHandler.Locate()).ToBeCheckedAsync(new LocatorAssertionsToBeCheckedOptions { Timeout = (float)timeout.Value.TotalMilliseconds });
+                        Assertions.Expect(ElementHandler.Locate()).ToBeCheckedAsync(new LocatorAssertionsToBeCheckedOptions { Timeout = (float)timeout.Value.TotalMilliseconds }).GetAwaiter().GetResult();
                     });
                 }
             }
@@ -246,9 +245,9 @@ namespace Yapoml.Playwright.Components
             {
                 using (var scope = Logger.BeginLogScope($"Expect {ElementHandler.ComponentMetadata.Name} is unchecked"))
                 {
-                    scope.Execute(async () =>
+                    scope.Execute(() =>
                     {
-                        await Assertions.Expect(ElementHandler.Locate()).ToBeCheckedAsync(new LocatorAssertionsToBeCheckedOptions { Checked = false, Timeout = (float)timeout.Value.TotalMilliseconds });
+                        Assertions.Expect(ElementHandler.Locate()).ToBeCheckedAsync(new LocatorAssertionsToBeCheckedOptions { Checked = false, Timeout = (float)timeout.Value.TotalMilliseconds }).GetAwaiter().GetResult();
                     });
                 }
             }
@@ -283,9 +282,9 @@ namespace Yapoml.Playwright.Components
             {
                 using (var scope = Logger.BeginLogScope($"Expect {ElementHandler.ComponentMetadata.Name} is in view"))
                 {
-                    scope.Execute(async () =>
+                    scope.Execute(() =>
                     {
-                        await Assertions.Expect(ElementHandler.Locate()).ToBeInViewportAsync(new LocatorAssertionsToBeInViewportOptions { Timeout = (float)timeout.Value.TotalMilliseconds });
+                        Assertions.Expect(ElementHandler.Locate()).ToBeInViewportAsync(new LocatorAssertionsToBeInViewportOptions { Timeout = (float)timeout.Value.TotalMilliseconds }).GetAwaiter().GetResult();
                     });
                 }
             }
@@ -310,9 +309,9 @@ namespace Yapoml.Playwright.Components
             {
                 using (var scope = Logger.BeginLogScope($"Expect {ElementHandler.ComponentMetadata.Name} is not in view"))
                 {
-                    scope.Execute(async () =>
+                    scope.Execute(() =>
                     {
-                        await Assertions.Expect(ElementHandler.Locate()).Not.ToBeInViewportAsync(new LocatorAssertionsToBeInViewportOptions { Timeout = (float)timeout.Value.TotalMilliseconds });
+                        Assertions.Expect(ElementHandler.Locate()).Not.ToBeInViewportAsync(new LocatorAssertionsToBeInViewportOptions { Timeout = (float)timeout.Value.TotalMilliseconds }).GetAwaiter().GetResult();
                     });
                 }
             }

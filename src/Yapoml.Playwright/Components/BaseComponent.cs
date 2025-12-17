@@ -1,11 +1,11 @@
-﻿using System;
-using Yapoml.Framework.Options;
+﻿using Microsoft.Playwright;
+using System;
 using Yapoml.Framework.Logging;
-using Yapoml.Playwright.Events;
-using Yapoml.Playwright.Services.Locator;
+using Yapoml.Framework.Options;
 using Yapoml.Playwright.Components.Metadata;
+using Yapoml.Playwright.Events;
 using Yapoml.Playwright.Options;
-using Microsoft.Playwright;
+using Yapoml.Playwright.Services.Locator;
 
 namespace Yapoml.Playwright.Components
 {
@@ -240,15 +240,6 @@ namespace Yapoml.Playwright.Components
             }
 
             return base.Equals(obj);
-        }
-
-        /// <summary>
-        /// Returns a text for the current component.
-        /// </summary>
-        /// <returns>Text of the currrent component.</returns>
-        public override string ToString()
-        {
-            return Text;
         }
 
         protected T RelocateOnStaleReference<T>(Func<T> act)

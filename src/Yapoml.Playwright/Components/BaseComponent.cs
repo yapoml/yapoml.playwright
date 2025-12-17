@@ -243,15 +243,6 @@ namespace Yapoml.Playwright.Components
             return base.Equals(obj);
         }
 
-        /// <summary>
-        /// Returns a text for the current component.
-        /// </summary>
-        /// <returns>Text of the currrent component.</returns>
-        public override string ToString()
-        {
-            return Text;
-        }
-
         protected async Task<T> RelocateOnStaleReferenceAsync<T>(Func<Task<T>> func)
         {
             return await func().ConfigureAwait(false);

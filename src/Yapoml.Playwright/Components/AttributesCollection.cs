@@ -4,43 +4,42 @@ using Yapoml.Framework.Options;
 using Yapoml.Playwright.Options;
 using Yapoml.Playwright.Services.Locator;
 
-namespace Yapoml.Playwright.Components
+namespace Yapoml.Playwright.Components;
+
+public class AttributesCollection
 {
-    public class AttributesCollection
+    private readonly IElementHandler _elementHandler;
+
+    private readonly TimeSpan _timeout;
+    private readonly TimeSpan _pollingInterval;
+
+    public AttributesCollection(IElementHandler elementHandler, ISpaceOptions spaceOptions)
     {
-        private readonly IElementHandler _elementHandler;
+        _elementHandler = elementHandler;
 
-        private readonly TimeSpan _timeout;
-        private readonly TimeSpan _pollingInterval;
+        _timeout = spaceOptions.Services.Get<TimeoutOptions>().Timeout;
+        _pollingInterval = spaceOptions.Services.Get<TimeoutOptions>().PollingInterval;
+    }
 
-        public AttributesCollection(IElementHandler elementHandler, ISpaceOptions spaceOptions)
+    public string this[string name]
+    {
+        get
         {
-            _elementHandler = elementHandler;
-
-            _timeout = spaceOptions.Services.Get<TimeoutOptions>().Timeout;
-            _pollingInterval = spaceOptions.Services.Get<TimeoutOptions>().PollingInterval;
+            return RelocateOnStaleReference(() => Task.Run(() => _elementHandler.Locate().GetAttributeAsync(name)).GetAwaiter().GetResult());
         }
+    }
 
-        public string this[string name]
-        {
-            get
-            {
-                return RelocateOnStaleReference(() => Task.Run(() => _elementHandler.Locate().GetAttributeAsync(name)).GetAwaiter().GetResult());
-            }
-        }
+    public string Href => this["href"];
 
-        public string Href => this["href"];
+    public string Value => this["value"];
 
-        public string Value => this["value"];
+    public string Class => this["class"];
 
-        public string Class => this["class"];
+    // or even more complex object?
+    public string Style => this["style"];
 
-        // or even more complex object?
-        public string Style => this["style"];
-
-        private T RelocateOnStaleReference<T>(Func<T> act)
-        {
-            return act();
-        }
+    private T RelocateOnStaleReference<T>(Func<T> act)
+    {
+        return act();
     }
 }

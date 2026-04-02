@@ -2,17 +2,16 @@
 using Yapoml.Framework.Options;
 using Yapoml.Playwright.Options;
 
-namespace Yapoml.Playwright
+namespace Yapoml.Playwright;
+
+public static class TimeoutExtensions
 {
-    public static class TimeoutExtensions
+    public static ISpaceOptions WithTimeout(this ISpaceOptions spaceOptions, TimeSpan? timeout = null, TimeSpan? pollingInterval = null)
     {
-        public static ISpaceOptions WithTimeout(this ISpaceOptions spaceOptions, TimeSpan? timeout = null, TimeSpan? pollingInterval = null)
-        {
-            var timeoutOptions = new TimeoutOptions(timeout, pollingInterval);
+        var timeoutOptions = new TimeoutOptions(timeout, pollingInterval);
 
-            spaceOptions.WithService(timeoutOptions);
+        spaceOptions.WithService(timeoutOptions);
 
-            return spaceOptions;
-        }
+        return spaceOptions;
     }
 }

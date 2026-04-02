@@ -18,244 +18,243 @@ using Yapoml.Playwright.Services.Factory;
 using Yapoml.Playwright.Services.Locator;
 using Yapoml.Framework;
 
-namespace Yapoml.Playwright.Components
+namespace Yapoml.Playwright.Components;
+
+public class BaseComponentList<TComponent, TListConditions, TComponentConditions> : IReadOnlyList<TComponent>
+    where TComponent : BaseComponent
+    where TListConditions : BaseComponentListConditions<TListConditions, TComponentConditions>
+    where TComponentConditions : BaseComponentConditions<TComponentConditions>
 {
-    public class BaseComponentList<TComponent, TListConditions, TComponentConditions> : IReadOnlyList<TComponent>
-        where TComponent : BaseComponent
-        where TListConditions : BaseComponentListConditions<TListConditions, TComponentConditions>
-        where TComponentConditions : BaseComponentConditions<TComponentConditions>
+    protected TListConditions listConditions;
+
+    private IList<TComponent> _list;
+
+    private readonly BasePage _page;
+    private readonly BaseComponent _parentComponent;
+    private readonly IPage _driver;
+    protected readonly IElementsListHandler _elementsListHandler;
+    private readonly ComponentsListMetadata _componentsListMetadata;
+    private readonly IEventSource _eventSource;
+    private readonly ISpaceOptions _spaceOptions;
+
+    protected readonly ILogger _logger;
+
+    public BaseComponentList(BasePage page, BaseComponent parentComponent, IPage driver, IElementsListHandler elementsListHandler, ComponentsListMetadata componentsListMetadata, IEventSource eventSource, ISpaceOptions spaceOptions)
     {
-        protected TListConditions listConditions;
+        _page = page;
+        _parentComponent = parentComponent;
+        _driver = driver;
+        _elementsListHandler = elementsListHandler;
+        _componentsListMetadata = componentsListMetadata;
+        _eventSource = eventSource;
+        _spaceOptions = spaceOptions;
 
-        private IList<TComponent> _list;
+        _logger = _spaceOptions.Services.Get<ILogger>();
+    }
 
-        private readonly BasePage _page;
-        private readonly BaseComponent _parentComponent;
-        private readonly IPage _driver;
-        protected readonly IElementsListHandler _elementsListHandler;
-        private readonly ComponentsListMetadata _componentsListMetadata;
-        private readonly IEventSource _eventSource;
-        private readonly ISpaceOptions _spaceOptions;
-
-        protected readonly ILogger _logger;
-
-        public BaseComponentList(BasePage page, BaseComponent parentComponent, IPage driver, IElementsListHandler elementsListHandler, ComponentsListMetadata componentsListMetadata, IEventSource eventSource, ISpaceOptions spaceOptions)
+    public TComponent this[int index]
+    {
+        get
         {
-            _page = page;
-            _parentComponent = parentComponent;
-            _driver = driver;
-            _elementsListHandler = elementsListHandler;
-            _componentsListMetadata = componentsListMetadata;
-            _eventSource = eventSource;
-            _spaceOptions = spaceOptions;
+            var factory = _spaceOptions.Services.Get<IComponentFactory>();
+            var locator = _spaceOptions.Services.Get<IElementLocator>();
 
-            _logger = _spaceOptions.Services.Get<ILogger>();
-        }
-
-        public TComponent this[int index]
-        {
-            get
+            bool condition()
             {
-                var factory = _spaceOptions.Services.Get<IComponentFactory>();
-                var locator = _spaceOptions.Services.Get<IElementLocator>();
+                var elements = _elementsListHandler.LocateMany();
 
-                bool condition()
+                _list = new List<TComponent>(elements.Select(e => factory.Create<TComponent, TListConditions, TComponentConditions>(_page, _parentComponent, _driver, new ElementHandler(_driver, null, locator, _elementsListHandler.By, _elementsListHandler.From, e, _componentsListMetadata.ComponentMetadata, _elementsListHandler.ElementHandlerRepository.CreateNestedRepository(), _eventSource), _componentsListMetadata.ComponentMetadata, _spaceOptions)));
+
+                if (elements.Count > index)
                 {
-                    var elements = _elementsListHandler.LocateMany();
-
-                    _list = new List<TComponent>(elements.Select(e => factory.Create<TComponent, TListConditions, TComponentConditions>(_page, _parentComponent, _driver, new ElementHandler(_driver, null, locator, _elementsListHandler.By, _elementsListHandler.From, e, _componentsListMetadata.ComponentMetadata, _elementsListHandler.ElementHandlerRepository.CreateNestedRepository(), _eventSource), _componentsListMetadata.ComponentMetadata, _spaceOptions)));
-
-                    if (elements.Count > index)
-                    {
-                        return true;
-                    }
-                    else
-                    {
-                        _elementsListHandler.Invalidate();
-
-                        return false;
-                    }
+                    return true;
                 }
-
-                var timeout = _spaceOptions.Services.Get<TimeoutOptions>().Timeout;
-                var pollingInterval = _spaceOptions.Services.Get<TimeoutOptions>().PollingInterval;
-
-                try
+                else
                 {
-                    Waiter.Until(condition, timeout, pollingInterval);
-                }
-                catch (TimeoutException exp)
-                {
-                    throw new ExpectException($"Couldn't get a {_componentsListMetadata.ComponentMetadata.Name} by index {index} from {_list.Count} {_componentsListMetadata.Name}.", exp);
-                }
+                    _elementsListHandler.Invalidate();
 
-                return _list[index];
+                    return false;
+                }
             }
-        }
 
-        public TComponent this[string text]
-        {
-            get
+            var timeout = _spaceOptions.Services.Get<TimeoutOptions>().Timeout;
+            var pollingInterval = _spaceOptions.Services.Get<TimeoutOptions>().PollingInterval;
+
+            try
             {
-                var factory = _spaceOptions.Services.Get<IComponentFactory>();
-                var locator = _spaceOptions.Services.Get<IElementLocator>();
-
-                TComponent component = null;
-
-                bool condition()
-                {
-                    var elements = _elementsListHandler.LocateMany();
-
-                    _list = new List<TComponent>(elements.Select(e => factory.Create<TComponent, TListConditions, TComponentConditions>(_page, _parentComponent, _driver, new ElementHandler(_driver, null, locator, _elementsListHandler.By, _elementsListHandler.From, e, _componentsListMetadata.ComponentMetadata, _elementsListHandler.ElementHandlerRepository.CreateNestedRepository(), _eventSource), _componentsListMetadata.ComponentMetadata, _spaceOptions)));
-
-                    component = _list.FirstOrDefault(c => c.Text == text);
-
-                    if (component is null)
-                    {
-                        _elementsListHandler.Invalidate();
-
-                        return false;
-                    }
-                    else
-                    {
-                        return true;
-                    }
-                }
-
-                var timeout = _spaceOptions.Services.Get<TimeoutOptions>().Timeout;
-                var pollingInterval = _spaceOptions.Services.Get<TimeoutOptions>().PollingInterval;
-
-                try
-                {
-                    Waiter.Until(condition, timeout, pollingInterval);
-                }
-                catch (TimeoutException exp)
-                {
-                    throw new ExpectException($"{_componentsListMetadata.Name} contain no matching {_componentsListMetadata.ComponentMetadata.Name} with '{text}' text.", exp);
-                }
-
-                return component;
+                Waiter.Until(condition, timeout, pollingInterval);
             }
+            catch (TimeoutException exp)
+            {
+                throw new ExpectException($"Couldn't get a {_componentsListMetadata.ComponentMetadata.Name} by index {index} from {_list.Count} {_componentsListMetadata.Name}.", exp);
+            }
+
+            return _list[index];
         }
+    }
+
+    public TComponent this[string text]
+    {
+        get
+        {
+            var factory = _spaceOptions.Services.Get<IComponentFactory>();
+            var locator = _spaceOptions.Services.Get<IElementLocator>();
+
+            TComponent component = null;
+
+            bool condition()
+            {
+                var elements = _elementsListHandler.LocateMany();
+
+                _list = new List<TComponent>(elements.Select(e => factory.Create<TComponent, TListConditions, TComponentConditions>(_page, _parentComponent, _driver, new ElementHandler(_driver, null, locator, _elementsListHandler.By, _elementsListHandler.From, e, _componentsListMetadata.ComponentMetadata, _elementsListHandler.ElementHandlerRepository.CreateNestedRepository(), _eventSource), _componentsListMetadata.ComponentMetadata, _spaceOptions)));
+
+                component = _list.FirstOrDefault(c => c.Text == text);
+
+                if (component is null)
+                {
+                    _elementsListHandler.Invalidate();
+
+                    return false;
+                }
+                else
+                {
+                    return true;
+                }
+            }
+
+            var timeout = _spaceOptions.Services.Get<TimeoutOptions>().Timeout;
+            var pollingInterval = _spaceOptions.Services.Get<TimeoutOptions>().PollingInterval;
+
+            try
+            {
+                Waiter.Until(condition, timeout, pollingInterval);
+            }
+            catch (TimeoutException exp)
+            {
+                throw new ExpectException($"{_componentsListMetadata.Name} contain no matching {_componentsListMetadata.ComponentMetadata.Name} with '{text}' text.", exp);
+            }
+
+            return component;
+        }
+    }
 
 #if NET6_0_OR_GREATER
         public TComponent this[Func<TComponent, bool> predicate, [CallerArgumentExpression("predicate")] string predicateExpression = null]
 #else
-        public TComponent this[Func<TComponent, bool> predicate]
+    public TComponent this[Func<TComponent, bool> predicate]
 #endif
+    {
+        get
         {
-            get
+            var factory = _spaceOptions.Services.Get<IComponentFactory>();
+            var locator = _spaceOptions.Services.Get<IElementLocator>();
+
+            TComponent component = null;
+
+            bool condition()
             {
-                var factory = _spaceOptions.Services.Get<IComponentFactory>();
-                var locator = _spaceOptions.Services.Get<IElementLocator>();
+                var elements = _elementsListHandler.LocateMany();
 
-                TComponent component = null;
+                _list = new List<TComponent>(elements.Select(e => factory.Create<TComponent, TListConditions, TComponentConditions>(_page, _parentComponent, _driver, new ElementHandler(_driver, null, locator, _elementsListHandler.By, _elementsListHandler.From, e, _componentsListMetadata.ComponentMetadata, _elementsListHandler.ElementHandlerRepository.CreateNestedRepository(), _eventSource), _componentsListMetadata.ComponentMetadata, _spaceOptions)));
 
-                bool condition()
+                component = _list.FirstOrDefault(predicate);
+
+                if (component is null)
                 {
-                    var elements = _elementsListHandler.LocateMany();
+                    _elementsListHandler.Invalidate();
 
-                    _list = new List<TComponent>(elements.Select(e => factory.Create<TComponent, TListConditions, TComponentConditions>(_page, _parentComponent, _driver, new ElementHandler(_driver, null, locator, _elementsListHandler.By, _elementsListHandler.From, e, _componentsListMetadata.ComponentMetadata, _elementsListHandler.ElementHandlerRepository.CreateNestedRepository(), _eventSource), _componentsListMetadata.ComponentMetadata, _spaceOptions)));
-
-                    component = _list.FirstOrDefault(predicate);
-
-                    if (component is null)
-                    {
-                        _elementsListHandler.Invalidate();
-
-                        return false;
-                    }
-                    else
-                    {
-                        return true;
-                    }
+                    return false;
                 }
-
-                var timeout = _spaceOptions.Services.Get<TimeoutOptions>().Timeout;
-                var pollingInterval = _spaceOptions.Services.Get<TimeoutOptions>().PollingInterval;
-
-                try
+                else
                 {
-                    Waiter.Until(condition, timeout, pollingInterval);
+                    return true;
                 }
-                catch (TimeoutException exp)
-                {
+            }
+
+            var timeout = _spaceOptions.Services.Get<TimeoutOptions>().Timeout;
+            var pollingInterval = _spaceOptions.Services.Get<TimeoutOptions>().PollingInterval;
+
+            try
+            {
+                Waiter.Until(condition, timeout, pollingInterval);
+            }
+            catch (TimeoutException exp)
+            {
 #if NET6_0_OR_GREATER
                     throw new ExpectException($"{_componentsListMetadata.Name} contain no matching {_componentsListMetadata.ComponentMetadata.Name} satisfying condition '{predicateExpression}'.");
 #else
-                    throw new ExpectException($"{_componentsListMetadata.Name} contain no matching {_componentsListMetadata.ComponentMetadata.Name} satisfying condition.");
+                throw new ExpectException($"{_componentsListMetadata.Name} contain no matching {_componentsListMetadata.ComponentMetadata.Name} satisfying condition.");
 #endif
-                }
-
-                return component;
             }
-        }
 
-        public TComponent First()
-        {
-            return this[0];
+            return component;
         }
+    }
+
+    public TComponent First()
+    {
+        return this[0];
+    }
 
 #if NET6_0_OR_GREATER
         public TComponent First(Func<TComponent, bool> predicate, [CallerArgumentExpression("predicate")] string predicateExpression = null)
 #else
-        public TComponent First(Func<TComponent, bool> predicate)
+    public TComponent First(Func<TComponent, bool> predicate)
 #endif
-        {
+    {
 #if NET6_0_OR_GREATER
             return this[predicate, predicateExpression];
 #else
-            return this[predicate];
+        return this[predicate];
 #endif
-        }
+    }
 
-        public int Count
-        {
-            get
-            {
-                EnsureLocated();
-
-                return _list.Count;
-            }
-        }
-
-        public IEnumerator<TComponent> GetEnumerator()
+    public int Count
+    {
+        get
         {
             EnsureLocated();
 
-            return _list.GetEnumerator();
+            return _list.Count;
         }
+    }
 
-        IEnumerator IEnumerable.GetEnumerator()
+    public IEnumerator<TComponent> GetEnumerator()
+    {
+        EnsureLocated();
+
+        return _list.GetEnumerator();
+    }
+
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+        return GetEnumerator();
+    }
+
+    /// <summary>
+    /// Performs the specified action on each component.
+    /// </summary>
+    /// <param name="action">The action to be performed.</param>
+    public void ForEach(Action<TComponent> action)
+    {
+        EnsureLocated();
+
+        foreach (var item in _list)
         {
-            return GetEnumerator();
+            action(item);
         }
+    }
 
-        /// <summary>
-        /// Performs the specified action on each component.
-        /// </summary>
-        /// <param name="action">The action to be performed.</param>
-        public void ForEach(Action<TComponent> action)
+    private void EnsureLocated()
+    {
+        if (_list == null)
         {
-            EnsureLocated();
+            var factory = _spaceOptions.Services.Get<IComponentFactory>();
+            var locator = _spaceOptions.Services.Get<IElementLocator>();
 
-            foreach (var item in _list)
-            {
-                action(item);
-            }
-        }
+            var elements = _elementsListHandler.LocateMany();
 
-        private void EnsureLocated()
-        {
-            if (_list == null)
-            {
-                var factory = _spaceOptions.Services.Get<IComponentFactory>();
-                var locator = _spaceOptions.Services.Get<IElementLocator>();
-
-                var elements = _elementsListHandler.LocateMany();
-
-                _list = new List<TComponent>(elements.Select(e => factory.Create<TComponent, TListConditions, TComponentConditions>(_page, _parentComponent, _driver, new ElementHandler(_driver, null, locator, _elementsListHandler.By, _elementsListHandler.From, e, _componentsListMetadata.ComponentMetadata, _elementsListHandler.ElementHandlerRepository.CreateNestedRepository(), _eventSource), _componentsListMetadata.ComponentMetadata, _spaceOptions)));
-            }
+            _list = new List<TComponent>(elements.Select(e => factory.Create<TComponent, TListConditions, TComponentConditions>(_page, _parentComponent, _driver, new ElementHandler(_driver, null, locator, _elementsListHandler.By, _elementsListHandler.From, e, _componentsListMetadata.ComponentMetadata, _elementsListHandler.ElementHandlerRepository.CreateNestedRepository(), _eventSource), _componentsListMetadata.ComponentMetadata, _spaceOptions)));
         }
     }
 }

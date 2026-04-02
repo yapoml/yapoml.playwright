@@ -4,40 +4,39 @@ using System.Linq;
 using Yapoml.Framework.Options;
 using Yapoml.Playwright.Options;
 
-namespace Yapoml.Playwright.Services
+namespace Yapoml.Playwright.Services;
+
+public class NavigationService
 {
-    public class NavigationService
+    readonly ISpaceOptions _spaceOptions;
+
+    public NavigationService(ISpaceOptions spaceOptions)
     {
-        readonly ISpaceOptions _spaceOptions;
+        _spaceOptions = spaceOptions;
+    }
 
-        public NavigationService(ISpaceOptions spaceOptions)
+    public Uri BuildUri(string url, IList<KeyValuePair<string, string>> segments, IList<KeyValuePair<string, string>> queryParams)
+    {
+        url = new SegmentService().Replace(url, segments);
+
+        UriBuilder urlBuilder;
+
+        if (Uri.IsWellFormedUriString(url, UriKind.Relative))
         {
-            _spaceOptions = spaceOptions;
+            var baseUrl = _spaceOptions.Services.Get<BaseUrlOptions>();
+
+            urlBuilder = new UriBuilder(new Uri(new Uri(baseUrl.Url), url));
+        }
+        else
+        {
+            urlBuilder = new UriBuilder(url);
         }
 
-        public Uri BuildUri(string url, IList<KeyValuePair<string, string>> segments, IList<KeyValuePair<string, string>> queryParams)
+        if (queryParams != null && queryParams.Count > 0)
         {
-            url = new SegmentService().Replace(url, segments);
-
-            UriBuilder urlBuilder;
-
-            if (Uri.IsWellFormedUriString(url, UriKind.Relative))
-            {
-                var baseUrl = _spaceOptions.Services.Get<BaseUrlOptions>();
-
-                urlBuilder = new UriBuilder(new Uri(new Uri(baseUrl.Url), url));
-            }
-            else
-            {
-                urlBuilder = new UriBuilder(url);
-            }
-
-            if (queryParams != null && queryParams.Count > 0)
-            {
-                urlBuilder.Query = string.Join("&", queryParams.Where(qp => qp.Value is not null).Select(qp => $"{qp.Key}={qp.Value}"));
-            }
-
-            return urlBuilder.Uri;
+            urlBuilder.Query = string.Join("&", queryParams.Where(qp => qp.Value is not null).Select(qp => $"{qp.Key}={qp.Value}"));
         }
+
+        return urlBuilder.Uri;
     }
 }

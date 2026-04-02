@@ -3,58 +3,57 @@ using NUnit.Framework;
 using System.Threading.Tasks;
 using Yapoml.Playwright.Sample.TheInternet.Pages;
 
-namespace Yapoml.Playwright.Sample.TheInternet
+namespace Yapoml.Playwright.Sample.TheInternet;
+
+internal class TheInternetFixture
 {
-    internal class TheInternetFixture
+    private IPage _page;
+    private IBrowser _browser;
+    private IPlaywright _playwright;
+
+    private PagesSpace _ya;
+
+    [OneTimeSetUp]
+    public void DownloadPlaywright()
     {
-        private IPage _page;
-        private IBrowser _browser;
-        private IPlaywright _playwright;
+        Program.Main(new string[] { "install" });
+    }
 
-        private PagesSpace _ya;
+    [SetUp]
+    public async Task SetUp()
+    {
+        _playwright = await Microsoft.Playwright.Playwright.CreateAsync();
+        _browser = await _playwright.Chromium.LaunchAsync(new() { Headless = true });
+        _page = await _browser.NewPageAsync();
 
-        [OneTimeSetUp]
-        public void DownloadPlaywright()
-        {
-            Program.Main(new string[] { "install" });
-        }
+        _ya = _page.Ya(opts => opts.WithBaseUrl("https://the-internet.herokuapp.com")).TheInternet.Pages;
+    }
 
-        [SetUp]
-        public async Task SetUp()
-        {
-            _playwright = await Microsoft.Playwright.Playwright.CreateAsync();
-            _browser = await _playwright.Chromium.LaunchAsync(new() { Headless = true });
-            _page = await _browser.NewPageAsync();
+    [TearDown]
+    public void TearDown()
+    {
+        _playwright?.Dispose();
+    }
 
-            _ya = _page.Ya(opts => opts.WithBaseUrl("https://the-internet.herokuapp.com")).TheInternet.Pages;
-        }
+    [Test]
+    public void Hover()
+    {
+        var user = _ya.HoversPage.Open().Users[1].Hover();
 
-        [TearDown]
-        public void TearDown()
-        {
-            _playwright?.Dispose();
-        }
+        user.Name.Expect(it => it.IsDisplayed().Is("name: user2"));
+    }
 
-        [Test]
-        public void Hover()
-        {
-            var user = _ya.HoversPage.Open().Users[1].Hover();
+    [Test]
+    public void DragAndDrop()
+    {
+        var page = _ya.DragAndDropPage.Open();
 
-            user.Name.Expect(it => it.IsDisplayed().Is("name: user2"));
-        }
+        page.Expect().ColumnA.Is("A");
+        page.Expect().ColumnB.Is("B");
 
-        [Test]
-        public void DragAndDrop()
-        {
-            var page = _ya.DragAndDropPage.Open();
+        page.ColumnA.DragAndDrop(page.ColumnB);
 
-            page.Expect().ColumnA.Is("A");
-            page.Expect().ColumnB.Is("B");
-
-            page.ColumnA.DragAndDrop(page.ColumnB);
-
-            page.Expect().ColumnA.Is("B");
-            page.Expect().ColumnB.Is("A");
-        }
+        page.Expect().ColumnA.Is("B");
+        page.Expect().ColumnB.Is("A");
     }
 }

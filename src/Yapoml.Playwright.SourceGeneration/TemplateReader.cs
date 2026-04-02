@@ -1,26 +1,25 @@
 ﻿using System.IO;
 using System.Reflection;
 
-namespace Yapoml.Playwright.SourceGeneration
+namespace Yapoml.Playwright.SourceGeneration;
+
+internal class TemplateReader
 {
-    internal class TemplateReader
+    private readonly Assembly assembly;
+
+    public TemplateReader()
     {
-        private readonly Assembly assembly;
+        assembly = typeof(TemplateReader).Assembly;
+    }
 
-        public TemplateReader()
+    public string Read(string templateName)
+    {
+        using (Stream stream = assembly.GetManifestResourceStream($"{assembly.GetName().Name}.Templates.{templateName}.scriban"))
+        using (StreamReader reader = new StreamReader(stream))
         {
-            assembly = typeof(TemplateReader).Assembly;
-        }
+            var content = reader.ReadToEnd();
 
-        public string Read(string templateName)
-        {
-            using (Stream stream = assembly.GetManifestResourceStream($"{assembly.GetName().Name}.Templates.{templateName}.scriban"))
-            using (StreamReader reader = new StreamReader(stream))
-            {
-                var content = reader.ReadToEnd();
-
-                return content;
-            }
+            return content;
         }
     }
 }

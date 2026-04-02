@@ -1,18 +1,17 @@
 ﻿using System;
 
-namespace Yapoml.Playwright.Components
+namespace Yapoml.Playwright.Components;
+
+public abstract class BaseConditions<TSelf>
 {
-    public abstract class BaseConditions<TSelf>
+    protected TSelf _self;
+
+    protected BaseConditions(TimeSpan timeout, TimeSpan pollingInterval)
     {
-        protected TSelf _self;
-
-        protected BaseConditions(TimeSpan timeout, TimeSpan pollingInterval)
-        {
-            Timeout = timeout;
-            PollingInterval = pollingInterval;
-        }
-
-        protected TimeSpan Timeout { get; }
-        protected TimeSpan PollingInterval { get; }
+        Timeout = timeout;
+        PollingInterval = pollingInterval;
     }
+
+    protected TimeSpan Timeout { get; }
+    protected TimeSpan PollingInterval { get; }
 }

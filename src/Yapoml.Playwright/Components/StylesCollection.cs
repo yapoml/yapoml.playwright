@@ -4,44 +4,43 @@ using Yapoml.Framework.Options;
 using Yapoml.Playwright.Options;
 using Yapoml.Playwright.Services.Locator;
 
-namespace Yapoml.Playwright.Components
+namespace Yapoml.Playwright.Components;
+
+public class StylesCollection
 {
-    public class StylesCollection
+    private readonly IElementHandler _elementHandler;
+
+    private readonly TimeSpan _timeout;
+    private readonly TimeSpan _pollingInterval;
+
+    public StylesCollection(IElementHandler elementHandler, ISpaceOptions spaceOptions)
     {
-        private readonly IElementHandler _elementHandler;
+        _elementHandler = elementHandler;
 
-        private readonly TimeSpan _timeout;
-        private readonly TimeSpan _pollingInterval;
+        _timeout = spaceOptions.Services.Get<TimeoutOptions>().Timeout;
+        _pollingInterval = spaceOptions.Services.Get<TimeoutOptions>().PollingInterval;
+    }
 
-        public StylesCollection(IElementHandler elementHandler, ISpaceOptions spaceOptions)
+    public string this[string name]
+    {
+        get
         {
-            _elementHandler = elementHandler;
+            var style = Task.Run(() => _elementHandler.Locate().EvaluateAsync($"node => window.getComputedStyle(node).getPropertyValue('{name}')")).GetAwaiter().GetResult();
 
-            _timeout = spaceOptions.Services.Get<TimeoutOptions>().Timeout;
-            _pollingInterval = spaceOptions.Services.Get<TimeoutOptions>().PollingInterval;
+            return style.ToString();
         }
+    }
 
-        public string this[string name]
-        {
-            get
-            {
-                var style = Task.Run(() => _elementHandler.Locate().EvaluateAsync($"node => window.getComputedStyle(node).getPropertyValue('{name}')")).GetAwaiter().GetResult();
+    public string Color => this["color"];
 
-                return style.ToString();
-            }
-        }
+    public string BackgroundColor => this["background-color"];
 
-        public string Color => this["color"];
+    public string Opacity => this["opacity"];
 
-        public string BackgroundColor => this["background-color"];
+    private T RelocateOnStaleReference<T>(Func<T> act)
+    {
+        _elementHandler.Locate(_timeout, _pollingInterval);
 
-        public string Opacity => this["opacity"];
-
-        private T RelocateOnStaleReference<T>(Func<T> act)
-        {
-            _elementHandler.Locate(_timeout, _pollingInterval);
-
-            return act();
-        }
+        return act();
     }
 }

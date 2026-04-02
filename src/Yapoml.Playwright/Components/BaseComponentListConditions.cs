@@ -12,208 +12,207 @@ using Yapoml.Playwright.Services.Locator;
 using Yapoml.Framework.Options;
 using Yapoml.Framework;
 
-namespace Yapoml.Playwright.Components
+namespace Yapoml.Playwright.Components;
+
+public class BaseComponentListConditions<TSelf, TComponentConditions> : BaseConditions<TSelf>
 {
-    public class BaseComponentListConditions<TSelf, TComponentConditions> : BaseConditions<TSelf>
+    public BaseComponentListConditions(TimeSpan timeout, TimeSpan pollingInterval, IPage driver, IElementsListHandler elementsListHandler, IElementLocator elementLocator, IEventSource eventSource, ILogger logger, ISpaceOptions spaceOptions)
+        : base(timeout, pollingInterval)
     {
-        public BaseComponentListConditions(TimeSpan timeout, TimeSpan pollingInterval, IPage driver, IElementsListHandler elementsListHandler, IElementLocator elementLocator, IEventSource eventSource, ILogger logger, ISpaceOptions spaceOptions)
-            : base(timeout, pollingInterval)
-        {
-            Driver = driver;
-            ElementsListHandler = elementsListHandler;
-            ElementLocator = elementLocator;
-            EventSource = eventSource;
-            Logger = logger;
-            SpaceOptions = spaceOptions;
-        }
+        Driver = driver;
+        ElementsListHandler = elementsListHandler;
+        ElementLocator = elementLocator;
+        EventSource = eventSource;
+        Logger = logger;
+        SpaceOptions = spaceOptions;
+    }
 
-        protected IPage Driver { get; }
-        protected IElementsListHandler ElementsListHandler { get; }
-        protected IElementLocator ElementLocator { get; }
-        protected IEventSource EventSource { get; }
-        protected ILogger Logger { get; }
-        protected ISpaceOptions SpaceOptions { get; }
+    protected IPage Driver { get; }
+    protected IElementsListHandler ElementsListHandler { get; }
+    protected IElementLocator ElementLocator { get; }
+    protected IEventSource EventSource { get; }
+    protected ILogger Logger { get; }
+    protected ISpaceOptions SpaceOptions { get; }
 
-        public CountCollectionConditions<TSelf> Count => new CountCollectionConditions<TSelf>(_self, ElementsListHandler, Timeout, PollingInterval, Logger);
+    public CountCollectionConditions<TSelf> Count => new CountCollectionConditions<TSelf>(_self, ElementsListHandler, Timeout, PollingInterval, Logger);
 
 #if NET6_0_OR_GREATER
         public TSelf Each(Action<TComponentConditions> predicate, TimeSpan? timeout = default, [CallerArgumentExpression("predicate")] string predicateExpression = null)
 #else
-        public TSelf Each(Action<TComponentConditions> predicate, TimeSpan? timeout = default)
+    public TSelf Each(Action<TComponentConditions> predicate, TimeSpan? timeout = default)
 #endif
+    {
+        timeout ??= Timeout;
+
+        bool condition()
         {
-            timeout ??= Timeout;
+            var elements = ElementsListHandler.LocateMany();
 
-            bool condition()
+            for (int i = 0; i < elements.Count; i++)
             {
-                var elements = ElementsListHandler.LocateMany();
+                var elementHandler = new ElementHandler(Driver, null, ElementLocator, ElementsListHandler.By, ElementsListHandler.From, elements[i], ElementsListHandler.ComponentsListMetadata.ComponentMetadata, ElementsListHandler.ElementHandlerRepository.CreateNestedRepository(), EventSource);
+                var elementCondition = (TComponentConditions)Activator.CreateInstance(typeof(TComponentConditions), TimeSpan.FromMilliseconds(-1), PollingInterval, Driver, elementHandler, ElementLocator, EventSource, Logger, SpaceOptions);
 
-                for (int i = 0; i < elements.Count; i++)
+                try
                 {
-                    var elementHandler = new ElementHandler(Driver, null, ElementLocator, ElementsListHandler.By, ElementsListHandler.From, elements[i], ElementsListHandler.ComponentsListMetadata.ComponentMetadata, ElementsListHandler.ElementHandlerRepository.CreateNestedRepository(), EventSource);
-                    var elementCondition = (TComponentConditions)Activator.CreateInstance(typeof(TComponentConditions), TimeSpan.FromMilliseconds(-1), PollingInterval, Driver, elementHandler, ElementLocator, EventSource, Logger, SpaceOptions);
-
-                    try
+                    predicate(elementCondition);
+                }
+                catch (TimeoutException ex)
+                {
+                    var indexPostfix = (i + 1) switch
                     {
-                        predicate(elementCondition);
-                    }
-                    catch (TimeoutException ex)
-                    {
-                        var indexPostfix = (i + 1) switch
-                        {
-                            1 => "st",
-                            2 => "nd",
-                            3 => "rd",
-                            _ => "th"
-                        };
+                        1 => "st",
+                        2 => "nd",
+                        3 => "rd",
+                        _ => "th"
+                    };
 #if NET6_0_OR_GREATER
                         throw new ExpectException($"The {i + 1}{indexPostfix} {elementHandler.ComponentMetadata.Name} of {elements.Count} does not satisfy condition '{predicateExpression}'.", ex);
 #else
-                        throw new ExpectException($"The {i + 1}{indexPostfix} {elementHandler.ComponentMetadata.Name} of {elements.Count} does not satisfy condition.", ex);
+                    throw new ExpectException($"The {i + 1}{indexPostfix} {elementHandler.ComponentMetadata.Name} of {elements.Count} does not satisfy condition.", ex);
 #endif
-                    }
-                }
-
-                return true;
-            }
-
-            try
-            {
-                using (var scope = Logger.BeginLogScope($"Expect each {ElementsListHandler.ComponentsListMetadata.ComponentMetadata.Name} satisfy conditions"))
-                {
-                    scope.Execute(() =>
-                    {
-                        Waiter.Until(condition, timeout.Value, PollingInterval);
-                    });
                 }
             }
-            catch (TimeoutException ex)
-            {
-                throw new ExpectException($"Not all {ElementsListHandler.ComponentsListMetadata.Name} satisfy condition.", ex);
-            }
 
-            return _self;
+            return true;
         }
+
+        try
+        {
+            using (var scope = Logger.BeginLogScope($"Expect each {ElementsListHandler.ComponentsListMetadata.ComponentMetadata.Name} satisfy conditions"))
+            {
+                scope.Execute(() =>
+                {
+                    Waiter.Until(condition, timeout.Value, PollingInterval);
+                });
+            }
+        }
+        catch (TimeoutException ex)
+        {
+            throw new ExpectException($"Not all {ElementsListHandler.ComponentsListMetadata.Name} satisfy condition.", ex);
+        }
+
+        return _self;
+    }
 
 #if NET6_0_OR_GREATER
         public TSelf Contains(Action<TComponentConditions> predicate, TimeSpan? timeout = default, [CallerArgumentExpression("predicate")] string predicateExpression = null)
 #else
-        public TSelf Contains(Action<TComponentConditions> predicate, TimeSpan? timeout = default)
+    public TSelf Contains(Action<TComponentConditions> predicate, TimeSpan? timeout = default)
 #endif
+    {
+        timeout ??= Timeout;
+
+        bool condition()
         {
-            timeout ??= Timeout;
+            var elements = ElementsListHandler.LocateMany();
 
-            bool condition()
+            foreach (var element in elements)
             {
-                var elements = ElementsListHandler.LocateMany();
-
-                foreach (var element in elements)
+                try
                 {
-                    try
-                    {
-                        var elementHandler = new ElementHandler(Driver, null, ElementLocator, ElementsListHandler.By, ElementsListHandler.From, element, ElementsListHandler.ComponentsListMetadata.ComponentMetadata, ElementsListHandler.ElementHandlerRepository.CreateNestedRepository(), EventSource);
-                        var elementCondition = (TComponentConditions)Activator.CreateInstance(typeof(TComponentConditions), TimeSpan.FromMilliseconds(-1), PollingInterval, Driver, elementHandler, ElementLocator, EventSource, Logger, SpaceOptions);
+                    var elementHandler = new ElementHandler(Driver, null, ElementLocator, ElementsListHandler.By, ElementsListHandler.From, element, ElementsListHandler.ComponentsListMetadata.ComponentMetadata, ElementsListHandler.ElementHandlerRepository.CreateNestedRepository(), EventSource);
+                    var elementCondition = (TComponentConditions)Activator.CreateInstance(typeof(TComponentConditions), TimeSpan.FromMilliseconds(-1), PollingInterval, Driver, elementHandler, ElementLocator, EventSource, Logger, SpaceOptions);
 
-                        predicate(elementCondition);
+                    predicate(elementCondition);
 
-                        return true;
-                    }
-                    catch (ExpectException)
-                    {
-                        continue;
-                    }
+                    return true;
                 }
-
-                return false;
+                catch (ExpectException)
+                {
+                    continue;
+                }
             }
 
-            try
-            {
-                Waiter.Until(condition, timeout.Value, PollingInterval);
-            }
-            catch (TimeoutException ex)
-            {
+            return false;
+        }
+
+        try
+        {
+            Waiter.Until(condition, timeout.Value, PollingInterval);
+        }
+        catch (TimeoutException ex)
+        {
 #if NET6_0_OR_GREATER
                 throw new ExpectException($"The {ElementsListHandler.ComponentsListMetadata.Name} does not contain any {ElementsListHandler.ComponentsListMetadata.ComponentMetadata.Name} satisfying condition '{predicateExpression}'.", ex);
 #else
-                throw new ExpectException($"The {ElementsListHandler.ComponentsListMetadata.Name} does not contain any {ElementsListHandler.ComponentsListMetadata.ComponentMetadata.Name} satisfying condition.", ex);
+            throw new ExpectException($"The {ElementsListHandler.ComponentsListMetadata.Name} does not contain any {ElementsListHandler.ComponentsListMetadata.ComponentMetadata.Name} satisfying condition.", ex);
 #endif
-            }
-
-            return _self;
         }
+
+        return _self;
+    }
 
 #if NET6_0_OR_GREATER
         public TSelf DoNotContain(Action<TComponentConditions> predicate, TimeSpan? timeout = default, [CallerArgumentExpression("predicate")] string predicateExpression = null)
 #else
-        public TSelf DoNotContain(Action<TComponentConditions> predicate, TimeSpan? timeout = default)
+    public TSelf DoNotContain(Action<TComponentConditions> predicate, TimeSpan? timeout = default)
 #endif
+    {
+        timeout ??= Timeout;
+
+        bool condition()
         {
-            timeout ??= Timeout;
+            var elements = ElementsListHandler.LocateMany();
 
-            bool condition()
+            bool result = true;
+
+            foreach (var element in elements)
             {
-                var elements = ElementsListHandler.LocateMany();
-
-                bool result = true;
-
-                foreach (var element in elements)
+                try
                 {
-                    try
-                    {
-                        var elementHandler = new ElementHandler(Driver, null, ElementLocator, ElementsListHandler.By, ElementsListHandler.From, element, ElementsListHandler.ComponentsListMetadata.ComponentMetadata, ElementsListHandler.ElementHandlerRepository.CreateNestedRepository(), EventSource);
-                        var elementCondition = (TComponentConditions)Activator.CreateInstance(typeof(TComponentConditions), TimeSpan.FromMilliseconds(-1), PollingInterval, Driver, elementHandler, ElementLocator, EventSource, Logger, SpaceOptions);
+                    var elementHandler = new ElementHandler(Driver, null, ElementLocator, ElementsListHandler.By, ElementsListHandler.From, element, ElementsListHandler.ComponentsListMetadata.ComponentMetadata, ElementsListHandler.ElementHandlerRepository.CreateNestedRepository(), EventSource);
+                    var elementCondition = (TComponentConditions)Activator.CreateInstance(typeof(TComponentConditions), TimeSpan.FromMilliseconds(-1), PollingInterval, Driver, elementHandler, ElementLocator, EventSource, Logger, SpaceOptions);
 
-                        predicate(elementCondition);
+                    predicate(elementCondition);
 
-                        // this one still satisfy condition, so returning false for reiterating
-                        result = false;
-                    }
-                    catch (ExpectException)
-                    {
-                        // do noting and leave result true b default, proceding next item
-                    }
+                    // this one still satisfy condition, so returning false for reiterating
+                    result = false;
                 }
-
-                return result;
+                catch (ExpectException)
+                {
+                    // do noting and leave result true b default, proceding next item
+                }
             }
 
-            try
-            {
-                Waiter.Until(condition, timeout.Value, PollingInterval);
-            }
-            catch (TimeoutException ex)
-            {
+            return result;
+        }
+
+        try
+        {
+            Waiter.Until(condition, timeout.Value, PollingInterval);
+        }
+        catch (TimeoutException ex)
+        {
 #if NET6_0_OR_GREATER
                 throw new ExpectException($"The {ElementsListHandler.ComponentsListMetadata.Name} contain at least one {ElementsListHandler.ComponentsListMetadata.ComponentMetadata.Name} satisfying condition '{predicateExpression}'.", ex);
 #else
-                throw new ExpectException($"The {ElementsListHandler.ComponentsListMetadata.Name} contain at least one {ElementsListHandler.ComponentsListMetadata.ComponentMetadata.Name} satisfying condition.", ex);
+            throw new ExpectException($"The {ElementsListHandler.ComponentsListMetadata.Name} contain at least one {ElementsListHandler.ComponentsListMetadata.ComponentMetadata.Name} satisfying condition.", ex);
 #endif
-            }
-
-            return _self;
         }
 
-        public virtual TSelf IsEmpty(TimeSpan? timeout = default)
-        {
-            return Count.Is(0, timeout);
-        }
+        return _self;
+    }
 
-        public virtual TSelf IsNotEmpty(TimeSpan? timeout = default)
-        {
-            return Count.IsGreaterThan(0, timeout);
-        }
+    public virtual TSelf IsEmpty(TimeSpan? timeout = default)
+    {
+        return Count.Is(0, timeout);
+    }
 
-        /// <summary>
-        /// Waits specified amount of time.
-        /// </summary>
-        /// <param name="duration">Aamount of time to wait.</param>
-        /// <returns></returns>
-        public virtual TSelf Elapsed(TimeSpan duration)
-        {
-            Thread.Sleep(duration);
+    public virtual TSelf IsNotEmpty(TimeSpan? timeout = default)
+    {
+        return Count.IsGreaterThan(0, timeout);
+    }
 
-            return _self;
-        }
+    /// <summary>
+    /// Waits specified amount of time.
+    /// </summary>
+    /// <param name="duration">Aamount of time to wait.</param>
+    /// <returns></returns>
+    public virtual TSelf Elapsed(TimeSpan duration)
+    {
+        Thread.Sleep(duration);
+
+        return _self;
     }
 }

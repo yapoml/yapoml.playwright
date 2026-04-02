@@ -2,10 +2,9 @@
 using Yapoml.Framework.Options;
 using Yapoml.Playwright.Components;
 
-namespace Yapoml.Playwright.Services.Factory
+namespace Yapoml.Playwright.Services.Factory;
+
+public interface ISpaceFactory
 {
-    public interface ISpaceFactory
-    {
-        TSpace Create<TSpace>(BaseSpace parentSpace, IPage driver, ISpaceOptions spaceOptions);
-    }
+    TSpace Create<TSpace>(BaseSpace parentSpace, IPage driver, ISpaceOptions spaceOptions);
 }

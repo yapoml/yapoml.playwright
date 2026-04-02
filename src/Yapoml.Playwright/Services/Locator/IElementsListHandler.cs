@@ -2,20 +2,19 @@
 using System.Collections.Generic;
 using Yapoml.Playwright.Components.Metadata;
 
-namespace Yapoml.Playwright.Services.Locator
+namespace Yapoml.Playwright.Services.Locator;
+
+public interface IElementsListHandler
 {
-    public interface IElementsListHandler
-    {
-        void Invalidate();
+    void Invalidate();
 
-        IReadOnlyList<ILocator> LocateMany();
+    IReadOnlyList<ILocator> LocateMany();
 
-        string By { get; }
+    string By { get; }
 
-        ElementLocatorContext From { get; }
+    ElementLocatorContext From { get; }
 
-        ComponentsListMetadata ComponentsListMetadata { get; }
+    ComponentsListMetadata ComponentsListMetadata { get; }
 
-        IElementHandlerRepository ElementHandlerRepository { get; }
-    }
+    IElementHandlerRepository ElementHandlerRepository { get; }
 }

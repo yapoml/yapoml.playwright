@@ -4,33 +4,32 @@ using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
 
-namespace Yapoml.Playwright.SourceGeneration
+namespace Yapoml.Playwright.SourceGeneration;
+
+internal class ResourceTemplateLoader : Scriban.Runtime.ITemplateLoader
 {
-    internal class ResourceTemplateLoader : Scriban.Runtime.ITemplateLoader
+    private readonly Assembly _assembly = typeof(ResourceTemplateLoader).Assembly;
+
+    public string GetPath(TemplateContext context, SourceSpan callerSpan, string templateName)
     {
-        private readonly Assembly _assembly = typeof(ResourceTemplateLoader).Assembly;
+        return $"{_assembly.GetName().Name}.Templates.{templateName}.scriban";
+    }
 
-        public string GetPath(TemplateContext context, SourceSpan callerSpan, string templateName)
+    public string Load(TemplateContext context, SourceSpan callerSpan, string templatePath)
+    {
+        using (Stream stream = _assembly.GetManifestResourceStream(templatePath))
+        using (StreamReader reader = new StreamReader(stream))
         {
-            return $"{_assembly.GetName().Name}.Templates.{templateName}.scriban";
+            return reader.ReadToEnd();
         }
+    }
 
-        public string Load(TemplateContext context, SourceSpan callerSpan, string templatePath)
+    public async ValueTask<string> LoadAsync(TemplateContext context, SourceSpan callerSpan, string templatePath)
+    {
+        using (Stream stream = _assembly.GetManifestResourceStream(templatePath))
+        using (StreamReader reader = new StreamReader(stream))
         {
-            using (Stream stream = _assembly.GetManifestResourceStream(templatePath))
-            using (StreamReader reader = new StreamReader(stream))
-            {
-                return reader.ReadToEnd();
-            }
-        }
-
-        public async ValueTask<string> LoadAsync(TemplateContext context, SourceSpan callerSpan, string templatePath)
-        {
-            using (Stream stream = _assembly.GetManifestResourceStream(templatePath))
-            using (StreamReader reader = new StreamReader(stream))
-            {
-                return await reader.ReadToEndAsync();
-            }
+            return await reader.ReadToEndAsync();
         }
     }
 }

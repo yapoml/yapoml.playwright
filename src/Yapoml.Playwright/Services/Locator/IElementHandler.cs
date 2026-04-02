@@ -2,22 +2,21 @@
 using System;
 using Yapoml.Playwright.Components.Metadata;
 
-namespace Yapoml.Playwright.Services.Locator
+namespace Yapoml.Playwright.Services.Locator;
+
+public interface IElementHandler
 {
-    public interface IElementHandler
-    {
-        ILocator Locate();
+    ILocator Locate();
 
-        ILocator Locate(TimeSpan timeout, TimeSpan pollingInterval);
+    ILocator Locate(TimeSpan timeout, TimeSpan pollingInterval);
 
-        void Invalidate();
+    void Invalidate();
 
-        string By { get; }
+    string By { get; }
 
-        ElementLocatorContext From { get; }
+    ElementLocatorContext From { get; }
 
-        ComponentMetadata ComponentMetadata { get; }
+    ComponentMetadata ComponentMetadata { get; }
 
-        IElementHandlerRepository ElementHandlerRepository { get; }
-    }
+    IElementHandlerRepository ElementHandlerRepository { get; }
 }

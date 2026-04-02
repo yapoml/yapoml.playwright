@@ -1,17 +1,16 @@
 ﻿using System.Collections.Generic;
 
-namespace Yapoml.Playwright.Services.Locator
+namespace Yapoml.Playwright.Services.Locator;
+
+public interface IElementHandlerRepository
 {
-    public interface IElementHandlerRepository
-    {
-        bool TryGet(string key, out IElementHandler elementHandler);
+    bool TryGet(string key, out IElementHandler elementHandler);
 
-        void Set(string key, IElementHandler elementHandler);
+    void Set(string key, IElementHandler elementHandler);
 
-        IElementHandlerRepository ParentRepository { get; }
+    IElementHandlerRepository ParentRepository { get; }
 
-        IElementHandlerRepository CreateNestedRepository();
+    IElementHandlerRepository CreateNestedRepository();
 
-        IReadOnlyCollection<IElementHandler> ElementHandlers { get; }
-    }
+    IReadOnlyCollection<IElementHandler> ElementHandlers { get; }
 }

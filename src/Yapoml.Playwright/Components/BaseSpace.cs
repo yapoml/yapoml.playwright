@@ -1,30 +1,29 @@
 ﻿using Microsoft.Playwright;
 using Yapoml.Framework.Options;
 
-namespace Yapoml.Playwright.Components
+namespace Yapoml.Playwright.Components;
+
+public abstract class BaseSpace<TParentSpace> : BaseSpace
 {
-    public abstract class BaseSpace<TParentSpace> : BaseSpace
+    protected TParentSpace _parentSpace;
+
+    public BaseSpace(TParentSpace parentSpace, IPage driver, ISpaceOptions spaceOptions)
+        : base(driver, spaceOptions)
     {
-        protected TParentSpace _parentSpace;
+        _parentSpace = parentSpace;
 
-        public BaseSpace(TParentSpace parentSpace, IPage driver, ISpaceOptions spaceOptions)
-            : base(driver, spaceOptions)
-        {
-            _parentSpace = parentSpace;
-
-        }
     }
+}
 
-    public abstract class BaseSpace
+public abstract class BaseSpace
+{
+    protected IPage _driver;
+
+    protected ISpaceOptions _spaceOptions;
+
+    protected BaseSpace(IPage driver, ISpaceOptions spaceOptions)
     {
-        protected IPage _driver;
-
-        protected ISpaceOptions _spaceOptions;
-
-        protected BaseSpace(IPage driver, ISpaceOptions spaceOptions)
-        {
-            _driver = driver;
-            _spaceOptions = spaceOptions;
-        }
+        _driver = driver;
+        _spaceOptions = spaceOptions;
     }
 }

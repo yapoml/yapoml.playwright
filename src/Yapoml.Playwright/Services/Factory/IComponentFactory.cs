@@ -4,10 +4,9 @@ using Yapoml.Playwright.Components;
 using Yapoml.Playwright.Components.Metadata;
 using Yapoml.Playwright.Services.Locator;
 
-namespace Yapoml.Playwright.Services.Factory
+namespace Yapoml.Playwright.Services.Factory;
+
+public interface IComponentFactory
 {
-    public interface IComponentFactory
-    {
-        TComponent Create<TComponent, TConditions, TCondition>(BasePage page, BaseComponent parentComponent, IPage driver, IElementHandler elementHandler, ComponentMetadata componentMetadata, ISpaceOptions spaceOptions) where TComponent : BaseComponent;
-    }
+    TComponent Create<TComponent, TConditions, TCondition>(BasePage page, BaseComponent parentComponent, IPage driver, IElementHandler elementHandler, ComponentMetadata componentMetadata, ISpaceOptions spaceOptions) where TComponent : BaseComponent;
 }

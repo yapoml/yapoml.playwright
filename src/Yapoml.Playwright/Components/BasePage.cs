@@ -3,6 +3,7 @@ using Yapoml.Framework.Logging;
 using Yapoml.Framework.Options;
 using Yapoml.Playwright.Components.Metadata;
 using Yapoml.Playwright.Events;
+using Yapoml.Playwright.Services.Factory;
 using Yapoml.Playwright.Services.Locator;
 
 namespace Yapoml.Playwright.Components;
@@ -45,5 +46,17 @@ public abstract class BasePage
         var elementHandler = new ElementHandler(Driver, null, elementLocator, by, byFrom, metadata, ElementHandlerRepository.CreateNestedRepository(), EventSource);
         ElementHandlerRepository.Set(key, elementHandler);
         return elementHandler;
+    }
+
+    /// <summary>
+    /// Creates an elements list handler for plural components on a page.
+    /// </summary>
+    protected IElementsListHandler CreateElementsListHandler(string by, ElementLocatorContext byFrom, string singularName, string pluralName)
+    {
+        var metadata = new ComponentMetadata { Name = singularName };
+        var listMetadata = new ComponentsListMetadata { Name = pluralName, ComponentMetadata = metadata };
+        var elementLocator = SpaceOptions.Services.Get<IElementLocator>();
+        var factory = SpaceOptions.Services.Get<IElementsListHandlerFactory>();
+        return factory.Create(Driver, null, elementLocator, by, byFrom, listMetadata, ElementHandlerRepository.CreateNestedRepository(), EventSource);
     }
 }

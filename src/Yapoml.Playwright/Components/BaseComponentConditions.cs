@@ -8,6 +8,7 @@ using Yapoml.Playwright.Components.Conditions;
 using Yapoml.Playwright.Components.Conditions.Generic;
 using Yapoml.Playwright.Components.Metadata;
 using Yapoml.Playwright.Events;
+using Yapoml.Playwright.Services.Factory;
 using Yapoml.Playwright.Services.Locator;
 
 namespace Yapoml.Playwright.Components;
@@ -492,5 +493,16 @@ public abstract class BaseComponentConditions<TSelf> : BaseConditions<TSelf>, IT
         var elementHandler = new ElementHandler(Driver, ElementHandler, ElementLocator, by, byFrom, metadata, ElementHandler.ElementHandlerRepository.CreateNestedRepository(), EventSource);
         ElementHandler.ElementHandlerRepository.Set(key, elementHandler);
         return elementHandler;
+    }
+
+    /// <summary>
+    /// Creates an elements list handler for plural components in component conditions.
+    /// </summary>
+    protected IElementsListHandler CreateElementsListHandler(string by, ElementLocatorContext byFrom, string singularName, string pluralName)
+    {
+        var metadata = new ComponentMetadata { Name = singularName };
+        var listMetadata = new ComponentsListMetadata { Name = pluralName, ComponentMetadata = metadata };
+        var factory = SpaceOptions.Services.Get<IElementsListHandlerFactory>();
+        return factory.Create(Driver, ElementHandler, ElementLocator, by, byFrom, listMetadata, ElementHandler.ElementHandlerRepository.CreateNestedRepository(), EventSource);
     }
 }

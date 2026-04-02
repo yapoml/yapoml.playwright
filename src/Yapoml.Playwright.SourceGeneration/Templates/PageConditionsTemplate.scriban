@@ -50,12 +50,8 @@ public partial class Conditions : global::Yapoml.Playwright.Components.BasePageC
 			var byValue = "{{ escape component.by.value }}";
 
 			{{ include 'ByTemplate' component }}
-				
-			var metadata = new global::Yapoml.Playwright.Components.Metadata.ComponentMetadata() { Name = "{{singularize(component.original_name)}}" };
-			var listMetadata = new global::Yapoml.Playwright.Components.Metadata.ComponentsListMetadata() { Name = "{{component.original_name}}", ComponentMetadata = metadata };
-			var elementsListHandlerFactory = SpaceOptions.Services.Get<global::Yapoml.Playwright.Services.Factory.IElementsListHandlerFactory>();
-			var elementsListHandler = elementsListHandlerFactory.Create(Driver, null, ElementLocator, by, byFrom, listMetadata, ElementHandlerRepository.CreateNestedRepository(), EventSource);
-			
+
+			var elementsListHandler = CreateElementsListHandler(by, byFrom, "{{singularize(component.original_name)}}", "{{component.original_name}}");
 			return new global::{{component.namespace}}.{{component.singular_name}}ComponentList.Conditions(Timeout, PollingInterval, Driver, elementsListHandler, ElementLocator, EventSource, Logger, SpaceOptions);
 		}
 	}

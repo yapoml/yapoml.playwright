@@ -247,4 +247,19 @@ public abstract class BaseComponent
     {
         return await func().ConfigureAwait(false);
     }
+
+    /// <summary>
+    /// Resolves an element handler from the component's repository, creating and caching it if not found.
+    /// </summary>
+    protected IElementHandler ResolveElementHandler(string key, string by, ElementLocatorContext byFrom, string metadataName)
+    {
+        if (_elementHandler.ElementHandlerRepository.TryGet(key, out var cachedElementHandler))
+            return cachedElementHandler;
+
+        var metadata = new ComponentMetadata { Name = metadataName };
+        var elementLocator = SpaceOptions.Services.Get<IElementLocator>();
+        var elementHandler = new ElementHandler(Driver, _elementHandler, elementLocator, by, byFrom, metadata, _elementHandler.ElementHandlerRepository.CreateNestedRepository(), EventSource);
+        _elementHandler.ElementHandlerRepository.Set(key, elementHandler);
+        return elementHandler;
+    }
 }

@@ -95,4 +95,18 @@ public abstract class BasePageConditions<TSelf> : BaseConditions<TSelf>
 
         return _self;
     }
+
+    /// <summary>
+    /// Resolves an element handler from the page conditions' repository, creating and caching it if not found.
+    /// </summary>
+    protected IElementHandler ResolveElementHandler(string key, string by, ElementLocatorContext byFrom, string metadataName)
+    {
+        if (ElementHandlerRepository.TryGet(key, out var cachedElementHandler))
+            return cachedElementHandler;
+
+        var metadata = new ComponentMetadata { Name = metadataName };
+        var elementHandler = new ElementHandler(Driver, null, ElementLocator, by, byFrom, metadata, ElementHandlerRepository.CreateNestedRepository(), EventSource);
+        ElementHandlerRepository.Set(key, elementHandler);
+        return elementHandler;
+    }
 }

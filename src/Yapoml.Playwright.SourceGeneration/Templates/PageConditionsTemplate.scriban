@@ -34,23 +34,12 @@ public partial class Conditions : global::Yapoml.Playwright.Components.BasePageC
 	{
 		get
 		{
-			if (ElementHandlerRepository.TryGet("{{component.name}}", out var cachedElementHandler))
-			{
-				return new global::{{component.namespace}}.{{get_component_return_type component}}.ChainConditions(Timeout, PollingInterval, Driver, cachedElementHandler, ElementLocator, EventSource, Logger, SpaceOptions);
-			}
-			else
-			{
-				var byValue = "{{ escape component.by.value }}";
+			var byValue = "{{ escape component.by.value }}";
 
-				{{ include 'ByTemplate' component }}
+			{{ include 'ByTemplate' component }}
 
-				var metadata = new global::Yapoml.Playwright.Components.Metadata.ComponentMetadata() { Name = "{{component.original_name}}" };
-				var elementHandler = new global::Yapoml.Playwright.Services.Locator.ElementHandler(Driver, null, ElementLocator, by, byFrom, metadata, ElementHandlerRepository.CreateNestedRepository(), EventSource);
-			
-				ElementHandlerRepository.Set("{{component.name}}", elementHandler);
-
-				return new global::{{component.namespace}}.{{get_component_return_type component}}.ChainConditions(Timeout, PollingInterval, Driver, elementHandler, ElementLocator, EventSource, Logger, SpaceOptions);
-			}
+			var elementHandler = ResolveElementHandler("{{component.name}}", by, byFrom, "{{component.original_name}}");
+			return new global::{{component.namespace}}.{{get_component_return_type component}}.ChainConditions(Timeout, PollingInterval, Driver, elementHandler, ElementLocator, EventSource, Logger, SpaceOptions);
 		}
 	}
 	{{ else if component.is_plural && (component.by.segments == null || component.by.segments.size == 0) }}

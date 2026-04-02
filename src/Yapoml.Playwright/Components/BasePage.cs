@@ -31,4 +31,19 @@ public abstract class BasePage
     protected IEventSource EventSource { get; }
 
     protected ILogger _logger;
+
+    /// <summary>
+    /// Resolves an element handler from the page's repository, creating and caching it if not found.
+    /// </summary>
+    protected IElementHandler ResolveElementHandler(string key, string by, ElementLocatorContext byFrom, string metadataName)
+    {
+        if (ElementHandlerRepository.TryGet(key, out var cachedElementHandler))
+            return cachedElementHandler;
+
+        var metadata = new ComponentMetadata { Name = metadataName };
+        var elementLocator = SpaceOptions.Services.Get<IElementLocator>();
+        var elementHandler = new ElementHandler(Driver, null, elementLocator, by, byFrom, metadata, ElementHandlerRepository.CreateNestedRepository(), EventSource);
+        ElementHandlerRepository.Set(key, elementHandler);
+        return elementHandler;
+    }
 }

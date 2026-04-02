@@ -6,6 +6,7 @@ using Yapoml.Framework.Logging;
 using Yapoml.Framework.Options;
 using Yapoml.Playwright.Components.Conditions;
 using Yapoml.Playwright.Components.Conditions.Generic;
+using Yapoml.Playwright.Components.Metadata;
 using Yapoml.Playwright.Events;
 using Yapoml.Playwright.Services.Locator;
 
@@ -478,4 +479,18 @@ public abstract class BaseComponentConditions<TSelf> : BaseConditions<TSelf>, IT
         return Text.DoesNotMatch(regex, timeout);
     }
     #endregion
+
+    /// <summary>
+    /// Resolves an element handler from the component conditions' repository, creating and caching it if not found.
+    /// </summary>
+    protected IElementHandler ResolveElementHandler(string key, string by, ElementLocatorContext byFrom, string metadataName)
+    {
+        if (ElementHandler.ElementHandlerRepository.TryGet(key, out var cachedElementHandler))
+            return cachedElementHandler;
+
+        var metadata = new ComponentMetadata { Name = metadataName };
+        var elementHandler = new ElementHandler(Driver, ElementHandler, ElementLocator, by, byFrom, metadata, ElementHandler.ElementHandlerRepository.CreateNestedRepository(), EventSource);
+        ElementHandler.ElementHandlerRepository.Set(key, elementHandler);
+        return elementHandler;
+    }
 }

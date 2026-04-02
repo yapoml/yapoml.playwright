@@ -139,64 +139,7 @@ public partial class {{$1.singular_name}}Component : {{if $1.base_component}}glo
 	{{ end }}
 	#endregion
 
-	{{ if $1.page != null }}
-	/// <summary>
-	/// Enables continuation of accessing parent components.
-	/// </summary>
-	public AndContinuation And => new AndContinuation(Page, parentComponent);
 
-	[global::System.Runtime.CompilerServices.CompilerGenerated]
-	public partial class AndContinuation
-	{
-		private global::{{$1.page.namespace}}.{{get_page_class_name_for_page $1.page}} _page;
-		{{ if $1.parent_component != null }}
-		private {{ get_component_return_full_type $1.parent_component }} _component;
-		{{ else }}
-		private global::Yapoml.Playwright.Components.BaseComponent _component;
-		{{ end }}
-
-		public AndContinuation(global::Yapoml.Playwright.Components.BasePage page, global::Yapoml.Playwright.Components.BaseComponent component)
-		{
-			_page = (global::{{$1.page.namespace}}.{{get_page_class_name_for_page $1.page}})page;
-			{{ if $1.parent_component != null }}
-			_component = ({{ get_component_return_full_type $1.parent_component }})component;
-			{{ else }}
-			_component = component;
-			{{ end }}
-		}
-
-		{{ if $1.parent_component != null }}
-			{{- for component in $1.parent_component.components }}
-		
-			/// <summary>
-			{{ include 'NestedComponentTemplate_Desc' component }}
-			/// </summary>
-			{{- if component.by.segments == null || component.by.segments.size == 0 }}
-			public {{ if component.is_plural }}{{component.singular_name}}ComponentList{{ else }}{{get_component_return_full_type component}}{{ end }} {{component.name}}
-				=> _component.{{component.name}};
-			{{ else }}
-			public {{ if component.is_plural }}{{component.singular_name}}ComponentList{{ else }}{{get_component_return_full_type component}}{{ end }} {{component.name}}({{ for segment in component.by.segments }}{{ if for.first == false }}, {{end}}string {{ segment }}{{ end }})
-				=> _component.{{component.name}}({{ for segment in component.by.segments }}{{ if for.first == false }}, {{end}}{{ segment }}{{ end }});
-			{{ end }}
-			{{ end }}
-		{{ else }}
-			{{- for component in $1.page.components }}
-		
-			/// <summary>
-			{{ include 'NestedComponentTemplate_Desc' component }}
-			/// </summary>
-			{{- if component.by.segments == null || component.by.segments.size == 0 }}
-			public {{ if component.is_plural }}{{component.singular_name}}ComponentList{{ else }}{{get_component_return_full_type component}}{{ end }} {{component.name}}
-				=> _page.{{component.name}};
-			{{ else }}
-			public {{ if component.is_plural }}{{component.singular_name}}ComponentList{{ else }}{{get_component_return_full_type component}}{{ end }} {{component.name}}({{ for segment in component.by.segments }}{{ if for.first == false }}, {{end}}string {{ segment }}{{ end }})
-				=> _page.{{component.name}}({{ for segment in component.by.segments }}{{ if for.first == false }}, {{end}}{{ segment }}{{ end }});
-			{{ end }}
-			{{ end }}
-		{{ end }}
-	}
-
-	{{ end }}
 }
 
 {{ if $1.is_plural -}}

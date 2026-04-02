@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;net8.0</TargetFrameworks>
     <LangVersion>Latest</LangVersion>
+    <Nullable>enable</Nullable>
 
     <Description>Yet another page object generation for Microsoft Playwright</Description>
     <Authors>Nikolay Borisenko</Authors>

@@ -22,7 +22,9 @@ internal class SourceProducer
         _ctx = new TemplateContext
         {
             TemplateLoader = templateLoader,
-            AutoIndent = true
+            AutoIndent = true,
+            LimitToString = 0,
+            LoopLimit = 0
         };
 
         var templateReader = new TemplateReader();

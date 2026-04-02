@@ -19,5 +19,7 @@ jobs:
       uses: actions/setup-dotnet@v2
       with:
         dotnet-version: 10.0.x
+    - name: Authenticate GitHub Packages
+      run: dotnet nuget update source "GitHub Yapoml" --username yapoml --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text
     - name: Test
       run: dotnet test sample/Yapoml.Playwright.Sample/Yapoml.Playwright.Sample.csproj

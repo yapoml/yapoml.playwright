@@ -1,5 +1,5 @@
 ﻿{{ for component in $1.components }}
-{{if !component.is_plural && component.by.segments == null }}
+{{if !component.is_plural && (component.by.segments == null || component.by.segments.size == 0) }}
 public global::{{component.namespace}}.{{get_component_return_type component}}.ChainConditions {{component.name}}
 {
 	get
@@ -23,7 +23,7 @@ public global::{{component.namespace}}.{{get_component_return_type component}}.C
 		}
 	}
 }
-{{ else if component.is_plural && component.by.segments == null }}
+{{ else if component.is_plural && (component.by.segments == null || component.by.segments.size == 0) }}
 public global::{{component.namespace}}.{{get_component_return_type component}}List.Conditions {{component.name}}
 {
 	get
@@ -44,7 +44,7 @@ public global::{{component.namespace}}.{{get_component_return_type component}}Li
 {{ end }}
 
 {{ for component in $1.base_component?.components }}
-{{if !component.is_plural && component.by.segments == null }}
+{{if !component.is_plural && (component.by.segments == null || component.by.segments.size == 0) }}
 public global::{{component.namespace}}.{{get_component_return_type component}}.ChainConditions {{component.name}}
 {
 	get
@@ -68,7 +68,7 @@ public global::{{component.namespace}}.{{get_component_return_type component}}.C
 		}
 	}
 }
-{{ else if component.is_plural && component.by.segments == null }}
+{{ else if component.is_plural && (component.by.segments == null || component.by.segments.size == 0) }}
 public global::{{component.namespace}}.{{get_component_return_type component}}List.Conditions {{component.name}}
 {
 	get

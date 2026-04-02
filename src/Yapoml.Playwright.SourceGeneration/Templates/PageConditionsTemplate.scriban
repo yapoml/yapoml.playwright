@@ -7,7 +7,7 @@ public partial class Conditions : global::Yapoml.Playwright.Components.BasePageC
 		base._self = this;
 	}
 
-	{{ if $1.url && $1.url.segments == null && $1.url.params == null }}
+	{{ if $1.url && ($1.url.segments == null || $1.url.segments.size == 0) && ($1.url.params == null || $1.url.params.size == 0) }}
 	/// <summary>
 	/// Expect that current url contains <c>{{ $1.url.path }}</c>.
 	///
@@ -29,7 +29,7 @@ public partial class Conditions : global::Yapoml.Playwright.Components.BasePageC
 	{{ end }}
 
 	{{ for component in $1.components }}
-	{{if !component.is_plural && component.by.segments == null }}
+	{{if !component.is_plural && (component.by.segments == null || component.by.segments.size == 0) }}
 	public global::{{component.namespace}}.{{get_component_return_type component}}.ChainConditions {{component.name}}
 	{
 		get
@@ -53,7 +53,7 @@ public partial class Conditions : global::Yapoml.Playwright.Components.BasePageC
 			}
 		}
 	}
-	{{ else if component.is_plural && component.by.segments == null }}
+	{{ else if component.is_plural && (component.by.segments == null || component.by.segments.size == 0) }}
 	public global::{{component.namespace}}.{{get_component_return_type component}}List.Conditions {{component.name}}
 	{
 		get

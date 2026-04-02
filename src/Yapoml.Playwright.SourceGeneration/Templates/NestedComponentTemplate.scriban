@@ -26,7 +26,7 @@ public partial class {{$1.singular_name}}Component : {{if $1.base_component}}glo
 	/// <summary>
 	{{ include 'NestedComponentTemplate_Desc' component }}
 	/// </summary>
-	{{- if component.by.segments == null }}
+	{{- if component.by.segments == null || component.by.segments.size == 0 }}
 	public global::{{component.namespace}}.{{ if component.is_plural }}{{component.singular_name}}ComponentList{{ else }}{{get_component_return_type component}}{{ end }} {{component.name}}
 	{
 		get
@@ -138,7 +138,7 @@ public partial class {{$1.singular_name}}Component : {{if $1.base_component}}glo
 		/// <summary>
 		{{ include 'NestedComponentTemplate_Desc' component }}
 		/// </summary>
-		{{- if component.by.segments == null }}
+		{{- if component.by.segments == null || component.by.segments.size == 0 }}
 		public {{ if component.is_plural }}{{component.singular_name}}ComponentList{{ else }}{{get_component_return_full_type component}}{{ end }} {{component.name}}
 		{
 			get
@@ -192,7 +192,7 @@ public partial class {{$1.singular_name}}Component : {{if $1.base_component}}glo
 			/// <summary>
 			{{ include 'NestedComponentTemplate_Desc' component }}
 			/// </summary>
-			{{- if component.by.segments == null }}
+			{{- if component.by.segments == null || component.by.segments.size == 0 }}
 			public {{ if component.is_plural }}{{component.singular_name}}ComponentList{{ else }}{{get_component_return_full_type component}}{{ end }} {{component.name}}
 				=> _component.{{component.name}};
 			{{ else }}
@@ -206,7 +206,7 @@ public partial class {{$1.singular_name}}Component : {{if $1.base_component}}glo
 			/// <summary>
 			{{ include 'NestedComponentTemplate_Desc' component }}
 			/// </summary>
-			{{- if component.by.segments == null }}
+			{{- if component.by.segments == null || component.by.segments.size == 0 }}
 			public {{ if component.is_plural }}{{component.singular_name}}ComponentList{{ else }}{{get_component_return_full_type component}}{{ end }} {{component.name}}
 				=> _page.{{component.name}};
 			{{ else }}

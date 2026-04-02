@@ -38,7 +38,7 @@ namespace {{namespace}}
 		/// <summary>
 		{{ include 'NestedComponentTemplate_Desc' component }}
 		/// </summary>
-		{{- if component.by.segments == null }}
+		{{- if component.by.segments == null || component.by.segments.size == 0 }}
 		public global::{{component.namespace}}.{{ if component.is_plural }}{{component.singular_name}}ComponentList{{ else }}{{get_component_return_type component}}{{ end }} {{component.name}}
 		{
 			get

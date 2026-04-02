@@ -19,7 +19,7 @@ namespace {{namespace}}
 		/// </summary>
 		public {{ get_page_class_name this }} Open(
 		{{- for segment in url.segments }}{{ if for.first == false }}, {{ end }}string {{ segment }}{{ end }}
-		{{- for param in url.params }} {{ if url.segments && for.first }}, {{ end }}{{ if for.first == false }}, {{ end }}string {{ param }} = null{{ end }})
+		{{- for param in url.params }} {{ if url.segments && url.segments.size > 0 && for.first }}, {{ end }}{{ if for.first == false }}, {{ end }}string {{ param }} = null{{ end }})
 		{
 			var segments = new global::System.Collections.Generic.List<global::System.Collections.Generic.KeyValuePair<string, string>>() { 
 				{{- for segment in url.segments }}{{ if for.first == false }}, {{end}}new global::System.Collections.Generic.KeyValuePair<string, string>("{{ segment }}", {{ segment }}) {{ end -}} 
@@ -52,7 +52,7 @@ namespace {{namespace}}
 		/// <summary>
 		{{ include 'NestedComponentTemplate_Desc' component }}
 		/// </summary>
-		{{- if component.by.segments == null }}
+		{{- if component.by.segments == null || component.by.segments.size == 0 }}
 		public global::{{component.namespace}}.{{ if component.is_plural }}{{component.singular_name}}ComponentList{{ else }}{{get_component_return_type component}}{{ end }} {{component.name}}
 		{
 			get
@@ -94,7 +94,7 @@ namespace {{namespace}}
 			}
 		}
 		{{ else }}
-		public {{ if component.is_plural }}{{component.singular_name}}ComponentList{{ else }}{{get_component_return_type component}}{{ end }} {{component.name}}({{ for segment in component.by.segments }}{{ if for.first == false }}, {{end}}string {{ segment }}{{ end }})
+		public global::{{component.namespace}}.{{ if component.is_plural }}{{component.singular_name}}ComponentList{{ else }}{{get_component_return_type component}}{{ end }} {{component.name}}({{ for segment in component.by.segments }}{{ if for.first == false }}, {{end}}string {{ segment }}{{ end }})
 		{
 			var segments = new global::System.Collections.Generic.List<global::System.Collections.Generic.KeyValuePair<string, string>>() { 
 				{{ for segment in component.by.segments }}{{ if for.first == false }}, {{end}}new global::System.Collections.Generic.KeyValuePair<string, string>("{{ segment }}", {{ segment }}) {{ end }} 

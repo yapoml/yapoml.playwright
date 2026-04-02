@@ -38,7 +38,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Yapoml.Playwright.SourceGeneration\Yapoml.Playwright.SourceGeneration.csproj" PrivateAssets="all" />
+    <ProjectReference Include="..\Yapoml.Playwright.SourceGeneration\Yapoml.Playwright.SourceGeneration.csproj" PrivateAssets="all" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
     <None Include="$(MSBuildProjectDirectory)\..\Yapoml.Playwright.SourceGeneration\bin\$(Configuration)\netstandard2.0\Yapoml.Playwright.SourceGeneration.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
   </ItemGroup>
 

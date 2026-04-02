@@ -18,11 +18,13 @@
         /// </summary>
         public bool FocusVisible { get; set; } = true;
 
+        /// <summary>Serializes the focus options to a JSON string.</summary>
         public string ToJson()
         {
             return $"{{preventScroll: \"{PreventScroll.ToString().ToLowerInvariant()}\", focusVisible: \"{FocusVisible.ToString().ToLowerInvariant()}\"}}";
         }
 
+        /// <inheritdoc />
         public override string ToString()
         {
             return $"Prevent scroll: {PreventScroll}, Focus visible: {FocusVisible}";

@@ -11,8 +11,15 @@ using Yapoml.Playwright.Services.Locator;
 
 namespace Yapoml.Playwright.Components;
 
+/// <summary>
+/// Provides awaitable conditions for verifying the state of a page, including load state, URL, and title.
+/// </summary>
+/// <typeparam name="TSelf">The concrete conditions type for fluent chaining.</typeparam>
 public abstract class BasePageConditions<TSelf> : BaseConditions<TSelf>
 {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BasePageConditions{TSelf}"/> class.
+    /// </summary>
     public BasePageConditions(TimeSpan timeout, TimeSpan pollingInterval, IPage driver, IElementHandlerRepository elementHandlerRepository, IElementLocator elementLocator, PageMetadata pageMetadata, IEventSource eventSource, ILogger logger, ISpaceOptions spaceOptions)
         : base(timeout, pollingInterval)
     {
@@ -25,12 +32,19 @@ public abstract class BasePageConditions<TSelf> : BaseConditions<TSelf>
         SpaceOptions = spaceOptions;
     }
 
+    /// <summary>Gets the Playwright page instance.</summary>
     protected IPage Driver { get; }
+    /// <summary>Gets the element handler repository.</summary>
     protected IElementHandlerRepository ElementHandlerRepository { get; }
+    /// <summary>Gets the element locator service.</summary>
     protected IElementLocator ElementLocator { get; }
+    /// <summary>Gets the page metadata.</summary>
     protected PageMetadata PageMetadata { get; }
+    /// <summary>Gets the event source for lifecycle events.</summary>
     protected IEventSource EventSource { get; }
+    /// <summary>Gets the logger instance.</summary>
     protected ILogger Logger { get; }
+    /// <summary>Gets the space options configuration.</summary>
     protected ISpaceOptions SpaceOptions { get; }
 
     /// <summary>

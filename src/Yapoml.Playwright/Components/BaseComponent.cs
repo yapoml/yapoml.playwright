@@ -11,16 +11,28 @@ using Yapoml.Playwright.Services.Locator;
 
 namespace Yapoml.Playwright.Components;
 
+/// <summary>
+/// Base class for all page components providing fluent interactions and condition-based expectations.
+/// </summary>
+/// <typeparam name="TComponent">The concrete component type for fluent chaining.</typeparam>
+/// <typeparam name="TConditions">The chainable conditions type used for multi-condition expectations.</typeparam>
+/// <typeparam name="TCondition">The one-time conditions type used for single expectations.</typeparam>
 public abstract partial class BaseComponent<TComponent, TConditions, TCondition> : BaseComponent
     where TComponent : BaseComponent<TComponent, TConditions, TCondition>
     where TConditions : BaseComponentConditions<TConditions>
     where TCondition : BaseComponentConditions<TComponent>
 {
+    /// <summary>The concrete component instance for fluent chaining.</summary>
     protected TComponent component;
 
+    /// <summary>The chainable conditions instance.</summary>
     protected TConditions conditions;
+    /// <summary>The one-time conditions instance.</summary>
     protected TCondition oneTimeConditions;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BaseComponent{TComponent, TConditions, TCondition}"/> class.
+    /// </summary>
     protected BaseComponent(BasePage page, BaseComponent parentComponent, IPage driver, IElementHandler elementHandler, ComponentMetadata metadata, ISpaceOptions spaceOptions)
         : base(page, parentComponent, driver, elementHandler, metadata, spaceOptions)
     {
@@ -45,6 +57,12 @@ public abstract partial class BaseComponent<TComponent, TConditions, TCondition>
         return component;
     }
 
+    /// <summary>
+    /// Compares the component's text content with a string value.
+    /// </summary>
+    /// <param name="component">The component to compare.</param>
+    /// <param name="value">The string value to compare against.</param>
+    /// <returns><c>true</c> if the component's text equals the value; otherwise, <c>false</c>.</returns>
     public static bool operator ==(BaseComponent<TComponent, TConditions, TCondition> component, string value)
     {
         if (component is null)
@@ -55,34 +73,57 @@ public abstract partial class BaseComponent<TComponent, TConditions, TCondition>
         return component.Text == value;
     }
 
+    /// <summary>
+    /// Compares the component's text content with a string value for inequality.
+    /// </summary>
+    /// <param name="component">The component to compare.</param>
+    /// <param name="value">The string value to compare against.</param>
+    /// <returns><c>true</c> if the component's text does not equal the value; otherwise, <c>false</c>.</returns>
     public static bool operator !=(BaseComponent<TComponent, TConditions, TCondition> component, string value)
     {
         return !(component == value);
     }
 }
 
+/// <summary>
+/// Non-generic base class for all page components, providing core properties and element interaction primitives.
+/// </summary>
 public abstract class BaseComponent
 {
+    /// <summary>The parent component in the hierarchy, or <c>null</c> for top-level components.</summary>
     protected BaseComponent parentComponent;
+    /// <summary>Gets the parent page that owns this component.</summary>
     protected BasePage Page { get; }
+    /// <summary>Gets the Playwright page instance.</summary>
     protected IPage Driver { get; private set; }
 
+    /// <summary>The element handler responsible for locating this component.</summary>
     protected IElementHandler _elementHandler;
     private readonly Lazy<AttributesCollection> _attributes;
     private readonly Lazy<StylesCollection> _styles;
+    /// <summary>The logger for tracing component operations.</summary>
     protected ILogger _logger;
 
+    /// <summary>The maximum duration to wait when locating this component.</summary>
     protected TimeSpan _locateTimeout;
+    /// <summary>The polling interval used when locating this component.</summary>
     protected TimeSpan _locatePollingInterval;
 
+    /// <summary>Gets the underlying Playwright locator for this component.</summary>
     protected virtual ILocator WrappedElement => _elementHandler.Locate(_locateTimeout, _locatePollingInterval);
 
+    /// <summary>Gets the metadata describing this component.</summary>
     protected ComponentMetadata Metadata { get; }
 
+    /// <summary>Gets the space options configuration.</summary>
     protected ISpaceOptions SpaceOptions { get; private set; }
 
+    /// <summary>Gets the event source for raising lifecycle events.</summary>
     protected IEventSource EventSource { get; private set; }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BaseComponent"/> class.
+    /// </summary>
     public BaseComponent(BasePage page, BaseComponent parentComponent, IPage driver, IElementHandler elementHandler, ComponentMetadata metadata, ISpaceOptions spaceOptions)
     {
         Page = page;
@@ -232,6 +273,7 @@ public abstract class BaseComponent
         }
     }
 
+    /// <inheritdoc />
     public override bool Equals(object obj)
     {
         var str = obj as string;
@@ -244,6 +286,9 @@ public abstract class BaseComponent
         return base.Equals(obj);
     }
 
+    /// <summary>
+    /// Retries an async function upon stale element references.
+    /// </summary>
     protected async Task<T> RelocateOnStaleReferenceAsync<T>(Func<Task<T>> func)
     {
         return await func().ConfigureAwait(false);

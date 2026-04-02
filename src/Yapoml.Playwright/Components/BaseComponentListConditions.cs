@@ -14,8 +14,16 @@ using Yapoml.Framework;
 
 namespace Yapoml.Playwright.Components;
 
+/// <summary>
+/// Provides awaitable conditions for verifying the state of a list of components, including count, element-level predicates, and emptiness.
+/// </summary>
+/// <typeparam name="TSelf">The concrete list conditions type for fluent chaining.</typeparam>
+/// <typeparam name="TComponentConditions">The conditions type for individual component expectations within the list.</typeparam>
 public class BaseComponentListConditions<TSelf, TComponentConditions> : BaseConditions<TSelf>
 {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BaseComponentListConditions{TSelf, TComponentConditions}"/> class.
+    /// </summary>
     public BaseComponentListConditions(TimeSpan timeout, TimeSpan pollingInterval, IPage driver, IElementsListHandler elementsListHandler, IElementLocator elementLocator, IEventSource eventSource, ILogger logger, ISpaceOptions spaceOptions)
         : base(timeout, pollingInterval)
     {
@@ -27,15 +35,30 @@ public class BaseComponentListConditions<TSelf, TComponentConditions> : BaseCond
         SpaceOptions = spaceOptions;
     }
 
+    /// <summary>Gets the Playwright page instance.</summary>
     protected IPage Driver { get; }
+    /// <summary>Gets the elements list handler for this list.</summary>
     protected IElementsListHandler ElementsListHandler { get; }
+    /// <summary>Gets the element locator service.</summary>
     protected IElementLocator ElementLocator { get; }
+    /// <summary>Gets the event source for lifecycle events.</summary>
     protected IEventSource EventSource { get; }
+    /// <summary>Gets the logger instance.</summary>
     protected ILogger Logger { get; }
+    /// <summary>Gets the space options configuration.</summary>
     protected ISpaceOptions SpaceOptions { get; }
 
+    /// <summary>
+    /// Conditions for the count of components in the list.
+    /// </summary>
     public CountCollectionConditions<TSelf> Count => new CountCollectionConditions<TSelf>(_self, ElementsListHandler, Timeout, PollingInterval, Logger);
 
+    /// <summary>
+    /// Waits until every component in the list satisfies the specified predicate.
+    /// </summary>
+    /// <param name="predicate">The condition that each component must satisfy.</param>
+    /// <param name="timeout">How long to wait for all components to satisfy the condition.</param>
+    /// <returns>The same conditions instance for further chaining.</returns>
 #if NET6_0_OR_GREATER
         public TSelf Each(Action<TComponentConditions> predicate, TimeSpan? timeout = default, [CallerArgumentExpression("predicate")] string predicateExpression = null)
 #else
@@ -95,6 +118,12 @@ public class BaseComponentListConditions<TSelf, TComponentConditions> : BaseCond
         return _self;
     }
 
+    /// <summary>
+    /// Waits until at least one component in the list satisfies the specified predicate.
+    /// </summary>
+    /// <param name="predicate">The condition that at least one component must satisfy.</param>
+    /// <param name="timeout">How long to wait for a matching component.</param>
+    /// <returns>The same conditions instance for further chaining.</returns>
 #if NET6_0_OR_GREATER
         public TSelf Contains(Action<TComponentConditions> predicate, TimeSpan? timeout = default, [CallerArgumentExpression("predicate")] string predicateExpression = null)
 #else
@@ -143,6 +172,12 @@ public class BaseComponentListConditions<TSelf, TComponentConditions> : BaseCond
         return _self;
     }
 
+    /// <summary>
+    /// Waits until no component in the list satisfies the specified predicate.
+    /// </summary>
+    /// <param name="predicate">The condition that no component should satisfy.</param>
+    /// <param name="timeout">How long to wait for the condition to be met.</param>
+    /// <returns>The same conditions instance for further chaining.</returns>
 #if NET6_0_OR_GREATER
         public TSelf DoNotContain(Action<TComponentConditions> predicate, TimeSpan? timeout = default, [CallerArgumentExpression("predicate")] string predicateExpression = null)
 #else
@@ -194,11 +229,21 @@ public class BaseComponentListConditions<TSelf, TComponentConditions> : BaseCond
         return _self;
     }
 
+    /// <summary>
+    /// Waits until the list contains no components.
+    /// </summary>
+    /// <param name="timeout">How long to wait for the list to become empty.</param>
+    /// <returns>The same conditions instance for further chaining.</returns>
     public virtual TSelf IsEmpty(TimeSpan? timeout = default)
     {
         return Count.Is(0, timeout);
     }
 
+    /// <summary>
+    /// Waits until the list contains at least one component.
+    /// </summary>
+    /// <param name="timeout">How long to wait for the list to become non-empty.</param>
+    /// <returns>The same conditions instance for further chaining.</returns>
     public virtual TSelf IsNotEmpty(TimeSpan? timeout = default)
     {
         return Count.IsGreaterThan(0, timeout);

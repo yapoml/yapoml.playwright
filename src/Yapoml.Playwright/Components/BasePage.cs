@@ -8,8 +8,14 @@ using Yapoml.Playwright.Services.Locator;
 
 namespace Yapoml.Playwright.Components;
 
+/// <summary>
+/// Base class for all page objects, providing navigation and element resolution capabilities.
+/// </summary>
 public abstract class BasePage
 {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BasePage"/> class.
+    /// </summary>
     public BasePage(IPage driver, IElementHandlerRepository elementHandlerRepository, PageMetadata metadata, ISpaceOptions spaceOptions)
     {
         Driver = driver;
@@ -21,16 +27,22 @@ public abstract class BasePage
         _logger = spaceOptions.Services.Get<ILogger>();
     }
 
+    /// <summary>Gets the Playwright page instance.</summary>
     protected IPage Driver { get; }
 
+    /// <summary>Gets the element handler repository for caching resolved elements.</summary>
     protected IElementHandlerRepository ElementHandlerRepository { get; }
 
+    /// <summary>Gets the page metadata.</summary>
     protected PageMetadata Metadata { get; }
 
+    /// <summary>Gets the space options configuration.</summary>
     protected ISpaceOptions SpaceOptions { get; }
 
+    /// <summary>Gets the event source for lifecycle events.</summary>
     protected IEventSource EventSource { get; }
 
+    /// <summary>The logger instance.</summary>
     protected ILogger _logger;
 
     /// <summary>

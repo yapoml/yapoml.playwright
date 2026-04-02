@@ -6,6 +6,10 @@ using Yapoml.Playwright.Events;
 
 namespace Yapoml.Playwright.Services.Locator;
 
+/// <summary>
+/// Default implementation of <see cref="IElementHandler"/> that locates and caches a single element,
+/// supporting both parent-relative and root-relative search contexts.
+/// </summary>
 public class ElementHandler : IElementHandler
 {
     private readonly IPage _driver;
@@ -13,6 +17,7 @@ public class ElementHandler : IElementHandler
     private readonly IElementLocator _elementLocator;
     private readonly IEventSource _eventSource;
 
+    /// <inheritdoc />
     public ElementHandler(IPage driver, IElementHandler parentElementHandler, IElementLocator elementLocator, string by, ElementLocatorContext from, ComponentMetadata componentMetadata, IElementHandlerRepository elementHandlerRepository, IEventSource eventSource)
     {
         _driver = driver;
@@ -25,6 +30,7 @@ public class ElementHandler : IElementHandler
         _eventSource = eventSource;
     }
 
+    /// <inheritdoc />
     public ElementHandler(IPage driver, IElementHandler parentElementHandler, IElementLocator elementLocator, string by, ElementLocatorContext from, ILocator element, ComponentMetadata componentMetadata, IElementHandlerRepository elementHandlerRepository, IEventSource eventSource)
         : this(driver, parentElementHandler, elementLocator, by, from, componentMetadata, elementHandlerRepository, eventSource)
     {
@@ -33,19 +39,25 @@ public class ElementHandler : IElementHandler
 
     private ILocator _element;
 
+    /// <inheritdoc />
     public string By { get; }
 
+    /// <inheritdoc />
     public ElementLocatorContext From { get; }
 
+    /// <inheritdoc />
     public ComponentMetadata ComponentMetadata { get; }
 
+    /// <inheritdoc />
     public IElementHandlerRepository ElementHandlerRepository { get; }
 
+    /// <inheritdoc />
     public ILocator Locate()
     {
         return Locate(TimeSpan.Zero, TimeSpan.Zero);
     }
 
+    /// <inheritdoc />
     public ILocator Locate(TimeSpan timeout, TimeSpan pollingInterval)
     {
         if (_element == null)
@@ -130,6 +142,7 @@ public class ElementHandler : IElementHandler
         return _element;
     }
 
+    /// <inheritdoc />
     public void Invalidate()
     {
         _element = null;

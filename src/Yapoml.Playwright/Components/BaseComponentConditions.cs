@@ -13,8 +13,15 @@ using Yapoml.Playwright.Services.Locator;
 
 namespace Yapoml.Playwright.Components;
 
+/// <summary>
+/// Provides awaitable conditions for verifying the state of a component, including visibility, text, attributes, and styles.
+/// </summary>
+/// <typeparam name="TSelf">The concrete conditions type for fluent chaining.</typeparam>
 public abstract class BaseComponentConditions<TSelf> : BaseConditions<TSelf>, ITextualConditions<TSelf>
 {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BaseComponentConditions{TSelf}"/> class.
+    /// </summary>
     public BaseComponentConditions(TimeSpan timeout, TimeSpan pollingInterval, IPage driver, IElementHandler elementHandler, IElementLocator elementLocator, IEventSource eventSource, ILogger logger, ISpaceOptions spaceOptions)
         : base(timeout, pollingInterval)
     {
@@ -26,11 +33,17 @@ public abstract class BaseComponentConditions<TSelf> : BaseConditions<TSelf>, IT
         SpaceOptions = spaceOptions;
     }
 
+    /// <summary>Gets the Playwright page instance.</summary>
     protected IPage Driver { get; }
+    /// <summary>Gets the element handler for this component.</summary>
     protected IElementHandler ElementHandler { get; }
+    /// <summary>Gets the element locator service.</summary>
     protected IElementLocator ElementLocator { get; }
+    /// <summary>Gets the event source for lifecycle events.</summary>
     protected IEventSource EventSource { get; }
+    /// <summary>Gets the logger instance.</summary>
     protected ILogger Logger { get; }
+    /// <summary>Gets the space options configuration.</summary>
     protected ISpaceOptions SpaceOptions { get; }
 
     /// <summary>
@@ -358,6 +371,9 @@ public abstract class BaseComponentConditions<TSelf> : BaseConditions<TSelf>, IT
         }
     }
 
+    /// <summary>
+    /// Various expected conditions for the component's input value.
+    /// </summary>
     public virtual ValueConditions<TSelf> Value
     {
         get
@@ -380,101 +396,121 @@ public abstract class BaseComponentConditions<TSelf> : BaseConditions<TSelf>, IT
 
     #region Textual Conditions
 
+    /// <inheritdoc />
     public TSelf Is(string value, TimeSpan? timeout = default)
     {
         return Text.Is(value, timeout);
     }
 
+    /// <inheritdoc />
     public TSelf Is(string value, StringComparison comparisonType, TimeSpan? timeout = default)
     {
         return Text.Is(value, comparisonType, timeout);
     }
 
+    /// <inheritdoc />
     public TSelf IsNot(string value, TimeSpan? timeout = default)
     {
         return Text.IsNot(value, timeout);
     }
 
+    /// <inheritdoc />
     public TSelf IsNot(string value, StringComparison comparisonType, TimeSpan? timeout = default)
     {
         return Text.IsNot(value, comparisonType, timeout);
     }
 
+    /// <inheritdoc />
     public TSelf IsEmpty(TimeSpan? timeout = default)
     {
         return Text.IsEmpty(timeout);
     }
 
+    /// <inheritdoc />
     public TSelf IsNotEmpty(TimeSpan? timeout = default)
     {
         return Text.IsNotEmpty(timeout);
     }
 
+    /// <inheritdoc />
     public TSelf StartsWith(string value, TimeSpan? timeout = default)
     {
         return Text.StartsWith(value, timeout);
     }
 
+    /// <inheritdoc />
     public TSelf StartsWith(string value, StringComparison comparisonType, TimeSpan? timeout = default)
     {
         return Text.StartsWith(value, comparisonType, timeout);
     }
 
+    /// <inheritdoc />
     public TSelf DoesNotStartWith(string value, TimeSpan? timeout = default)
     {
         return Text.DoesNotStartWith(value, timeout);
     }
 
+    /// <inheritdoc />
     public TSelf DoesNotStartWith(string value, StringComparison comparisonType, TimeSpan? timeout = default)
     {
         return Text.DoesNotStartWith(value, comparisonType, timeout);
     }
 
+    /// <inheritdoc />
     public TSelf EndsWith(string value, TimeSpan? timeout = default)
     {
         return Text.EndsWith(value, timeout);
     }
 
+    /// <inheritdoc />
     public TSelf EndsWith(string value, StringComparison comparisonType, TimeSpan? timeout = default)
     {
         return Text.EndsWith(value, comparisonType, timeout);
     }
 
+    /// <inheritdoc />
     public TSelf DoesNotEndWith(string value, TimeSpan? timeout = default)
     {
         return Text.DoesNotEndWith(value, timeout);
     }
 
+    /// <inheritdoc />
     public TSelf DoesNotEndWith(string value, StringComparison comparisonType, TimeSpan? timeout = default)
     {
         return Text.DoesNotEndWith(value, comparisonType, timeout);
     }
 
+    /// <inheritdoc />
     public TSelf Contains(string value, TimeSpan? timeout = default)
     {
         return Text.Contains(value, timeout);
     }
 
+    /// <inheritdoc />
     public TSelf Contains(string value, StringComparison comparisonType, TimeSpan? timeout = default)
     {
         return Text.Contains(value, comparisonType, timeout);
     }
 
+    /// <inheritdoc />
     public TSelf DoesNotContain(string value, TimeSpan? timeout = default)
     {
         return Text.DoesNotContain(value, timeout);
     }
 
+    /// <inheritdoc />
     public TSelf DoesNotContain(string value, StringComparison comparisonType, TimeSpan? timeout = default)
     {
         return Text.DoesNotContain(value, comparisonType, timeout);
     }
 
+    /// <inheritdoc />
     public TSelf Matches(Regex regex, TimeSpan? timeout = default)
     {
         return Text.Matches(regex, timeout);
     }
 
+    /// <inheritdoc />
     public TSelf DoesNotMatch(Regex regex, TimeSpan? timeout = default)
     {
         return Text.DoesNotMatch(regex, timeout);

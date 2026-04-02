@@ -6,15 +6,29 @@ using Yapoml.Playwright.Options;
 
 namespace Yapoml.Playwright.Services;
 
+/// <summary>
+/// Builds navigation URIs by combining base URLs, path segments, and query parameters.
+/// </summary>
 public class NavigationService
 {
     readonly ISpaceOptions _spaceOptions;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="NavigationService"/> class.
+    /// </summary>
+    /// <param name="spaceOptions">The space options containing the base URL configuration.</param>
     public NavigationService(ISpaceOptions spaceOptions)
     {
         _spaceOptions = spaceOptions;
     }
 
+    /// <summary>
+    /// Builds a URI by resolving a URL against the base URL, substituting path segments, and appending query parameters.
+    /// </summary>
+    /// <param name="url">The URL, which may be relative to the registered base URL.</param>
+    /// <param name="segments">Path segment placeholders and their replacement values.</param>
+    /// <param name="queryParams">Query string parameters to append to the URL.</param>
+    /// <returns>The fully constructed <see cref="Uri"/>.</returns>
     public Uri BuildUri(string url, IList<KeyValuePair<string, string>> segments, IList<KeyValuePair<string, string>> queryParams)
     {
         url = new SegmentService().Replace(url, segments);

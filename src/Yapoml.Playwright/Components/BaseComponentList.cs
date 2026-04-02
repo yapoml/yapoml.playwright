@@ -20,11 +20,18 @@ using Yapoml.Framework;
 
 namespace Yapoml.Playwright.Components;
 
+/// <summary>
+/// Represents a read-only list of page components, supporting indexing by position, text, and predicate.
+/// </summary>
+/// <typeparam name="TComponent">The concrete component type in the list.</typeparam>
+/// <typeparam name="TListConditions">The conditions type for list-level expectations.</typeparam>
+/// <typeparam name="TComponentConditions">The conditions type for individual component expectations.</typeparam>
 public class BaseComponentList<TComponent, TListConditions, TComponentConditions> : IReadOnlyList<TComponent>
     where TComponent : BaseComponent
     where TListConditions : BaseComponentListConditions<TListConditions, TComponentConditions>
     where TComponentConditions : BaseComponentConditions<TComponentConditions>
 {
+    /// <summary>The list-level conditions instance.</summary>
     protected TListConditions listConditions;
 
     private IList<TComponent> _list;
@@ -32,13 +39,18 @@ public class BaseComponentList<TComponent, TListConditions, TComponentConditions
     private readonly BasePage _page;
     private readonly BaseComponent _parentComponent;
     private readonly IPage _driver;
+    /// <summary>The elements list handler for locating components.</summary>
     protected readonly IElementsListHandler _elementsListHandler;
     private readonly ComponentsListMetadata _componentsListMetadata;
     private readonly IEventSource _eventSource;
     private readonly ISpaceOptions _spaceOptions;
 
+    /// <summary>The logger for tracing list operations.</summary>
     protected readonly ILogger _logger;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BaseComponentList{TComponent, TListConditions, TComponentConditions}"/> class.
+    /// </summary>
     public BaseComponentList(BasePage page, BaseComponent parentComponent, IPage driver, IElementsListHandler elementsListHandler, ComponentsListMetadata componentsListMetadata, IEventSource eventSource, ISpaceOptions spaceOptions)
     {
         _page = page;
@@ -52,6 +64,12 @@ public class BaseComponentList<TComponent, TListConditions, TComponentConditions
         _logger = _spaceOptions.Services.Get<ILogger>();
     }
 
+    /// <summary>
+    /// Gets the component at the specified index. Waits until sufficient elements are located.
+    /// </summary>
+    /// <param name="index">The zero-based index of the component.</param>
+    /// <returns>The component at the specified index.</returns>
+    /// <exception cref="ExpectException">Thrown when the component at the index cannot be found within the timeout.</exception>
     public TComponent this[int index]
     {
         get
@@ -93,6 +111,12 @@ public class BaseComponentList<TComponent, TListConditions, TComponentConditions
         }
     }
 
+    /// <summary>
+    /// Gets the first component whose text content matches the specified string. Waits until a matching element is found.
+    /// </summary>
+    /// <param name="text">The text content to match.</param>
+    /// <returns>The first component with matching text.</returns>
+    /// <exception cref="ExpectException">Thrown when no component with the specified text is found within the timeout.</exception>
     public TComponent this[string text]
     {
         get
@@ -138,6 +162,12 @@ public class BaseComponentList<TComponent, TListConditions, TComponentConditions
         }
     }
 
+    /// <summary>
+    /// Gets the first component satisfying the specified predicate. Waits until a matching element is found.
+    /// </summary>
+    /// <param name="predicate">The predicate to match components against.</param>
+    /// <returns>The first component satisfying the predicate.</returns>
+    /// <exception cref="ExpectException">Thrown when no component satisfying the predicate is found within the timeout.</exception>
 #if NET6_0_OR_GREATER
         public TComponent this[Func<TComponent, bool> predicate, [CallerArgumentExpression("predicate")] string predicateExpression = null]
 #else
@@ -191,11 +221,20 @@ public class BaseComponentList<TComponent, TListConditions, TComponentConditions
         }
     }
 
+    /// <summary>
+    /// Gets the first component in the list.
+    /// </summary>
+    /// <returns>The first component.</returns>
     public TComponent First()
     {
         return this[0];
     }
 
+    /// <summary>
+    /// Gets the first component satisfying the specified predicate.
+    /// </summary>
+    /// <param name="predicate">The predicate to match components against.</param>
+    /// <returns>The first component satisfying the predicate.</returns>
 #if NET6_0_OR_GREATER
         public TComponent First(Func<TComponent, bool> predicate, [CallerArgumentExpression("predicate")] string predicateExpression = null)
 #else
@@ -209,6 +248,9 @@ public class BaseComponentList<TComponent, TListConditions, TComponentConditions
 #endif
     }
 
+    /// <summary>
+    /// Gets the number of components in the list.
+    /// </summary>
     public int Count
     {
         get
@@ -219,6 +261,7 @@ public class BaseComponentList<TComponent, TListConditions, TComponentConditions
         }
     }
 
+    /// <inheritdoc />
     public IEnumerator<TComponent> GetEnumerator()
     {
         EnsureLocated();

@@ -4,18 +4,25 @@ using Yapoml.Playwright.Events.Args.Page;
 
 namespace Yapoml.Playwright.Events;
 
+/// <summary>
+/// Subscribes to component events and produces log entries for element finding operations.
+/// </summary>
 public class LogEventsProducer
 {
     private ILogger _logger;
 
     private readonly IEventSource _source;
 
+    /// <summary>Initializes a new instance of the <see cref="LogEventsProducer"/> class.</summary>
     public LogEventsProducer(ILogger logger, IEventSource eventSource)
     {
         _logger = logger;
         _source = eventSource;
     }
 
+    /// <summary>
+    /// Subscribes to component event source events and starts producing log output.
+    /// </summary>
     public void Init()
     {
         _source.ComponentEventSource.OnFindingComponent += ComponentEventSource_OnFindingComponent;

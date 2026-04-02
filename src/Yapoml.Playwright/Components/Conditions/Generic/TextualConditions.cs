@@ -8,23 +8,37 @@ namespace Yapoml.Playwright.Components.Conditions.Generic;
 /// <inheritdoc cref="ITextualConditions{TConditions}"/>
 public abstract class TextualConditions<TSelf> : Conditions<TSelf>, ITextualConditions<TSelf>
 {
+    /// <summary>
+    /// A description of the subject being tested (e.g., "text of the search input").
+    /// </summary>
     protected readonly string _subject;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TextualConditions{TSelf}"/> class.
+    /// </summary>
     protected TextualConditions(TSelf conditions, TimeSpan timeout, TimeSpan pollingInterval, string subject, ILogger logger)
         : base(conditions, timeout, pollingInterval, logger)
     {
         _subject = subject;
     }
 
+    /// <summary>
+    /// Gets the function that fetches the current textual value to be tested.
+    /// </summary>
     protected abstract Func<string> FetchValueFunc { get; }
 
+    /// <summary>
+    /// Gets numeric conditions for the text length.
+    /// </summary>
     public abstract NumericConditions<TSelf, int> Length { get; }
 
+    /// <inheritdoc />
     public TSelf Is(string value, TimeSpan? timeout = default)
     {
         return Is(value, StringComparison.CurrentCulture, timeout);
     }
 
+    /// <inheritdoc />
     public TSelf Is(string value, StringComparison comparisonType, TimeSpan? timeout = default)
     {
         timeout ??= _timeout;
@@ -56,11 +70,13 @@ public abstract class TextualConditions<TSelf> : Conditions<TSelf>, ITextualCond
         return _conditions;
     }
 
+    /// <inheritdoc />
     public TSelf IsNot(string value, TimeSpan? timeout = default)
     {
         return IsNot(value, StringComparison.CurrentCulture, timeout);
     }
 
+    /// <inheritdoc />
     public TSelf IsNot(string value, StringComparison comparisonType, TimeSpan? timeout = default)
     {
         timeout ??= _timeout;
@@ -92,6 +108,7 @@ public abstract class TextualConditions<TSelf> : Conditions<TSelf>, ITextualCond
         return _conditions;
     }
 
+    /// <inheritdoc />
     public TSelf IsEmpty(TimeSpan? timeout = default)
     {
         timeout ??= _timeout;
@@ -123,6 +140,7 @@ public abstract class TextualConditions<TSelf> : Conditions<TSelf>, ITextualCond
         return _conditions;
     }
 
+    /// <inheritdoc />
     public TSelf IsNotEmpty(TimeSpan? timeout = default)
     {
         timeout ??= _timeout;
@@ -154,11 +172,13 @@ public abstract class TextualConditions<TSelf> : Conditions<TSelf>, ITextualCond
         return _conditions;
     }
 
+    /// <inheritdoc />
     public TSelf StartsWith(string value, TimeSpan? timeout = default)
     {
         return StartsWith(value, StringComparison.CurrentCulture, timeout);
     }
 
+    /// <inheritdoc />
     public TSelf StartsWith(string value, StringComparison comparisonType, TimeSpan? timeout = default)
     {
         timeout ??= _timeout;
@@ -190,11 +210,13 @@ public abstract class TextualConditions<TSelf> : Conditions<TSelf>, ITextualCond
         return _conditions;
     }
 
+    /// <inheritdoc />
     public TSelf DoesNotStartWith(string value, TimeSpan? timeout = default)
     {
         return DoesNotStartWith(value, StringComparison.CurrentCulture, timeout);
     }
 
+    /// <inheritdoc />
     public TSelf DoesNotStartWith(string value, StringComparison comparisonType, TimeSpan? timeout = default)
     {
         timeout ??= _timeout;
@@ -226,11 +248,13 @@ public abstract class TextualConditions<TSelf> : Conditions<TSelf>, ITextualCond
         return _conditions;
     }
 
+    /// <inheritdoc />
     public TSelf EndsWith(string value, TimeSpan? timeout = default)
     {
         return EndsWith(value, StringComparison.CurrentCulture, timeout);
     }
 
+    /// <inheritdoc />
     public TSelf EndsWith(string value, StringComparison comparisonType, TimeSpan? timeout = default)
     {
         timeout ??= _timeout;
@@ -262,11 +286,13 @@ public abstract class TextualConditions<TSelf> : Conditions<TSelf>, ITextualCond
         return _conditions;
     }
 
+    /// <inheritdoc />
     public TSelf DoesNotEndWith(string value, TimeSpan? timeout = default)
     {
         return DoesNotEndWith(value, StringComparison.CurrentCulture, timeout);
     }
 
+    /// <inheritdoc />
     public TSelf DoesNotEndWith(string value, StringComparison comparisonType, TimeSpan? timeout = default)
     {
         timeout ??= _timeout;
@@ -298,11 +324,13 @@ public abstract class TextualConditions<TSelf> : Conditions<TSelf>, ITextualCond
         return _conditions;
     }
 
+    /// <inheritdoc />
     public TSelf Contains(string value, TimeSpan? timeout = default)
     {
         return Contains(value, StringComparison.CurrentCulture, timeout);
     }
 
+    /// <inheritdoc />
     public TSelf Contains(string value, StringComparison comparisonType, TimeSpan? timeout = default)
     {
         timeout ??= _timeout;
@@ -334,11 +362,13 @@ public abstract class TextualConditions<TSelf> : Conditions<TSelf>, ITextualCond
         return _conditions;
     }
 
+    /// <inheritdoc />
     public TSelf DoesNotContain(string value, TimeSpan? timeout = default)
     {
         return DoesNotContain(value, StringComparison.CurrentCulture, timeout);
     }
 
+    /// <inheritdoc />
     public TSelf DoesNotContain(string value, StringComparison comparisonType, TimeSpan? timeout = default)
     {
         timeout ??= _timeout;
@@ -370,6 +400,7 @@ public abstract class TextualConditions<TSelf> : Conditions<TSelf>, ITextualCond
         return _conditions;
     }
 
+    /// <inheritdoc />
     public TSelf Matches(Regex regex, TimeSpan? timeout = default)
     {
         timeout ??= _timeout;
@@ -401,6 +432,7 @@ public abstract class TextualConditions<TSelf> : Conditions<TSelf>, ITextualCond
         return _conditions;
     }
 
+    /// <inheritdoc />
     public TSelf DoesNotMatch(Regex regex, TimeSpan? timeout = default)
     {
         timeout ??= _timeout;
@@ -432,27 +464,39 @@ public abstract class TextualConditions<TSelf> : Conditions<TSelf>, ITextualCond
         return _conditions;
     }
 
+    /// <summary>Gets the error message when the "is" condition fails.</summary>
     protected abstract string GetIsError(string latestValue, string expectedValue);
 
+    /// <summary>Gets the error message when the "is not" condition fails.</summary>
     protected abstract string GetIsNotError(string latestValue, string expectedValue);
 
+    /// <summary>Gets the error message when the "is empty" condition fails.</summary>
     protected abstract string GetIsEmptyError(string latestValue);
 
+    /// <summary>Gets the error message when the "is not empty" condition fails.</summary>
     protected abstract string GetIsNotEmptyError(string latestValue);
 
+    /// <summary>Gets the error message when the "starts with" condition fails.</summary>
     protected abstract string GetStartsWithError(string latestValue, string expectedValue);
 
+    /// <summary>Gets the error message when the "does not start with" condition fails.</summary>
     protected abstract string GetDoesNotStartWithError(string latestValue, string expectedValue);
 
+    /// <summary>Gets the error message when the "ends with" condition fails.</summary>
     protected abstract string GetEndsWithError(string latestValue, string expectedValue);
 
+    /// <summary>Gets the error message when the "does not end with" condition fails.</summary>
     protected abstract string GetDoesNotEndWithError(string latestValue, string expectedValue);
 
+    /// <summary>Gets the error message when the "contains" condition fails.</summary>
     protected abstract string GetContainsError(string latestValue, string expectedValue);
 
+    /// <summary>Gets the error message when the "does not contain" condition fails.</summary>
     protected abstract string GetDoesNotContainError(string latestValue, string expectedValue);
 
+    /// <summary>Gets the error message when the "matches" condition fails.</summary>
     protected abstract string GetMatchesError(string latestValue, Regex regex);
 
+    /// <summary>Gets the error message when the "does not match" condition fails.</summary>
     protected abstract string GetDoesNotMatchError(string latestValue, Regex regex);
 }

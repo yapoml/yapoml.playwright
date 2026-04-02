@@ -30,7 +30,7 @@ namespace Yapoml.Playwright.Sample
         {
             await _page.GotoAsync("https://nuget.org");
 
-            await _page.Locator("#search").TypeAsync("Yapoml");
+            await _page.Locator("#search").FillAsync("Yapoml");
             await _page.Locator(".btn-search").ClickAsync();
 
             var packageLocator = _page.Locator(".package");

@@ -31,10 +31,12 @@ jobs:
         name: nupkgs
         path: '**/*.nupkg'
         
-  myget:
+  github-packages:
     if: github.ref == 'refs/heads/develop'
     runs-on: ubuntu-latest
     needs: build
+    permissions:
+      packages: write
     
     steps:
     - name: Download Artifacts
@@ -44,4 +46,4 @@ jobs:
       with:
         dotnet-version: 8.0.x
     - name: Push
-      run: dotnet nuget push **\*.nupkg -s 'https://www.myget.org/F/yapoml/api/v2/package' -k ${{secrets.MYGET_API_KEY}}
+      run: dotnet nuget push **\*.nupkg -s 'https://nuget.pkg.github.com/yapoml/index.json' -k ${{secrets.GITHUB_TOKEN}}

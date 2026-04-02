@@ -1,0 +1,12 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/sample/">
+    <Project Path="sample/Yapoml.Playwright.Sample/Yapoml.Playwright.Sample.csproj" />
+  </Folder>
+  <Project Path="src/Yapoml.Playwright.SourceGeneration/Yapoml.Playwright.SourceGeneration.csproj" />
+  <Project Path="src/Yapoml.Playwright/Yapoml.Playwright.csproj" />
+</Solution>

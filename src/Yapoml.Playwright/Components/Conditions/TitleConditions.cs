@@ -26,11 +26,11 @@ public class TitleConditions<TConditions> : TextualConditions<TConditions>
     }
 
     /// <inheritdoc />
-    protected override Func<string> FetchValueFunc => () => Task.Run(() => _driver.TitleAsync()).GetAwaiter().GetResult();
+    protected override Func<Task<string>> FetchValueFunc => () => _driver.TitleAsync();
 
     /// <inheritdoc />
     public override NumericConditions<TConditions, int> Length
-        => new TextualLengthConditons<TConditions>(_conditions, _timeout, _pollingInterval, FetchValueFunc, $"{_pageMetadata.Name} page title", _logger);
+        => new TextualLengthConditons<TConditions>(_conditions, _timeout, _pollingInterval, FetchValueFunc, $"{_pageMetadata.Name} page title", _logger) { Chain = Chain };
 
     /// <inheritdoc />
     protected override string GetIsError(string latestValue, string expectedValue)

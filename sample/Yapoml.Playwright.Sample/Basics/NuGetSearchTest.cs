@@ -53,9 +53,9 @@ public class NuGetSearchTest
     }
 
     [Test]
-    public void SearchWithYapoml()
+    public async Task SearchWithYapoml()
     {
-        _page.Ya().Basics.Pages
+        await _page.Ya().Basics.Pages
             .HomePage.Search("selenium")
             .Packages.Expect(its => its.Count.Is(20).Each(package =>
             {
@@ -80,7 +80,7 @@ public class NuGetSearchTest
     }
 
     [Test]
-    public void WaitWithYapoml()
+    public async Task WaitWithYapoml()
     {
         // set global timeout
         var homePage = _page.Ya(opts =>
@@ -88,31 +88,31 @@ public class NuGetSearchTest
             .Basics.Pages.HomePage;
 
         // used global timeout
-        var searchInput = homePage.SearchInput.Expect(it => it.IsDisplayed());
+        var searchInput = await homePage.SearchInput.Expect(it => it.IsDisplayed());
 
         // or explicitly only here
-        var searchInput2 = homePage.SearchInput.Expect(it => it.IsDisplayed(timeout: TimeSpan.FromSeconds(20)));
+        var searchInput2 = await homePage.SearchInput.Expect(it => it.IsDisplayed(timeout: TimeSpan.FromSeconds(20)));
     }
 
     [Test]
-    public void ScrollEachPackageIntoView()
+    public async Task ScrollEachPackageIntoView()
     {
         var packagesPage = _page.Ya(opts => opts.WithBaseUrl("https://nuget.org")).Basics.Pages.PackagesPage;
 
-        foreach (var package in packagesPage.Open(q: "yaml").Packages)
+        foreach (var package in await packagesPage.Open(q: "yaml").Packages)
         {
-            package.ScrollIntoView();
+            await package.ScrollIntoView();
         }
     }
 
     [Test]
-    public void Cache()
+    public async Task Cache()
     {
         var page = _page.Ya().Basics.Pages.HomePage;
 
-        page.Expect(it => it.Title.Matches(new System.Text.RegularExpressions.Regex("Home"), TimeSpan.FromSeconds(3)));
+        await page.Expect(it => it.Title.Matches(new System.Text.RegularExpressions.Regex("Home"), TimeSpan.FromSeconds(3)));
 
-        page.Search("yapoml");
+        await page.Search("yapoml");
 
         var packagesPage = _page.Ya().Basics.Pages.PackagesPage;
 
@@ -126,10 +126,10 @@ public class NuGetSearchTest
     }
 
     [Test]
-    public void CustomExpectation()
+    public async Task CustomExpectation()
     {
-        var page = _page.Ya().Basics.Pages.HomePage.Expect(its => its.SearchButton.IsNotWhite());
+        var page = await _page.Ya().Basics.Pages.HomePage.Expect(its => its.SearchButton.IsNotWhite());
 
-        page.SearchButton.Click(when => when.IsNotWhite());
+        await page.SearchButton.Click(when => when.IsNotWhite());
     }
 }

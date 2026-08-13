@@ -25,11 +25,11 @@ public class StringAttributeConditions<TConditions> : TextualConditions<TConditi
     }
 
     /// <inheritdoc />
-    protected override Func<string> FetchValueFunc => () => RelocateOnStaleReference(() => Task.Run(() => _elementHandler.Locate().GetAttributeAsync(_attributeName)).GetAwaiter().GetResult());
+    protected override Func<Task<string>> FetchValueFunc => () => _elementHandler.Locate().GetAttributeAsync(_attributeName);
 
     /// <inheritdoc />
     public override NumericConditions<TConditions, int> Length
-        => new TextualLengthConditons<TConditions>(_conditions, _timeout, _pollingInterval, FetchValueFunc, $"{_attributeName} attribute of {_elementHandler.ComponentMetadata.Name}", _logger);
+        => new TextualLengthConditons<TConditions>(_conditions, _timeout, _pollingInterval, FetchValueFunc, $"{_attributeName} attribute of {_elementHandler.ComponentMetadata.Name}", _logger) { Chain = Chain };
 
     /// <inheritdoc />
     protected override string GetIsError(string latestValue, string expectedValue)

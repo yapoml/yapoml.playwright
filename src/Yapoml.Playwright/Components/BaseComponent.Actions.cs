@@ -16,10 +16,13 @@ partial class BaseComponent<TComponent, TConditions, TCondition>
     /// <returns>The same instance of the component to continue interaction with it.</returns>
     public virtual TComponent Clear()
     {
-        using (var scope = _logger.BeginLogScope($"Clearing {Metadata.Name}"))
+        Chain.Add(async () =>
         {
-            scope.Execute(() => WrappedElement.ClearAsync().GetAwaiter().GetResult());
-        }
+            using (var scope = _logger.BeginLogScope($"Clearing {Metadata.Name}"))
+            {
+                await scope.ExecuteAsync(() => WrappedElement.ClearAsync()).ConfigureAwait(false);
+            }
+        });
 
         return component;
     }
@@ -55,10 +58,13 @@ partial class BaseComponent<TComponent, TConditions, TCondition>
             scopeName = $"Typing '{text}' into {Metadata.Name}";
         }
 
-        using (var scope = _logger.BeginLogScope(scopeName))
+        Chain.Add(async () =>
         {
-            scope.Execute(() => WrappedElement.TypeAsync(text).GetAwaiter().GetResult());
-        }
+            using (var scope = _logger.BeginLogScope(scopeName))
+            {
+                await scope.ExecuteAsync(() => WrappedElement.TypeAsync(text)).ConfigureAwait(false);
+            }
+        });
 
         return component;
     }
@@ -79,10 +85,13 @@ partial class BaseComponent<TComponent, TConditions, TCondition>
     /// <returns>The same instance of the component to continue interaction with it.</returns>
     public virtual TComponent Fill(string text)
     {
-        using (var scope = _logger.BeginLogScope($"Filling in {component.Metadata.Name} within '{text}'"))
+        Chain.Add(async () =>
         {
-            scope.Execute(() => WrappedElement.FillAsync(text).GetAwaiter().GetResult());
-        }
+            using (var scope = _logger.BeginLogScope($"Filling in {component.Metadata.Name} within '{text}'"))
+            {
+                await scope.ExecuteAsync(() => WrappedElement.FillAsync(text)).ConfigureAwait(false);
+            }
+        });
 
         return component;
     }
@@ -103,10 +112,13 @@ partial class BaseComponent<TComponent, TConditions, TCondition>
     /// <returns>The same instance of the component to continue interaction with it.</returns>
     public virtual TComponent Click()
     {
-        using (var scope = _logger.BeginLogScope($"Clicking on {Metadata.Name}"))
+        Chain.Add(async () =>
         {
-            scope.Execute(() => WrappedElement.ClickAsync().GetAwaiter().GetResult());
-        }
+            using (var scope = _logger.BeginLogScope($"Clicking on {Metadata.Name}"))
+            {
+                await scope.ExecuteAsync(() => WrappedElement.ClickAsync()).ConfigureAwait(false);
+            }
+        });
 
         return component;
     }
@@ -125,10 +137,13 @@ partial class BaseComponent<TComponent, TConditions, TCondition>
     /// <param name="y">Coordinates offset by Y-axis.</param>
     public virtual TComponent Click(int x, int y)
     {
-        using (var scope = _logger.BeginLogScope($"Clicking on {Metadata.Name} by X: {x}, Y: {y}"))
+        Chain.Add(async () =>
         {
-            scope.Execute(() => WrappedElement.ClickAsync(new Microsoft.Playwright.LocatorClickOptions { Position = new Microsoft.Playwright.Position { X = x, Y = y } }).GetAwaiter().GetResult());
-        }
+            using (var scope = _logger.BeginLogScope($"Clicking on {Metadata.Name} by X: {x}, Y: {y}"))
+            {
+                await scope.ExecuteAsync(() => WrappedElement.ClickAsync(new Microsoft.Playwright.LocatorClickOptions { Position = new Microsoft.Playwright.Position { X = x, Y = y } })).ConfigureAwait(false);
+            }
+        });
 
         return component;
     }
@@ -152,10 +167,13 @@ partial class BaseComponent<TComponent, TConditions, TCondition>
     /// <returns>The same instance of the component to continue interaction with it.</returns>
     public virtual TComponent Hover()
     {
-        using (var scope = _logger.BeginLogScope($"Hovering over {Metadata.Name}"))
+        Chain.Add(async () =>
         {
-            scope.Execute(() => WrappedElement.HoverAsync().GetAwaiter().GetResult());
-        }
+            using (var scope = _logger.BeginLogScope($"Hovering over {Metadata.Name}"))
+            {
+                await scope.ExecuteAsync(() => WrappedElement.HoverAsync()).ConfigureAwait(false);
+            }
+        });
 
         return component;
     }
@@ -174,11 +192,13 @@ partial class BaseComponent<TComponent, TConditions, TCondition>
     /// <param name="y">Coordinates offset by Y-axis.</param>
     public virtual TComponent Hover(int x, int y)
     {
-        using (var scope = _logger.BeginLogScope($"Hovering on {Metadata.Name} by X: {x}, Y: {y}"))
+        Chain.Add(async () =>
         {
-            scope.Execute(() => WrappedElement.HoverAsync(new Microsoft.Playwright.LocatorHoverOptions { Position = new Microsoft.Playwright.Position { X = x, Y = y } }).GetAwaiter().GetResult());
-        }
-        ;
+            using (var scope = _logger.BeginLogScope($"Hovering on {Metadata.Name} by X: {x}, Y: {y}"))
+            {
+                await scope.ExecuteAsync(() => WrappedElement.HoverAsync(new Microsoft.Playwright.LocatorHoverOptions { Position = new Microsoft.Playwright.Position { X = x, Y = y } })).ConfigureAwait(false);
+            }
+        });
 
         return component;
     }
@@ -208,10 +228,13 @@ partial class BaseComponent<TComponent, TConditions, TCondition>
         }
         else
         {
-            using (var scope = _logger.BeginLogScope($"Scrolling {Metadata.Name} into view"))
+            Chain.Add(async () =>
             {
-                scope.Execute(() => WrappedElement.ScrollIntoViewIfNeededAsync().GetAwaiter().GetResult());
-            }
+                using (var scope = _logger.BeginLogScope($"Scrolling {Metadata.Name} into view"))
+                {
+                    await scope.ExecuteAsync(() => WrappedElement.ScrollIntoViewIfNeededAsync()).ConfigureAwait(false);
+                }
+            });
         }
 
         return component;
@@ -241,10 +264,13 @@ partial class BaseComponent<TComponent, TConditions, TCondition>
     {
         if (options == null) throw new ArgumentNullException(nameof(options));
 
-        using (var scope = _logger.BeginLogScope($"Scrolling {Metadata.Name} into view with options {options}"))
+        Chain.Add(async () =>
         {
-            scope.Execute(() => WrappedElement.ScrollIntoViewIfNeededAsync().GetAwaiter().GetResult());
-        }
+            using (var scope = _logger.BeginLogScope($"Scrolling {Metadata.Name} into view with options {options}"))
+            {
+                await scope.ExecuteAsync(() => WrappedElement.ScrollIntoViewIfNeededAsync()).ConfigureAwait(false);
+            }
+        });
 
         return component;
     }
@@ -274,10 +300,13 @@ partial class BaseComponent<TComponent, TConditions, TCondition>
         }
         else
         {
-            using (var scope = _logger.BeginLogScope($"Focusing {Metadata.Name}"))
+            Chain.Add(async () =>
             {
-                scope.Execute(() => WrappedElement.FocusAsync().GetAwaiter().GetResult());
-            }
+                using (var scope = _logger.BeginLogScope($"Focusing {Metadata.Name}"))
+                {
+                    await scope.ExecuteAsync(() => WrappedElement.FocusAsync()).ConfigureAwait(false);
+                }
+            });
         }
 
         return component;
@@ -305,10 +334,13 @@ partial class BaseComponent<TComponent, TConditions, TCondition>
     {
         if (options == null) throw new ArgumentNullException(nameof(options));
 
-        using (var scope = _logger.BeginLogScope($"Focusing {Metadata.Name} with options {options}"))
+        Chain.Add(async () =>
         {
-            scope.Execute(() => WrappedElement.FocusAsync().GetAwaiter().GetResult());
-        }
+            using (var scope = _logger.BeginLogScope($"Focusing {Metadata.Name} with options {options}"))
+            {
+                await scope.ExecuteAsync(() => WrappedElement.FocusAsync()).ConfigureAwait(false);
+            }
+        });
 
         return component;
     }
@@ -332,10 +364,13 @@ partial class BaseComponent<TComponent, TConditions, TCondition>
     /// <returns>The same instance of the component to continue interaction with it.</returns>
     public virtual TComponent Blur()
     {
-        using (var scope = _logger.BeginLogScope($"Bluring {Metadata.Name}"))
+        Chain.Add(async () =>
         {
-            scope.Execute(() => WrappedElement.BlurAsync().GetAwaiter().GetResult());
-        }
+            using (var scope = _logger.BeginLogScope($"Bluring {Metadata.Name}"))
+            {
+                await scope.ExecuteAsync(() => WrappedElement.BlurAsync()).ConfigureAwait(false);
+            }
+        });
 
         return component;
     }
@@ -356,10 +391,13 @@ partial class BaseComponent<TComponent, TConditions, TCondition>
     /// <returns>The same instance of the component to continue interaction with it.</returns>
     public virtual TComponent ContextClick()
     {
-        using (var scope = _logger.BeginLogScope($"Context clicking on {Metadata.Name}"))
+        Chain.Add(async () =>
         {
-            scope.Execute(() => WrappedElement.ClickAsync(new Microsoft.Playwright.LocatorClickOptions { Button = Microsoft.Playwright.MouseButton.Right }).GetAwaiter().GetResult());
-        }
+            using (var scope = _logger.BeginLogScope($"Context clicking on {Metadata.Name}"))
+            {
+                await scope.ExecuteAsync(() => WrappedElement.ClickAsync(new Microsoft.Playwright.LocatorClickOptions { Button = Microsoft.Playwright.MouseButton.Right })).ConfigureAwait(false);
+            }
+        });
 
         return component;
     }
@@ -380,10 +418,13 @@ partial class BaseComponent<TComponent, TConditions, TCondition>
     /// <returns>The same instance of the component to continue interaction with it.</returns>
     public virtual TComponent DoubleClick()
     {
-        using (var scope = _logger.BeginLogScope($"Double clicking on {Metadata.Name}"))
+        Chain.Add(async () =>
         {
-            scope.Execute(() => WrappedElement.DblClickAsync().GetAwaiter().GetResult());
-        }
+            using (var scope = _logger.BeginLogScope($"Double clicking on {Metadata.Name}"))
+            {
+                await scope.ExecuteAsync(() => WrappedElement.DblClickAsync()).ConfigureAwait(false);
+            }
+        });
 
         return component;
     }
@@ -403,10 +444,13 @@ partial class BaseComponent<TComponent, TConditions, TCondition>
     /// <returns>The same instance of the component to continue interaction with it.</returns>
     public virtual TComponent Check()
     {
-        using (var scope = _logger.BeginLogScope($"Checking on {Metadata.Name}"))
+        Chain.Add(async () =>
         {
-            scope.Execute(() => WrappedElement.CheckAsync().GetAwaiter().GetResult());
-        }
+            using (var scope = _logger.BeginLogScope($"Checking on {Metadata.Name}"))
+            {
+                await scope.ExecuteAsync(() => WrappedElement.CheckAsync()).ConfigureAwait(false);
+            }
+        });
 
         return component;
     }
@@ -426,10 +470,13 @@ partial class BaseComponent<TComponent, TConditions, TCondition>
     /// <returns>The same instance of the component to continue interaction with it.</returns>
     public virtual TComponent Uncheck()
     {
-        using (var scope = _logger.BeginLogScope($"Unchecking on {Metadata.Name}"))
+        Chain.Add(async () =>
         {
-            scope.Execute(() => WrappedElement.UncheckAsync().GetAwaiter().GetResult());
-        }
+            using (var scope = _logger.BeginLogScope($"Unchecking on {Metadata.Name}"))
+            {
+                await scope.ExecuteAsync(() => WrappedElement.UncheckAsync()).ConfigureAwait(false);
+            }
+        });
 
         return component;
     }
@@ -451,10 +498,13 @@ partial class BaseComponent<TComponent, TConditions, TCondition>
         where TToConditions : BaseComponentConditions<TToConditions>
         where TToCondition : BaseComponentConditions<TToComponent>
     {
-        using (var scope = _logger.BeginLogScope($"Dragging {Metadata.Name} to {toComponent.Metadata.Name}"))
+        Chain.Add(async () =>
         {
-            scope.Execute(() => WrappedElement.DragToAsync(toComponent.WrappedElement).GetAwaiter().GetResult());
-        }
+            using (var scope = _logger.BeginLogScope($"Dragging {Metadata.Name} to {toComponent.Metadata.Name}"))
+            {
+                await scope.ExecuteAsync(() => WrappedElement.DragToAsync(toComponent.WrappedElement)).ConfigureAwait(false);
+            }
+        });
 
         return component;
     }
@@ -480,17 +530,20 @@ partial class BaseComponent<TComponent, TConditions, TCondition>
         where TToConditions : BaseComponentConditions<TToConditions>
         where TToCondition : BaseComponentConditions<TToComponent>
     {
-        using (var scope = _logger.BeginLogScope($"Dragging {Metadata.Name} to {toComponent.Metadata.Name}"))
+        Chain.Add(async () =>
         {
-            scope.Execute(() => WrappedElement.DragToAsync(toComponent.WrappedElement, new()
+            using (var scope = _logger.BeginLogScope($"Dragging {Metadata.Name} to {toComponent.Metadata.Name}"))
             {
-                TargetPosition = new()
+                await scope.ExecuteAsync(() => WrappedElement.DragToAsync(toComponent.WrappedElement, new()
                 {
-                    X = x,
-                    Y = y
-                }
-            }).GetAwaiter().GetResult());
-        }
+                    TargetPosition = new()
+                    {
+                        X = x,
+                        Y = y
+                    }
+                })).ConfigureAwait(false);
+            }
+        });
 
         return component;
     }
@@ -514,7 +567,7 @@ partial class BaseComponent<TComponent, TConditions, TCondition>
     /// <returns>A byte array representing the PNG screenshot image.</returns>
     public virtual byte[] GetScreenshot()
     {
-        return Task.Run(() => RelocateOnStaleReferenceAsync(async () => await WrappedElement.ScreenshotAsync())).GetAwaiter().GetResult();
+        return Read(() => RelocateOnStaleReferenceAsync(() => WrappedElement.ScreenshotAsync()));
     }
 
     /// <inheritdoc cref="GetScreenshot()"/>

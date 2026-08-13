@@ -1,5 +1,7 @@
 ﻿using Microsoft.Playwright;
 using System;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Yapoml.Framework.Logging;
 using Yapoml.Framework.Options;
@@ -25,10 +27,32 @@ public abstract partial class BaseComponent<TComponent, TConditions, TCondition>
     /// <summary>The concrete component instance for fluent chaining.</summary>
     protected TComponent component;
 
-    /// <summary>The chainable conditions instance.</summary>
-    protected TConditions conditions;
-    /// <summary>The one-time conditions instance.</summary>
-    protected TCondition oneTimeConditions;
+    private TConditions _conditions;
+    private TCondition _oneTimeConditions;
+
+    /// <summary>The chainable conditions instance. Assigning it shares the component's chain with the conditions.</summary>
+    protected TConditions conditions
+    {
+        get => _conditions;
+        set
+        {
+            _conditions = value;
+
+            if (value != null) value.Chain = Chain;
+        }
+    }
+
+    /// <summary>The one-time conditions instance. Assigning it shares the component's chain with the conditions.</summary>
+    protected TCondition oneTimeConditions
+    {
+        get => _oneTimeConditions;
+        set
+        {
+            _oneTimeConditions = value;
+
+            if (value != null) value.Chain = Chain;
+        }
+    }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="BaseComponent{TComponent, TConditions, TCondition}"/> class.
@@ -53,6 +77,20 @@ public abstract partial class BaseComponent<TComponent, TConditions, TCondition>
     public virtual TComponent Expect(Action<TConditions> it)
     {
         it(conditions);
+
+        return component;
+    }
+
+    /// <summary>Executes the pending steps and returns the component back.</summary>
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    public TaskAwaiter<TComponent> GetAwaiter()
+    {
+        return AwaitChainAsync().GetAwaiter();
+    }
+
+    private async Task<TComponent> AwaitChainAsync()
+    {
+        await Chain.RunAsync().ConfigureAwait(false);
 
         return component;
     }
@@ -115,6 +153,10 @@ public abstract class BaseComponent
     /// <summary>Gets the metadata describing this component.</summary>
     protected ComponentMetadata Metadata { get; }
 
+    /// <summary>Gets the chain of pending asynchronous steps shared with the page and parent component.</summary>
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    public Chain Chain { get; }
+
     /// <summary>Gets the space options configuration.</summary>
     protected ISpaceOptions SpaceOptions { get; private set; }
 
@@ -132,6 +174,8 @@ public abstract class BaseComponent
         _elementHandler = elementHandler;
         Metadata = metadata;
         SpaceOptions = spaceOptions;
+
+        Chain = Chain.Resolve(spaceOptions);
 
         EventSource = spaceOptions.Services.Get<IEventSource>();
         _logger = spaceOptions.Services.Get<ILogger>();
@@ -188,7 +232,7 @@ public abstract class BaseComponent
     /// input elements (<c>&lt;input&gt;</c>) do not have any inner text, so they will return an empty string for this property.
     /// To get the value of an input element, you may need to use the <see cref="AttributesCollection.Value"/> property.
     /// </remarks>
-    public virtual string Text => Task.Run(() => RelocateOnStaleReferenceAsync(() => WrappedElement.TextContentAsync())).GetAwaiter().GetResult().Trim();
+    public virtual string Text => Read(() => RelocateOnStaleReferenceAsync(() => WrappedElement.TextContentAsync())).Trim();
 
     /// <summary>
     /// Used to indicate whether a component can respond to user interactions or not.
@@ -199,7 +243,7 @@ public abstract class BaseComponent
     /// For example, you can use it to check if a checkbox is checked or unchecked, or if a text field is editable or read-only.
     /// </para>
     /// </summary>
-    public virtual bool IsEnabled => Task.Run(() => RelocateOnStaleReferenceAsync(() => WrappedElement.IsEnabledAsync())).GetAwaiter().GetResult();
+    public virtual bool IsEnabled => Read(() => RelocateOnStaleReferenceAsync(() => WrappedElement.IsEnabledAsync()));
 
     /// <summary>
     /// Indicates whether a component currently is checked or not.
@@ -207,7 +251,7 @@ public abstract class BaseComponent
     /// It returns a boolean value: <c>true</c> if the component is checked, and <c>false</c> if the component is unchecked.
     /// </para>
     /// </summary>
-    public virtual bool IsChecked => Task.Run(() => RelocateOnStaleReferenceAsync(() => WrappedElement.IsCheckedAsync())).GetAwaiter().GetResult();
+    public virtual bool IsChecked => Read(() => RelocateOnStaleReferenceAsync(() => WrappedElement.IsCheckedAsync()));
 
     /// <summary>
     /// Indicates whether a component currently is partially visible within viewport or not.
@@ -242,7 +286,7 @@ public abstract class BaseComponent
     {
         get
         {
-            return Task.Run(() => WrappedElement.IsVisibleAsync()).GetAwaiter().GetResult();
+            return Read(() => WrappedElement.IsVisibleAsync());
         }
     }
 
@@ -256,7 +300,7 @@ public abstract class BaseComponent
     {
         get
         {
-            var isFocusedRes = Task.Run(() => WrappedElement.EvaluateAsync("node => document.activeElement === node")).GetAwaiter().GetResult();
+            var isFocusedRes = Read(() => WrappedElement.EvaluateAsync("node => document.activeElement === node"));
 
             return bool.Parse(isFocusedRes.ToString());
         }
@@ -269,7 +313,7 @@ public abstract class BaseComponent
     {
         get
         {
-            return Task.Run(() => WrappedElement.InputValueAsync()).GetAwaiter().GetResult();
+            return Read(() => WrappedElement.InputValueAsync());
         }
     }
 
@@ -292,6 +336,19 @@ public abstract class BaseComponent
     protected async Task<T> RelocateOnStaleReferenceAsync<T>(Func<Task<T>> func)
     {
         return await func().ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Executes the pending steps and reads a value. Blocks the caller until value reads become awaitable.
+    /// </summary>
+    protected T Read<T>(Func<Task<T>> read)
+    {
+        return Task.Run(async () =>
+        {
+            await Chain.RunAsync().ConfigureAwait(false);
+
+            return await read().ConfigureAwait(false);
+        }).GetAwaiter().GetResult();
     }
 
     /// <summary>

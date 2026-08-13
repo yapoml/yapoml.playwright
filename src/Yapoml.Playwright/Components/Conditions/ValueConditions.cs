@@ -23,10 +23,10 @@ public class ValueConditions<TConditions> : TextualConditions<TConditions>
     }
 
     /// <inheritdoc />
-    public override NumericConditions<TConditions, int> Length => new TextualLengthConditons<TConditions>(_conditions, _timeout, _pollingInterval, FetchValueFunc, $"value of {_elementHandler.ComponentMetadata.Name}", _logger);
+    public override NumericConditions<TConditions, int> Length => new TextualLengthConditons<TConditions>(_conditions, _timeout, _pollingInterval, FetchValueFunc, $"value of {_elementHandler.ComponentMetadata.Name}", _logger) { Chain = Chain };
 
     /// <inheritdoc />
-    protected override Func<string> FetchValueFunc => () => Task.Run(() => _elementHandler.Locate().InputValueAsync()).GetAwaiter().GetResult();
+    protected override Func<Task<string>> FetchValueFunc => () => _elementHandler.Locate().InputValueAsync();
 
     /// <inheritdoc />
     protected override string GetIsError(string latestValue, string expectedValue)

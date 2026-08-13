@@ -1,4 +1,6 @@
 ﻿using Microsoft.Playwright;
+using System.ComponentModel;
+using System.Threading.Tasks;
 using Yapoml.Framework.Logging;
 using Yapoml.Framework.Options;
 using Yapoml.Playwright.Components.Metadata;
@@ -23,12 +25,29 @@ public abstract class BasePage
         Metadata = metadata;
         SpaceOptions = spaceOptions;
 
+        Chain = Chain.Resolve(spaceOptions);
+
         EventSource = spaceOptions.Services.Get<IEventSource>();
         _logger = spaceOptions.Services.Get<ILogger>();
     }
 
     /// <summary>Gets the Playwright page instance.</summary>
     protected IPage Driver { get; }
+
+    /// <summary>Gets the chain of pending asynchronous steps built on this page.</summary>
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    public Chain Chain { get; }
+
+    /// <summary>
+    /// Executes the pending steps and returns the awaited page back, so generated pages can expose <c>GetAwaiter</c>.
+    /// </summary>
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    protected async Task<TPage> AwaitChainAsync<TPage>(TPage self)
+    {
+        await Chain.RunAsync().ConfigureAwait(false);
+
+        return self;
+    }
 
     /// <summary>Gets the element handler repository for caching resolved elements.</summary>
     protected IElementHandlerRepository ElementHandlerRepository { get; }

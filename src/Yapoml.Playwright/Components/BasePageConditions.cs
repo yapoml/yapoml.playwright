@@ -1,6 +1,6 @@
 ﻿using Microsoft.Playwright;
 using System;
-using System.Threading;
+using System.Threading.Tasks;
 using Yapoml.Framework.Logging;
 using Yapoml.Framework.Options;
 using Yapoml.Playwright.Components.Conditions;
@@ -57,24 +57,20 @@ public abstract class BasePageConditions<TSelf> : BaseConditions<TSelf>
     {
         timeout ??= Timeout;
 
-        string latestValue = null;
-
-        try
+        return Enqueue(async () =>
         {
-            using (var scope = Logger.BeginLogScope($"Expect the {PageMetadata.Name} document state is complete"))
+            try
             {
-                scope.Execute(() =>
+                using (var scope = Logger.BeginLogScope($"Expect the {PageMetadata.Name} document state is complete"))
                 {
-                    Driver.WaitForLoadStateAsync(LoadState.Load, new PageWaitForLoadStateOptions { Timeout = (float)timeout.Value.TotalSeconds }).GetAwaiter().GetResult();
-                });
+                    await scope.ExecuteAsync(() => Driver.WaitForLoadStateAsync(LoadState.Load, new PageWaitForLoadStateOptions { Timeout = (float)timeout.Value.TotalSeconds })).ConfigureAwait(false);
+                }
             }
-        }
-        catch (TimeoutException ex)
-        {
-            throw new ExpectException($"{PageMetadata.Name} page is not opened yet. Current state is '{latestValue}'.", ex);
-        }
-
-        return _self;
+            catch (TimeoutException ex)
+            {
+                throw new ExpectException($"{PageMetadata.Name} page is not opened yet.", ex);
+            }
+        });
     }
 
     /// <summary>
@@ -84,7 +80,7 @@ public abstract class BasePageConditions<TSelf> : BaseConditions<TSelf>
     {
         get
         {
-            return new UrlConditions<TSelf>(Driver, _self, Timeout, PollingInterval, PageMetadata, Logger);
+            return new UrlConditions<TSelf>(Driver, _self, Timeout, PollingInterval, PageMetadata, Logger) { Chain = Chain };
         }
     }
 
@@ -95,7 +91,7 @@ public abstract class BasePageConditions<TSelf> : BaseConditions<TSelf>
     {
         get
         {
-            return new TitleConditions<TSelf>(Driver, _self, Timeout, PollingInterval, PageMetadata, Logger);
+            return new TitleConditions<TSelf>(Driver, _self, Timeout, PollingInterval, PageMetadata, Logger) { Chain = Chain };
         }
     }
 
@@ -106,9 +102,7 @@ public abstract class BasePageConditions<TSelf> : BaseConditions<TSelf>
     /// <returns></returns>
     public virtual TSelf Elapsed(TimeSpan duration)
     {
-        Thread.Sleep(duration);
-
-        return _self;
+        return Enqueue(() => Task.Delay(duration));
     }
 
     /// <summary>

@@ -1,5 +1,6 @@
 ﻿using Microsoft.Playwright;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Yapoml.Playwright.Services.Locator;
 
@@ -22,5 +23,5 @@ public interface IElementLocator
     /// <param name="searchContext">The parent locator to search within.</param>
     /// <param name="by">The selector string to use for finding elements.</param>
     /// <returns>A read-only list of Playwright <see cref="ILocator"/> instances.</returns>
-    IReadOnlyList<ILocator> FindElements(ILocator searchContext, string by);
+    Task<IReadOnlyList<ILocator>> FindElementsAsync(ILocator searchContext, string by);
 }

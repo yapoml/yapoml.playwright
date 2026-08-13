@@ -27,9 +27,9 @@ public class NumericStyleConditions<TConditions, TNumber> : NumericConditions<TC
     }
 
     /// <inheritdoc />
-    protected override Func<TNumber?> FetchValueFunc => () =>
+    protected override Func<Task<TNumber?>> FetchValueFunc => async () =>
     {
-        var value = Task.Run(() => _elementHandler.Locate().EvaluateAsync($"node => window.getComputedStyle(node).getPropertyValue('{_styleName}')")).GetAwaiter().GetResult().ToString();
+        var value = (await _elementHandler.Locate().EvaluateAsync($"node => window.getComputedStyle(node).getPropertyValue('{_styleName}')").ConfigureAwait(false)).ToString();
 
         if (string.IsNullOrEmpty(value))
         {

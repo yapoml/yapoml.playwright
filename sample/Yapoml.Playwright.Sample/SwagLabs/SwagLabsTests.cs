@@ -27,32 +27,32 @@ internal class SwagLabsTests
     }
 
     [Test]
-    public void IncorrectLogin()
+    public async Task IncorrectLogin()
     {
-        var error = _ya.LoginPage.Open().Form
+        var error = await _ya.LoginPage.Open().Form
             .Login.Click().Error;
 
-        error.Expect(it => it.IsDisplayed().Text.Is("Epic sadface: Username is required"));
+        await error.Expect(it => it.IsDisplayed().Text.Is("Epic sadface: Username is required"));
 
-        error.Close.Click();
+        await error.Close.Click();
 
-        error.Expect().IsNotDisplayed();
+        await error.Expect().IsNotDisplayed();
     }
 
     [Test]
-    public void AddToCart()
+    public async Task AddToCart()
     {
-        _ya.Login("standard_user", "secret_sauce")
+        await _ya.Login("standard_user", "secret_sauce")
             .Products[p => p.Name == "Sauce Labs Backpack"].AddToCartButton.Click();
 
-        _ya.InventoryPage.PrimaryHeader.ShoppingCart
+        await _ya.InventoryPage.PrimaryHeader.ShoppingCart
             .Expect(its => its.Badge.Is("1").Styles.BackgroundColor.Is("rgb(226, 35, 26)"))
             .Click();
 
-        _ya.CartPage.Expect().IsOpened()
+        await _ya.CartPage.Expect().IsOpened()
             .Items.Expect().Count.Is(1);
 
-        _ya.CartPage.RemoveAllItems()
+        await _ya.CartPage.RemoveAllItems()
             .Expect(its => its.Items.IsEmpty())
             .Expect(its => its.PrimaryHeader.ShoppingCart.Badge.IsNotDisplayed());
     }

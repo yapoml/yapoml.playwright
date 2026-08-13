@@ -1,6 +1,7 @@
 ﻿using Microsoft.Playwright;
 using System;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using Yapoml.Framework.Logging;
 using Yapoml.Playwright.Components.Conditions.Generic;
 using Yapoml.Playwright.Components.Metadata;
@@ -26,11 +27,11 @@ public class UrlPathConditions<TConditions> : TextualConditions<TConditions>
     }
 
     /// <inheritdoc />
-    protected override Func<string> FetchValueFunc => () => new Uri(_driver.Url).AbsolutePath;
+    protected override Func<Task<string>> FetchValueFunc => () => Task.FromResult(new Uri(_driver.Url).AbsolutePath);
 
     /// <inheritdoc />
     public override NumericConditions<TConditions, int> Length
-        => new TextualLengthConditons<TConditions>(_conditions, _timeout, _pollingInterval, FetchValueFunc, $"{_pageMetadata.Name} page url", _logger);
+        => new TextualLengthConditons<TConditions>(_conditions, _timeout, _pollingInterval, FetchValueFunc, $"{_pageMetadata.Name} page url", _logger) { Chain = Chain };
 
     /// <inheritdoc />
     protected override string GetIsError(string latestValue, string expectedValue)

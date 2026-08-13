@@ -1,7 +1,7 @@
 ﻿using Microsoft.Playwright;
 using System;
 using System.Text.RegularExpressions;
-using System.Threading;
+using System.Threading.Tasks;
 using Yapoml.Framework.Logging;
 using Yapoml.Framework.Options;
 using Yapoml.Playwright.Components.Conditions;
@@ -46,6 +46,24 @@ public abstract class BaseComponentConditions<TSelf> : BaseConditions<TSelf>, IT
     /// <summary>Gets the space options configuration.</summary>
     protected ISpaceOptions SpaceOptions { get; }
 
+    private TSelf ExpectCondition(string scopeName, Func<Task> assertion, Func<TimeoutException, ExpectException> onTimeout)
+    {
+        return Enqueue(async () =>
+        {
+            try
+            {
+                using (var scope = Logger.BeginLogScope(scopeName))
+                {
+                    await scope.ExecuteAsync(assertion).ConfigureAwait(false);
+                }
+            }
+            catch (TimeoutException ex)
+            {
+                throw onTimeout(ex);
+            }
+        });
+    }
+
     /// <summary>
     /// Waits until the component is displayed.
     /// </summary>
@@ -55,21 +73,9 @@ public abstract class BaseComponentConditions<TSelf> : BaseConditions<TSelf>, IT
     {
         timeout ??= Timeout;
 
-        try
-        {
-            using var scope = Logger.BeginLogScope($"Expect {ElementHandler.ComponentMetadata.Name} is displayed");
-
-            scope.Execute(() =>
-            {
-                Assertions.Expect(ElementHandler.Locate()).ToBeVisibleAsync(new LocatorAssertionsToBeVisibleOptions { Timeout = (float)timeout.Value.TotalMilliseconds }).GetAwaiter().GetResult();
-            });
-        }
-        catch (TimeoutException ex)
-        {
-            throw new ExpectException($"{ElementHandler.ComponentMetadata.Name} is not displayed yet '{ElementHandler.By}'.", ex);
-        }
-
-        return _self;
+        return ExpectCondition($"Expect {ElementHandler.ComponentMetadata.Name} is displayed",
+            () => Assertions.Expect(ElementHandler.Locate()).ToBeVisibleAsync(new LocatorAssertionsToBeVisibleOptions { Timeout = (float)timeout.Value.TotalMilliseconds }),
+            ex => new ExpectException($"{ElementHandler.ComponentMetadata.Name} is not displayed yet '{ElementHandler.By}'.", ex));
     }
 
     /// <summary>
@@ -82,22 +88,9 @@ public abstract class BaseComponentConditions<TSelf> : BaseConditions<TSelf>, IT
     {
         timeout ??= Timeout;
 
-        try
-        {
-            using (var scope = Logger.BeginLogScope($"Expect {ElementHandler.ComponentMetadata.Name} is not displayed"))
-            {
-                scope.Execute(() =>
-                {
-                    Assertions.Expect(ElementHandler.Locate()).ToBeHiddenAsync(new LocatorAssertionsToBeHiddenOptions { Timeout = (float)timeout.Value.TotalMilliseconds }).GetAwaiter().GetResult();
-                });
-            }
-        }
-        catch (TimeoutException ex)
-        {
-            throw new ExpectException($"{ElementHandler.ComponentMetadata.Name} is still displayed '{ElementHandler.By}'.", ex);
-        }
-
-        return _self;
+        return ExpectCondition($"Expect {ElementHandler.ComponentMetadata.Name} is not displayed",
+            () => Assertions.Expect(ElementHandler.Locate()).ToBeHiddenAsync(new LocatorAssertionsToBeHiddenOptions { Timeout = (float)timeout.Value.TotalMilliseconds }),
+            ex => new ExpectException($"{ElementHandler.ComponentMetadata.Name} is still displayed '{ElementHandler.By}'.", ex));
     }
 
     /// <summary>
@@ -109,22 +102,9 @@ public abstract class BaseComponentConditions<TSelf> : BaseConditions<TSelf>, IT
     {
         timeout ??= Timeout;
 
-        try
-        {
-            using (var scope = Logger.BeginLogScope($"Expect {ElementHandler.ComponentMetadata.Name} exists"))
-            {
-                scope.Execute(() =>
-                {
-                    Assertions.Expect(ElementHandler.Locate()).ToBeAttachedAsync(new LocatorAssertionsToBeAttachedOptions { Timeout = (float)timeout.Value.TotalMilliseconds }).GetAwaiter().GetResult();
-                });
-            }
-        }
-        catch (TimeoutException ex)
-        {
-            throw new ExpectException($"{ElementHandler.ComponentMetadata.Name} does not exist yet '{ElementHandler.By}'.", ex);
-        }
-
-        return _self;
+        return ExpectCondition($"Expect {ElementHandler.ComponentMetadata.Name} exists",
+            () => Assertions.Expect(ElementHandler.Locate()).ToBeAttachedAsync(new LocatorAssertionsToBeAttachedOptions { Timeout = (float)timeout.Value.TotalMilliseconds }),
+            ex => new ExpectException($"{ElementHandler.ComponentMetadata.Name} does not exist yet '{ElementHandler.By}'.", ex));
     }
 
     /// <summary>
@@ -136,22 +116,9 @@ public abstract class BaseComponentConditions<TSelf> : BaseConditions<TSelf>, IT
     {
         timeout ??= Timeout;
 
-        try
-        {
-            using (var scope = Logger.BeginLogScope($"Expect {ElementHandler.ComponentMetadata.Name} does not exist"))
-            {
-                scope.Execute(() =>
-                {
-                    Assertions.Expect(ElementHandler.Locate()).ToBeAttachedAsync(new LocatorAssertionsToBeAttachedOptions { Attached = false, Timeout = (float)timeout.Value.TotalMilliseconds }).GetAwaiter().GetResult();
-                });
-            }
-        }
-        catch (TimeoutException ex)
-        {
-            throw new ExpectException($"{ElementHandler.ComponentMetadata.Name} still exists '{ElementHandler.By}'.", ex);
-        }
-
-        return _self;
+        return ExpectCondition($"Expect {ElementHandler.ComponentMetadata.Name} does not exist",
+            () => Assertions.Expect(ElementHandler.Locate()).ToBeAttachedAsync(new LocatorAssertionsToBeAttachedOptions { Attached = false, Timeout = (float)timeout.Value.TotalMilliseconds }),
+            ex => new ExpectException($"{ElementHandler.ComponentMetadata.Name} still exists '{ElementHandler.By}'.", ex));
     }
 
     /// <summary>
@@ -163,22 +130,9 @@ public abstract class BaseComponentConditions<TSelf> : BaseConditions<TSelf>, IT
     {
         timeout ??= Timeout;
 
-        try
-        {
-            using (var scope = Logger.BeginLogScope($"Expect {ElementHandler.ComponentMetadata.Name} is enabled"))
-            {
-                scope.Execute(() =>
-                {
-                    Assertions.Expect(ElementHandler.Locate()).ToBeEnabledAsync(new LocatorAssertionsToBeEnabledOptions { Timeout = (float)timeout.Value.TotalMilliseconds }).GetAwaiter().GetResult();
-                });
-            }
-        }
-        catch (TimeoutException ex)
-        {
-            throw new ExpectException($"{ElementHandler.ComponentMetadata.Name} is not enabled yet.", ex);
-        }
-
-        return _self;
+        return ExpectCondition($"Expect {ElementHandler.ComponentMetadata.Name} is enabled",
+            () => Assertions.Expect(ElementHandler.Locate()).ToBeEnabledAsync(new LocatorAssertionsToBeEnabledOptions { Timeout = (float)timeout.Value.TotalMilliseconds }),
+            ex => new ExpectException($"{ElementHandler.ComponentMetadata.Name} is not enabled yet.", ex));
     }
 
     /// <summary>
@@ -190,22 +144,9 @@ public abstract class BaseComponentConditions<TSelf> : BaseConditions<TSelf>, IT
     {
         timeout ??= Timeout;
 
-        try
-        {
-            using (var scope = Logger.BeginLogScope($"Expect {ElementHandler.ComponentMetadata.Name} is disabled"))
-            {
-                scope.Execute(() =>
-                {
-                    Assertions.Expect(ElementHandler.Locate()).ToBeDisabledAsync(new LocatorAssertionsToBeDisabledOptions { Timeout = (float)timeout.Value.TotalMilliseconds }).GetAwaiter().GetResult();
-                });
-            }
-        }
-        catch (TimeoutException ex)
-        {
-            throw new ExpectException($"{ElementHandler.ComponentMetadata.Name} is still enabled.", ex);
-        }
-
-        return _self;
+        return ExpectCondition($"Expect {ElementHandler.ComponentMetadata.Name} is disabled",
+            () => Assertions.Expect(ElementHandler.Locate()).ToBeDisabledAsync(new LocatorAssertionsToBeDisabledOptions { Timeout = (float)timeout.Value.TotalMilliseconds }),
+            ex => new ExpectException($"{ElementHandler.ComponentMetadata.Name} is still enabled.", ex));
     }
 
     /// <summary>
@@ -228,22 +169,9 @@ public abstract class BaseComponentConditions<TSelf> : BaseConditions<TSelf>, IT
     {
         timeout ??= Timeout;
 
-        try
-        {
-            using (var scope = Logger.BeginLogScope($"Expect {ElementHandler.ComponentMetadata.Name} is checked"))
-            {
-                scope.Execute(() =>
-                {
-                    Assertions.Expect(ElementHandler.Locate()).ToBeCheckedAsync(new LocatorAssertionsToBeCheckedOptions { Timeout = (float)timeout.Value.TotalMilliseconds }).GetAwaiter().GetResult();
-                });
-            }
-        }
-        catch (TimeoutException ex)
-        {
-            throw new ExpectException($"{ElementHandler.ComponentMetadata.Name} is still not checked.", ex);
-        }
-
-        return _self;
+        return ExpectCondition($"Expect {ElementHandler.ComponentMetadata.Name} is checked",
+            () => Assertions.Expect(ElementHandler.Locate()).ToBeCheckedAsync(new LocatorAssertionsToBeCheckedOptions { Timeout = (float)timeout.Value.TotalMilliseconds }),
+            ex => new ExpectException($"{ElementHandler.ComponentMetadata.Name} is still not checked.", ex));
     }
 
     /// <summary>
@@ -256,22 +184,9 @@ public abstract class BaseComponentConditions<TSelf> : BaseConditions<TSelf>, IT
     {
         timeout ??= Timeout;
 
-        try
-        {
-            using (var scope = Logger.BeginLogScope($"Expect {ElementHandler.ComponentMetadata.Name} is unchecked"))
-            {
-                scope.Execute(() =>
-                {
-                    Assertions.Expect(ElementHandler.Locate()).ToBeCheckedAsync(new LocatorAssertionsToBeCheckedOptions { Checked = false, Timeout = (float)timeout.Value.TotalMilliseconds }).GetAwaiter().GetResult();
-                });
-            }
-        }
-        catch (TimeoutException ex)
-        {
-            throw new ExpectException($"{ElementHandler.ComponentMetadata.Name} is still checked.", ex);
-        }
-
-        return _self;
+        return ExpectCondition($"Expect {ElementHandler.ComponentMetadata.Name} is unchecked",
+            () => Assertions.Expect(ElementHandler.Locate()).ToBeCheckedAsync(new LocatorAssertionsToBeCheckedOptions { Checked = false, Timeout = (float)timeout.Value.TotalMilliseconds }),
+            ex => new ExpectException($"{ElementHandler.ComponentMetadata.Name} is still checked.", ex));
     }
 
     /// <summary>
@@ -293,22 +208,9 @@ public abstract class BaseComponentConditions<TSelf> : BaseConditions<TSelf>, IT
     {
         timeout ??= Timeout;
 
-        try
-        {
-            using (var scope = Logger.BeginLogScope($"Expect {ElementHandler.ComponentMetadata.Name} is in view"))
-            {
-                scope.Execute(() =>
-                {
-                    Assertions.Expect(ElementHandler.Locate()).ToBeInViewportAsync(new LocatorAssertionsToBeInViewportOptions { Timeout = (float)timeout.Value.TotalMilliseconds }).GetAwaiter().GetResult();
-                });
-            }
-        }
-        catch (TimeoutException ex)
-        {
-            throw new ExpectException($"{ElementHandler.ComponentMetadata.Name} is not in view yet.", ex);
-        }
-
-        return _self;
+        return ExpectCondition($"Expect {ElementHandler.ComponentMetadata.Name} is in view",
+            () => Assertions.Expect(ElementHandler.Locate()).ToBeInViewportAsync(new LocatorAssertionsToBeInViewportOptions { Timeout = (float)timeout.Value.TotalMilliseconds }),
+            ex => new ExpectException($"{ElementHandler.ComponentMetadata.Name} is not in view yet.", ex));
     }
 
     /// <summary>
@@ -320,22 +222,9 @@ public abstract class BaseComponentConditions<TSelf> : BaseConditions<TSelf>, IT
     {
         timeout ??= Timeout;
 
-        try
-        {
-            using (var scope = Logger.BeginLogScope($"Expect {ElementHandler.ComponentMetadata.Name} is not in view"))
-            {
-                scope.Execute(() =>
-                {
-                    Assertions.Expect(ElementHandler.Locate()).Not.ToBeInViewportAsync(new LocatorAssertionsToBeInViewportOptions { Timeout = (float)timeout.Value.TotalMilliseconds }).GetAwaiter().GetResult();
-                });
-            }
-        }
-        catch (TimeoutException ex)
-        {
-            throw new ExpectException($"{ElementHandler.ComponentMetadata.Name} is still in view.", ex);
-        }
-
-        return _self;
+        return ExpectCondition($"Expect {ElementHandler.ComponentMetadata.Name} is not in view",
+            () => Assertions.Expect(ElementHandler.Locate()).Not.ToBeInViewportAsync(new LocatorAssertionsToBeInViewportOptions { Timeout = (float)timeout.Value.TotalMilliseconds }),
+            ex => new ExpectException($"{ElementHandler.ComponentMetadata.Name} is still in view.", ex));
     }
 
     /// <summary>
@@ -345,7 +234,7 @@ public abstract class BaseComponentConditions<TSelf> : BaseConditions<TSelf>, IT
     {
         get
         {
-            return new TextConditions<TSelf>(_self, ElementHandler, Timeout, PollingInterval, $"text of the {ElementHandler.ComponentMetadata.Name}", Logger);
+            return new TextConditions<TSelf>(_self, ElementHandler, Timeout, PollingInterval, $"text of the {ElementHandler.ComponentMetadata.Name}", Logger) { Chain = Chain };
         }
     }
 
@@ -356,7 +245,7 @@ public abstract class BaseComponentConditions<TSelf> : BaseConditions<TSelf>, IT
     {
         get
         {
-            return new AttributesCollectionConditions<TSelf>(_self, ElementHandler, Timeout, PollingInterval, Logger);
+            return new AttributesCollectionConditions<TSelf>(_self, ElementHandler, Timeout, PollingInterval, Logger) { Chain = Chain };
         }
     }
 
@@ -367,7 +256,7 @@ public abstract class BaseComponentConditions<TSelf> : BaseConditions<TSelf>, IT
     {
         get
         {
-            return new StylesCollectionConditions<TSelf>(_self, ElementHandler, Timeout, PollingInterval, Logger);
+            return new StylesCollectionConditions<TSelf>(_self, ElementHandler, Timeout, PollingInterval, Logger) { Chain = Chain };
         }
     }
 
@@ -378,7 +267,7 @@ public abstract class BaseComponentConditions<TSelf> : BaseConditions<TSelf>, IT
     {
         get
         {
-            return new ValueConditions<TSelf>(_self, ElementHandler, Timeout, PollingInterval, $"value of the {ElementHandler.ComponentMetadata.Name}", Logger);
+            return new ValueConditions<TSelf>(_self, ElementHandler, Timeout, PollingInterval, $"value of the {ElementHandler.ComponentMetadata.Name}", Logger) { Chain = Chain };
         }
     }
 
@@ -389,9 +278,7 @@ public abstract class BaseComponentConditions<TSelf> : BaseConditions<TSelf>, IT
     /// <returns></returns>
     public virtual TSelf Elapsed(TimeSpan duration)
     {
-        Thread.Sleep(duration);
-
-        return _self;
+        return Enqueue(() => Task.Delay(duration));
     }
 
     #region Textual Conditions

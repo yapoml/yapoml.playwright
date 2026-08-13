@@ -30,7 +30,7 @@ public class StylesCollectionConditions<TConditions> : Conditions<TConditions>
     {
         get
         {
-            return new StringStyleConditions<TConditions>(_conditions, _elementHandler, styleName, _timeout, _pollingInterval, $"{styleName} style of the {_elementHandler.ComponentMetadata.Name}", _logger);
+            return new StringStyleConditions<TConditions>(_conditions, _elementHandler, styleName, _timeout, _pollingInterval, $"{styleName} style of the {_elementHandler.ComponentMetadata.Name}", _logger) { Chain = Chain };
         }
     }
 
@@ -48,5 +48,5 @@ public class StylesCollectionConditions<TConditions> : Conditions<TConditions>
     /// Gets numeric conditions for the <c>opacity</c> CSS property.
     /// </summary>
     public NumericStyleConditions<TConditions, double> Opacity =>
-        new NumericStyleConditions<TConditions, double>(_conditions, _elementHandler, "opacity", _timeout, _pollingInterval, $"opacity of the {_elementHandler.ComponentMetadata.Name}", _logger);
+        new NumericStyleConditions<TConditions, double>(_conditions, _elementHandler, "opacity", _timeout, _pollingInterval, $"opacity of the {_elementHandler.ComponentMetadata.Name}", _logger) { Chain = Chain };
 }

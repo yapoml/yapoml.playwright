@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Yapoml.Framework.Logging;
 using Yapoml.Playwright.Components.Conditions.Generic;
 using Yapoml.Playwright.Services.Locator;
@@ -21,11 +22,11 @@ public class CountCollectionConditions<TListConditions> : NumericConditions<TLis
     }
 
     /// <inheritdoc />
-    protected override Func<int?> FetchValueFunc => () =>
+    protected override Func<Task<int?>> FetchValueFunc => async () =>
     {
         _elementsListHandler.Invalidate();
 
-        return _elementsListHandler.LocateMany().Count;
+        return (await _elementsListHandler.LocateManyAsync().ConfigureAwait(false)).Count;
     };
 
     /// <inheritdoc />

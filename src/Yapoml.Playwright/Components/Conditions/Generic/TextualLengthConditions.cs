@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Yapoml.Framework.Logging;
 
 namespace Yapoml.Playwright.Components.Conditions.Generic;
@@ -9,23 +10,23 @@ namespace Yapoml.Playwright.Components.Conditions.Generic;
 /// <typeparam name="TConditions">The conditions type for fluent chaining.</typeparam>
 public class TextualLengthConditons<TConditions> : NumericConditions<TConditions, int>
 {
-    private readonly Func<string> _getTextualValueFunc;
+    private readonly Func<Task<string>> _getTextualValueFunc;
 
     private string _lastTextualValue;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="TextualLengthConditons{TConditions}"/> class.
     /// </summary>
-    public TextualLengthConditons(TConditions conditions, TimeSpan timeout, TimeSpan pollingInterval, Func<string> getTextualValueFunc, string subject, ILogger logger)
+    public TextualLengthConditons(TConditions conditions, TimeSpan timeout, TimeSpan pollingInterval, Func<Task<string>> getTextualValueFunc, string subject, ILogger logger)
     : base(conditions, timeout, pollingInterval, subject, logger)
     {
         _getTextualValueFunc = getTextualValueFunc;
     }
 
     /// <inheritdoc />
-    protected override Func<int?> FetchValueFunc => () =>
+    protected override Func<Task<int?>> FetchValueFunc => async () =>
     {
-        _lastTextualValue = _getTextualValueFunc();
+        _lastTextualValue = await _getTextualValueFunc().ConfigureAwait(false);
 
         return _lastTextualValue.Length;
     };

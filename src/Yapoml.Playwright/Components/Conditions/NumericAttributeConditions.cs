@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Yapoml.Framework.Logging;
 using Yapoml.Playwright.Components.Conditions.Generic;
 using Yapoml.Playwright.Services.Locator;
@@ -25,9 +26,9 @@ public class NumericAttributeConditions<TConditions, TNumber> : NumericCondition
     }
 
     /// <inheritdoc />
-    protected override Func<TNumber?> FetchValueFunc => () =>
+    protected override Func<Task<TNumber?>> FetchValueFunc => async () =>
     {
-        var value = RelocateOnStaleReference(async () => await _elementHandler.Locate().GetAttributeAsync(_attributeName));
+        var value = await _elementHandler.Locate().GetAttributeAsync(_attributeName).ConfigureAwait(false);
 
         if (value is null)
         {

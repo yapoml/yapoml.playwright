@@ -59,37 +59,30 @@ public class ElementsListHandler : IElementsListHandler
     IReadOnlyList<ILocator> _elements;
 
     /// <inheritdoc />
-    public virtual IReadOnlyList<ILocator> LocateMany()
+    public virtual ILocator Locate()
+    {
+        if (From == ElementLocatorContext.Parent && _parentElementHandler != null)
+        {
+            return _parentElementHandler.Locate().Locator(By);
+        }
+        else if (From == ElementLocatorContext.Parent || From == ElementLocatorContext.Root)
+        {
+            return _driver.Locator(By);
+        }
+        else
+        {
+            throw new NotImplementedException($"Element locator context {From} is not supported yet.");
+        }
+    }
+
+    /// <inheritdoc />
+    public virtual async Task<IReadOnlyList<ILocator>> LocateManyAsync()
     {
         if (_elements == null)
         {
-            if (From == ElementLocatorContext.Parent)
-            {
-                if (_parentElementHandler != null)
-                {
-                    var parentElement = _parentElementHandler.Locate();
+            _eventSource.ComponentEventSource.RaiseOnFindingComponents(By, ComponentsListMetadata);
 
-                    _eventSource.ComponentEventSource.RaiseOnFindingComponents(By, ComponentsListMetadata);
-
-                    _elements = FindAllFrom(parentElement.Locator(By));
-                }
-                else
-                {
-                    _eventSource.ComponentEventSource.RaiseOnFindingComponents(By, ComponentsListMetadata);
-
-                    _elements = FindAllFrom(_driver.Locator(By));
-                }
-            }
-            else if (From == ElementLocatorContext.Root)
-            {
-                _eventSource.ComponentEventSource.RaiseOnFindingComponents(By, ComponentsListMetadata);
-
-                _elements = FindAllFrom(_driver.Locator(By));
-            }
-            else
-            {
-                throw new NotImplementedException($"Element locator context {From} is not supported yet.");
-            }
+            _elements = await FindAllFromAsync(Locate()).ConfigureAwait(false);
 
             _eventSource.ComponentEventSource.RaiseOnFoundComponents(By, _driver, _elements, ComponentsListMetadata);
         }
@@ -102,8 +95,8 @@ public class ElementsListHandler : IElementsListHandler
     /// </summary>
     /// <param name="locator">The base locator to enumerate.</param>
     /// <returns>A read-only list of all matching locators.</returns>
-    protected virtual IReadOnlyList<ILocator> FindAllFrom(ILocator locator)
+    protected virtual Task<IReadOnlyList<ILocator>> FindAllFromAsync(ILocator locator)
     {
-        return Task.Run(() => locator.AllAsync()).GetAwaiter().GetResult();
+        return locator.AllAsync();
     }
 }

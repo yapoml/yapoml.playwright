@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Yapoml.Framework;
 using Yapoml.Framework.Logging;
 
@@ -24,240 +25,83 @@ public abstract class NumericConditions<TConditions, TNumber> : Conditions<TCond
     /// <summary>
     /// Gets the function that fetches the current numeric value to be tested.
     /// </summary>
-    protected abstract Func<TNumber?> FetchValueFunc { get; }
+    protected abstract Func<Task<TNumber?>> FetchValueFunc { get; }
+
+    private TConditions ExpectValue(string scopeName, TimeSpan? timeout, Func<TNumber?, bool> isSatisfied, Func<TNumber?, Exception, ExpectException> onTimeout)
+    {
+        timeout ??= _timeout;
+
+        return Enqueue(async () =>
+        {
+            TNumber? latestValue = null;
+
+            async Task<bool> condition()
+            {
+                latestValue = await FetchValueFunc().ConfigureAwait(false);
+
+                return isSatisfied(latestValue);
+            }
+
+            try
+            {
+                using (var scope = _logger.BeginLogScope(scopeName))
+                {
+                    await scope.ExecuteAsync(() => Waiter.UntilAsync(condition, timeout.Value, _pollingInterval)).ConfigureAwait(false);
+                }
+            }
+            catch (TimeoutException ex)
+            {
+                throw onTimeout(latestValue, ex);
+            }
+        });
+    }
 
     /// <inheritdoc />
     public TConditions Is(TNumber value, TimeSpan? timeout = default)
     {
-        timeout ??= _timeout;
-
-        TNumber? latestValue = null;
-
-        bool condition()
-        {
-            latestValue = FetchValueFunc();
-
-            if (latestValue != null)
-            {
-                return latestValue.Equals(value);
-            }
-            else
-            {
-                return false;
-            }
-        }
-
-        try
-        {
-            using (var scope = _logger.BeginLogScope($"Expect {_subject} is {value}"))
-            {
-                scope.Execute(() =>
-                {
-                    Waiter.Until(condition, timeout.Value, _pollingInterval);
-                });
-            }
-        }
-        catch (TimeoutException ex)
-        {
-            throw new ExpectException(GetIsError(latestValue, value), ex);
-        }
-
-        return _conditions;
+        return ExpectValue($"Expect {_subject} is {value}", timeout,
+            latest => latest != null && latest.Equals(value),
+            (latest, ex) => new ExpectException(GetIsError(latest, value), ex));
     }
 
     /// <inheritdoc />
     public TConditions IsNot(TNumber value, TimeSpan? timeout = default)
     {
-        timeout ??= _timeout;
-
-        TNumber? latestValue = null;
-
-        bool condition()
-        {
-            latestValue = FetchValueFunc();
-
-            if (latestValue != null)
-            {
-                return !latestValue.Equals(value);
-            }
-            else
-            {
-                return true;
-            }
-        }
-
-        try
-        {
-            using (var scope = _logger.BeginLogScope($"Expect {_subject} is not {value}"))
-            {
-                scope.Execute(() =>
-                {
-                    Waiter.Until(condition, timeout.Value, _pollingInterval);
-                });
-            }
-        }
-        catch (TimeoutException ex)
-        {
-            throw new ExpectException(GetIsNotError(latestValue, value), ex);
-        }
-
-        return _conditions;
+        return ExpectValue($"Expect {_subject} is not {value}", timeout,
+            latest => latest == null || !latest.Equals(value),
+            (latest, ex) => new ExpectException(GetIsNotError(latest, value), ex));
     }
 
     /// <inheritdoc />
     public TConditions IsGreaterThan(TNumber value, TimeSpan? timeout = default)
     {
-        timeout ??= _timeout;
-
-        TNumber? latestValue = null;
-
-        bool condition()
-        {
-            latestValue = FetchValueFunc();
-
-            if (latestValue != null)
-            {
-                return ((IComparable<TNumber>)latestValue).CompareTo(value) > 0;
-            }
-            else
-            {
-                return false;
-            }
-        }
-
-        try
-        {
-            using (var scope = _logger.BeginLogScope($"Expect {_subject} is greater than {value}"))
-            {
-                scope.Execute(() =>
-                {
-                    Waiter.Until(condition, timeout.Value, _pollingInterval);
-                });
-            }
-        }
-        catch (TimeoutException ex)
-        {
-            throw new ExpectException(GetIsGreaterThanError(latestValue, value), ex);
-        }
-
-        return _conditions;
+        return ExpectValue($"Expect {_subject} is greater than {value}", timeout,
+            latest => latest != null && ((IComparable<TNumber>)latest).CompareTo(value) > 0,
+            (latest, ex) => new ExpectException(GetIsGreaterThanError(latest, value), ex));
     }
 
     /// <inheritdoc />
     public TConditions AtLeast(TNumber value, TimeSpan? timeout = default)
     {
-        timeout ??= _timeout;
-
-        TNumber? latestValue = null;
-
-        bool condition()
-        {
-            latestValue = FetchValueFunc();
-
-            if (latestValue != null)
-            {
-                return ((IComparable<TNumber>)latestValue).CompareTo(value) >= 0;
-            }
-            else
-            {
-                return false;
-            }
-        }
-
-        try
-        {
-            using (var scope = _logger.BeginLogScope($"Expect {_subject} is equal to or greater than {value}"))
-            {
-                scope.Execute(() =>
-                {
-                    Waiter.Until(condition, timeout.Value, _pollingInterval);
-                });
-            }
-        }
-        catch (TimeoutException ex)
-        {
-            throw new ExpectException(AtLeast(latestValue, value), ex);
-        }
-
-        return _conditions;
+        return ExpectValue($"Expect {_subject} is equal to or greater than {value}", timeout,
+            latest => latest != null && ((IComparable<TNumber>)latest).CompareTo(value) >= 0,
+            (latest, ex) => new ExpectException(AtLeast(latest, value), ex));
     }
 
     /// <inheritdoc />
     public TConditions IsLessThan(TNumber value, TimeSpan? timeout = default)
     {
-        timeout ??= _timeout;
-
-        TNumber? latestValue = null;
-
-        bool condition()
-        {
-            latestValue = FetchValueFunc();
-
-            if (latestValue != null)
-            {
-                return ((IComparable<TNumber>)latestValue).CompareTo(value) < 0;
-            }
-            else
-            {
-                return false;
-            }
-        }
-
-        try
-        {
-            using (var scope = _logger.BeginLogScope($"Expect {_subject} is less than {value}"))
-            {
-                scope.Execute(() =>
-                {
-                    Waiter.Until(condition, timeout.Value, _pollingInterval);
-                });
-            }
-        }
-        catch (TimeoutException ex)
-        {
-            throw new ExpectException(GetIsLessThanError(latestValue, value), ex);
-        }
-
-        return _conditions;
+        return ExpectValue($"Expect {_subject} is less than {value}", timeout,
+            latest => latest != null && ((IComparable<TNumber>)latest).CompareTo(value) < 0,
+            (latest, ex) => new ExpectException(GetIsLessThanError(latest, value), ex));
     }
 
     /// <inheritdoc />
     public TConditions AtMost(TNumber value, TimeSpan? timeout = default)
     {
-        timeout ??= _timeout;
-
-        TNumber? latestValue = null;
-
-        bool condition()
-        {
-            latestValue = FetchValueFunc();
-
-            if (latestValue != null)
-            {
-                return ((IComparable<TNumber>)latestValue).CompareTo(value) <= 0;
-            }
-            else
-            {
-                return false;
-            }
-        }
-
-        try
-        {
-            using (var scope = _logger.BeginLogScope($"Expect {_subject} is less than {value}"))
-            {
-                scope.Execute(() =>
-                {
-                    Waiter.Until(condition, timeout.Value, _pollingInterval);
-                });
-            }
-        }
-        catch (TimeoutException ex)
-        {
-            throw new ExpectException(GetAtMostError(latestValue, value), ex);
-        }
-
-        return _conditions;
+        return ExpectValue($"Expect {_subject} is less than {value}", timeout,
+            latest => latest != null && ((IComparable<TNumber>)latest).CompareTo(value) <= 0,
+            (latest, ex) => new ExpectException(GetAtMostError(latest, value), ex));
     }
 
     /// <summary>Gets the error message when the "is" condition fails.</summary>

@@ -2,7 +2,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using System.Threading.Tasks;
 
 #if NET6_0_OR_GREATER
 using System.Runtime.CompilerServices;
@@ -31,8 +33,19 @@ public class BaseComponentList<TComponent, TListConditions, TComponentConditions
     where TListConditions : BaseComponentListConditions<TListConditions, TComponentConditions>
     where TComponentConditions : BaseComponentConditions<TComponentConditions>
 {
-    /// <summary>The list-level conditions instance.</summary>
-    protected TListConditions listConditions;
+    /// <summary>The list-level conditions instance. Assigning it shares the list's chain with the conditions.</summary>
+    protected TListConditions listConditions
+    {
+        get => _listConditions;
+        set
+        {
+            _listConditions = value;
+
+            if (value != null) value.Chain = Chain;
+        }
+    }
+
+    private TListConditions _listConditions;
 
     private IList<TComponent> _list;
 
@@ -61,7 +74,47 @@ public class BaseComponentList<TComponent, TListConditions, TComponentConditions
         _eventSource = eventSource;
         _spaceOptions = spaceOptions;
 
+        Chain = Chain.Resolve(spaceOptions);
+
         _logger = _spaceOptions.Services.Get<ILogger>();
+    }
+
+    /// <summary>Gets the chain of pending asynchronous steps shared with the page and parent component.</summary>
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    public Chain Chain { get; }
+
+    /// <summary>
+    /// Executes the pending steps and returns the awaited list back, so generated lists can expose <c>GetAwaiter</c>.
+    /// </summary>
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    protected async Task<TList> AwaitChainAsync<TList>(TList self)
+    {
+        await Chain.RunAsync().ConfigureAwait(false);
+
+        return self;
+    }
+
+    /// <summary>
+    /// Executes the pending steps and reads a value. Blocks the caller until list reads become awaitable.
+    /// </summary>
+    private T Read<T>(Func<Task<T>> read)
+    {
+        return Task.Run(async () =>
+        {
+            await Chain.RunAsync().ConfigureAwait(false);
+
+            return await read().ConfigureAwait(false);
+        }).GetAwaiter().GetResult();
+    }
+
+    private async Task<IList<TComponent>> LocateAllAsync()
+    {
+        var factory = _spaceOptions.Services.Get<IComponentFactory>();
+        var locator = _spaceOptions.Services.Get<IElementLocator>();
+
+        var elements = await _elementsListHandler.LocateManyAsync().ConfigureAwait(false);
+
+        return new List<TComponent>(elements.Select(e => factory.Create<TComponent, TListConditions, TComponentConditions>(_page, _parentComponent, _driver, new ElementHandler(_driver, null, locator, _elementsListHandler.By, _elementsListHandler.From, e, _componentsListMetadata.ComponentMetadata, _elementsListHandler.ElementHandlerRepository.CreateNestedRepository(), _eventSource), _componentsListMetadata.ComponentMetadata, _spaceOptions)));
     }
 
     /// <summary>
@@ -74,40 +127,38 @@ public class BaseComponentList<TComponent, TListConditions, TComponentConditions
     {
         get
         {
-            var factory = _spaceOptions.Services.Get<IComponentFactory>();
-            var locator = _spaceOptions.Services.Get<IElementLocator>();
-
-            bool condition()
+            return Read(async () =>
             {
-                var elements = _elementsListHandler.LocateMany();
-
-                _list = new List<TComponent>(elements.Select(e => factory.Create<TComponent, TListConditions, TComponentConditions>(_page, _parentComponent, _driver, new ElementHandler(_driver, null, locator, _elementsListHandler.By, _elementsListHandler.From, e, _componentsListMetadata.ComponentMetadata, _elementsListHandler.ElementHandlerRepository.CreateNestedRepository(), _eventSource), _componentsListMetadata.ComponentMetadata, _spaceOptions)));
-
-                if (elements.Count > index)
+                async Task<bool> condition()
                 {
-                    return true;
+                    _list = await LocateAllAsync().ConfigureAwait(false);
+
+                    if (_list.Count > index)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        _elementsListHandler.Invalidate();
+
+                        return false;
+                    }
                 }
-                else
+
+                var timeout = _spaceOptions.Services.Get<TimeoutOptions>().Timeout;
+                var pollingInterval = _spaceOptions.Services.Get<TimeoutOptions>().PollingInterval;
+
+                try
                 {
-                    _elementsListHandler.Invalidate();
-
-                    return false;
+                    await Waiter.UntilAsync(condition, timeout, pollingInterval).ConfigureAwait(false);
                 }
-            }
+                catch (TimeoutException exp)
+                {
+                    throw new ExpectException($"Couldn't get a {_componentsListMetadata.ComponentMetadata.Name} by index {index} from {_list.Count} {_componentsListMetadata.Name}.", exp);
+                }
 
-            var timeout = _spaceOptions.Services.Get<TimeoutOptions>().Timeout;
-            var pollingInterval = _spaceOptions.Services.Get<TimeoutOptions>().PollingInterval;
-
-            try
-            {
-                Waiter.Until(condition, timeout, pollingInterval);
-            }
-            catch (TimeoutException exp)
-            {
-                throw new ExpectException($"Couldn't get a {_componentsListMetadata.ComponentMetadata.Name} by index {index} from {_list.Count} {_componentsListMetadata.Name}.", exp);
-            }
-
-            return _list[index];
+                return _list[index];
+            });
         }
     }
 
@@ -121,44 +172,42 @@ public class BaseComponentList<TComponent, TListConditions, TComponentConditions
     {
         get
         {
-            var factory = _spaceOptions.Services.Get<IComponentFactory>();
-            var locator = _spaceOptions.Services.Get<IElementLocator>();
-
-            TComponent component = null;
-
-            bool condition()
+            return Read(async () =>
             {
-                var elements = _elementsListHandler.LocateMany();
+                TComponent component = null;
 
-                _list = new List<TComponent>(elements.Select(e => factory.Create<TComponent, TListConditions, TComponentConditions>(_page, _parentComponent, _driver, new ElementHandler(_driver, null, locator, _elementsListHandler.By, _elementsListHandler.From, e, _componentsListMetadata.ComponentMetadata, _elementsListHandler.ElementHandlerRepository.CreateNestedRepository(), _eventSource), _componentsListMetadata.ComponentMetadata, _spaceOptions)));
-
-                component = _list.FirstOrDefault(c => c.Text == text);
-
-                if (component is null)
+                async Task<bool> condition()
                 {
-                    _elementsListHandler.Invalidate();
+                    _list = await LocateAllAsync().ConfigureAwait(false);
 
-                    return false;
+                    component = _list.FirstOrDefault(c => c.Text == text);
+
+                    if (component is null)
+                    {
+                        _elementsListHandler.Invalidate();
+
+                        return false;
+                    }
+                    else
+                    {
+                        return true;
+                    }
                 }
-                else
+
+                var timeout = _spaceOptions.Services.Get<TimeoutOptions>().Timeout;
+                var pollingInterval = _spaceOptions.Services.Get<TimeoutOptions>().PollingInterval;
+
+                try
                 {
-                    return true;
+                    await Waiter.UntilAsync(condition, timeout, pollingInterval).ConfigureAwait(false);
                 }
-            }
+                catch (TimeoutException exp)
+                {
+                    throw new ExpectException($"{_componentsListMetadata.Name} contain no matching {_componentsListMetadata.ComponentMetadata.Name} with '{text}' text.", exp);
+                }
 
-            var timeout = _spaceOptions.Services.Get<TimeoutOptions>().Timeout;
-            var pollingInterval = _spaceOptions.Services.Get<TimeoutOptions>().PollingInterval;
-
-            try
-            {
-                Waiter.Until(condition, timeout, pollingInterval);
-            }
-            catch (TimeoutException exp)
-            {
-                throw new ExpectException($"{_componentsListMetadata.Name} contain no matching {_componentsListMetadata.ComponentMetadata.Name} with '{text}' text.", exp);
-            }
-
-            return component;
+                return component;
+            });
         }
     }
 
@@ -176,48 +225,46 @@ public class BaseComponentList<TComponent, TListConditions, TComponentConditions
     {
         get
         {
-            var factory = _spaceOptions.Services.Get<IComponentFactory>();
-            var locator = _spaceOptions.Services.Get<IElementLocator>();
-
-            TComponent component = null;
-
-            bool condition()
+            return Read(async () =>
             {
-                var elements = _elementsListHandler.LocateMany();
+                TComponent component = null;
 
-                _list = new List<TComponent>(elements.Select(e => factory.Create<TComponent, TListConditions, TComponentConditions>(_page, _parentComponent, _driver, new ElementHandler(_driver, null, locator, _elementsListHandler.By, _elementsListHandler.From, e, _componentsListMetadata.ComponentMetadata, _elementsListHandler.ElementHandlerRepository.CreateNestedRepository(), _eventSource), _componentsListMetadata.ComponentMetadata, _spaceOptions)));
-
-                component = _list.FirstOrDefault(predicate);
-
-                if (component is null)
+                async Task<bool> condition()
                 {
-                    _elementsListHandler.Invalidate();
+                    _list = await LocateAllAsync().ConfigureAwait(false);
 
-                    return false;
+                    component = _list.FirstOrDefault(predicate);
+
+                    if (component is null)
+                    {
+                        _elementsListHandler.Invalidate();
+
+                        return false;
+                    }
+                    else
+                    {
+                        return true;
+                    }
                 }
-                else
+
+                var timeout = _spaceOptions.Services.Get<TimeoutOptions>().Timeout;
+                var pollingInterval = _spaceOptions.Services.Get<TimeoutOptions>().PollingInterval;
+
+                try
                 {
-                    return true;
+                    await Waiter.UntilAsync(condition, timeout, pollingInterval).ConfigureAwait(false);
                 }
-            }
-
-            var timeout = _spaceOptions.Services.Get<TimeoutOptions>().Timeout;
-            var pollingInterval = _spaceOptions.Services.Get<TimeoutOptions>().PollingInterval;
-
-            try
-            {
-                Waiter.Until(condition, timeout, pollingInterval);
-            }
-            catch (TimeoutException exp)
-            {
+                catch (TimeoutException)
+                {
 #if NET6_0_OR_GREATER
                     throw new ExpectException($"{_componentsListMetadata.Name} contain no matching {_componentsListMetadata.ComponentMetadata.Name} satisfying condition '{predicateExpression}'.");
 #else
-                throw new ExpectException($"{_componentsListMetadata.Name} contain no matching {_componentsListMetadata.ComponentMetadata.Name} satisfying condition.");
+                    throw new ExpectException($"{_componentsListMetadata.Name} contain no matching {_componentsListMetadata.ComponentMetadata.Name} satisfying condition.");
 #endif
-            }
+                }
 
-            return component;
+                return component;
+            });
         }
     }
 
@@ -292,12 +339,7 @@ public class BaseComponentList<TComponent, TListConditions, TComponentConditions
     {
         if (_list == null)
         {
-            var factory = _spaceOptions.Services.Get<IComponentFactory>();
-            var locator = _spaceOptions.Services.Get<IElementLocator>();
-
-            var elements = _elementsListHandler.LocateMany();
-
-            _list = new List<TComponent>(elements.Select(e => factory.Create<TComponent, TListConditions, TComponentConditions>(_page, _parentComponent, _driver, new ElementHandler(_driver, null, locator, _elementsListHandler.By, _elementsListHandler.From, e, _componentsListMetadata.ComponentMetadata, _elementsListHandler.ElementHandlerRepository.CreateNestedRepository(), _eventSource), _componentsListMetadata.ComponentMetadata, _spaceOptions)));
+            _list = Read(() => LocateAllAsync());
         }
     }
 }

@@ -48,9 +48,9 @@ public class NuGetSearchTest
     }
 
     [Test]
-    public void SearchWithYapoml()
+    public async Task SearchWithYapoml()
     {
-        _page.Ya(opts => opts.WithBaseUrl("https://nuget.org"))
+        await _page.Ya(opts => opts.WithBaseUrl("https://nuget.org"))
             .HomePage.Open().Search("Yapoml")
             .Packages.Expect(its => its.Count.AtLeast(1).Each(package =>
                 {
@@ -62,9 +62,9 @@ public class NuGetSearchTest
     }
 
     [Test]
-    public void IntroShowcase()
+    public async Task IntroShowcase()
     {
-        _page.Ya().PackagesPage.Open(q: "yapoml")
+        await _page.Ya().PackagesPage.Open(q: "yapoml")
             .Packages.Expect(it => it.IsNotEmpty().Each(package =>
                 {
                     package.Description.IsNotEmpty();

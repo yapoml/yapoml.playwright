@@ -154,7 +154,15 @@ public partial class {{$1.singular_name}}ComponentList : global::Yapoml.Playwrig
 		var timeoutOptions = spaceOptions.Services.Get<global::Yapoml.Playwright.Options.TimeoutOptions>();
 		var elementLocator = spaceOptions.Services.Get<global::Yapoml.Playwright.Services.Locator.IElementLocator>();
 		base.listConditions = new Conditions(timeoutOptions.Timeout, timeoutOptions.PollingInterval, driver, elementsListHandler, elementLocator, eventSource, _logger, spaceOptions);
-		oneTimeConditions = new OneTimeConditions(this, timeoutOptions.Timeout, timeoutOptions.PollingInterval, driver, elementsListHandler, elementLocator, eventSource, _logger, spaceOptions);
+		oneTimeConditions = new OneTimeConditions(this, timeoutOptions.Timeout, timeoutOptions.PollingInterval, driver, elementsListHandler, elementLocator, eventSource, _logger, spaceOptions) { Chain = Chain };
+	}
+
+	/// <summary>
+	/// Executes pending steps of the chain.
+	/// </summary>
+	public global::System.Runtime.CompilerServices.TaskAwaiter<{{$1.singular_name}}ComponentList> GetAwaiter()
+	{
+		return AwaitChainAsync(this).GetAwaiter();
 	}
 
 	/// <summary>
@@ -170,13 +178,7 @@ public partial class {{$1.singular_name}}ComponentList : global::Yapoml.Playwrig
 	/// </summary>
 	public {{$1.singular_name}}ComponentList Expect(global::System.Action<Conditions> it)
 	{
-		using (var scope = _logger.BeginLogScope($"Expect {_elementsListHandler.ComponentsListMetadata.Name} satisfy conditions"))
-		{
-			scope.Execute(() =>
-			{
-				it(listConditions);
-			});
-		}
+		it(listConditions);
 
 		return this;
 	}

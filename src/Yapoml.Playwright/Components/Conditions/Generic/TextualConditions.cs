@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using Yapoml.Framework;
 using Yapoml.Framework.Logging;
 
@@ -25,12 +26,41 @@ public abstract class TextualConditions<TSelf> : Conditions<TSelf>, ITextualCond
     /// <summary>
     /// Gets the function that fetches the current textual value to be tested.
     /// </summary>
-    protected abstract Func<string> FetchValueFunc { get; }
+    protected abstract Func<Task<string>> FetchValueFunc { get; }
 
     /// <summary>
     /// Gets numeric conditions for the text length.
     /// </summary>
     public abstract NumericConditions<TSelf, int> Length { get; }
+
+    private TSelf ExpectValue(string scopeName, TimeSpan? timeout, Func<string, bool> isSatisfied, Func<string, Exception, ExpectException> onTimeout)
+    {
+        timeout ??= _timeout;
+
+        return Enqueue(async () =>
+        {
+            string latestValue = null;
+
+            async Task<bool> condition()
+            {
+                latestValue = await FetchValueFunc().ConfigureAwait(false);
+
+                return isSatisfied(latestValue);
+            }
+
+            try
+            {
+                using (var scope = _logger.BeginLogScope(scopeName))
+                {
+                    await scope.ExecuteAsync(() => Waiter.UntilAsync(condition, timeout.Value, _pollingInterval)).ConfigureAwait(false);
+                }
+            }
+            catch (TimeoutException ex)
+            {
+                throw onTimeout(latestValue, ex);
+            }
+        });
+    }
 
     /// <inheritdoc />
     public TSelf Is(string value, TimeSpan? timeout = default)
@@ -41,33 +71,9 @@ public abstract class TextualConditions<TSelf> : Conditions<TSelf>, ITextualCond
     /// <inheritdoc />
     public TSelf Is(string value, StringComparison comparisonType, TimeSpan? timeout = default)
     {
-        timeout ??= _timeout;
-
-        string latestValue = null;
-
-        bool condition()
-        {
-            latestValue = FetchValueFunc();
-
-            return latestValue.Equals(value, comparisonType);
-        }
-
-        try
-        {
-            using (var scope = _logger.BeginLogScope($"Expect {_subject} is {value}"))
-            {
-                scope.Execute(() =>
-                {
-                    Waiter.Until(condition, timeout.Value, _pollingInterval);
-                });
-            }
-        }
-        catch (TimeoutException ex)
-        {
-            throw new ExpectException(GetIsError(latestValue, value), ex);
-        }
-
-        return _conditions;
+        return ExpectValue($"Expect {_subject} is {value}", timeout,
+            latest => latest.Equals(value, comparisonType),
+            (latest, ex) => new ExpectException(GetIsError(latest, value), ex));
     }
 
     /// <inheritdoc />
@@ -79,97 +85,25 @@ public abstract class TextualConditions<TSelf> : Conditions<TSelf>, ITextualCond
     /// <inheritdoc />
     public TSelf IsNot(string value, StringComparison comparisonType, TimeSpan? timeout = default)
     {
-        timeout ??= _timeout;
-
-        string latestValue = null;
-
-        bool condition()
-        {
-            latestValue = FetchValueFunc();
-
-            return latestValue.Equals(value, comparisonType) == false;
-        }
-
-        try
-        {
-            using (var scope = _logger.BeginLogScope($"Expect {_subject} is not {value}"))
-            {
-                scope.Execute(() =>
-                {
-                    Waiter.Until(condition, timeout.Value, _pollingInterval);
-                });
-            }
-        }
-        catch (TimeoutException ex)
-        {
-            throw new ExpectException(GetIsNotError(latestValue, value), ex);
-        }
-
-        return _conditions;
+        return ExpectValue($"Expect {_subject} is not {value}", timeout,
+            latest => latest.Equals(value, comparisonType) == false,
+            (latest, ex) => new ExpectException(GetIsNotError(latest, value), ex));
     }
 
     /// <inheritdoc />
     public TSelf IsEmpty(TimeSpan? timeout = default)
     {
-        timeout ??= _timeout;
-
-        string latestValue = null;
-
-        bool condition()
-        {
-            latestValue = FetchValueFunc();
-
-            return latestValue.Equals(string.Empty);
-        }
-
-        try
-        {
-            using (var scope = _logger.BeginLogScope($"Expect {_subject} is empty"))
-            {
-                scope.Execute(() =>
-                {
-                    Waiter.Until(condition, timeout.Value, _pollingInterval);
-                });
-            }
-        }
-        catch (TimeoutException ex)
-        {
-            throw new ExpectException(GetIsEmptyError(latestValue), ex);
-        }
-
-        return _conditions;
+        return ExpectValue($"Expect {_subject} is empty", timeout,
+            latest => latest.Equals(string.Empty),
+            (latest, ex) => new ExpectException(GetIsEmptyError(latest), ex));
     }
 
     /// <inheritdoc />
     public TSelf IsNotEmpty(TimeSpan? timeout = default)
     {
-        timeout ??= _timeout;
-
-        string latestValue = null;
-
-        bool condition()
-        {
-            latestValue = FetchValueFunc();
-
-            return !string.IsNullOrEmpty(latestValue);
-        }
-
-        try
-        {
-            using (var scope = _logger.BeginLogScope($"Expect {_subject} is not empty"))
-            {
-                scope.Execute(() =>
-                {
-                    Waiter.Until(condition, timeout.Value, _pollingInterval);
-                });
-            }
-        }
-        catch (TimeoutException ex)
-        {
-            throw new ExpectException(GetIsNotEmptyError(latestValue), ex);
-        }
-
-        return _conditions;
+        return ExpectValue($"Expect {_subject} is not empty", timeout,
+            latest => !string.IsNullOrEmpty(latest),
+            (latest, ex) => new ExpectException(GetIsNotEmptyError(latest), ex));
     }
 
     /// <inheritdoc />
@@ -181,33 +115,9 @@ public abstract class TextualConditions<TSelf> : Conditions<TSelf>, ITextualCond
     /// <inheritdoc />
     public TSelf StartsWith(string value, StringComparison comparisonType, TimeSpan? timeout = default)
     {
-        timeout ??= _timeout;
-
-        string latestValue = null;
-
-        bool condition()
-        {
-            latestValue = FetchValueFunc();
-
-            return latestValue.StartsWith(value, comparisonType);
-        }
-
-        try
-        {
-            using (var scope = _logger.BeginLogScope($"Expect {_subject} starts with {value}"))
-            {
-                scope.Execute(() =>
-                {
-                    Waiter.Until(condition, timeout.Value, _pollingInterval);
-                });
-            }
-        }
-        catch (TimeoutException ex)
-        {
-            throw new ExpectException(GetStartsWithError(latestValue, value), ex);
-        }
-
-        return _conditions;
+        return ExpectValue($"Expect {_subject} starts with {value}", timeout,
+            latest => latest.StartsWith(value, comparisonType),
+            (latest, ex) => new ExpectException(GetStartsWithError(latest, value), ex));
     }
 
     /// <inheritdoc />
@@ -219,33 +129,9 @@ public abstract class TextualConditions<TSelf> : Conditions<TSelf>, ITextualCond
     /// <inheritdoc />
     public TSelf DoesNotStartWith(string value, StringComparison comparisonType, TimeSpan? timeout = default)
     {
-        timeout ??= _timeout;
-
-        string latestValue = null;
-
-        bool condition()
-        {
-            latestValue = FetchValueFunc();
-
-            return !latestValue.StartsWith(value, comparisonType);
-        }
-
-        try
-        {
-            using (var scope = _logger.BeginLogScope($"Expect {_subject} does not start with {value}"))
-            {
-                scope.Execute(() =>
-                {
-                    Waiter.Until(condition, timeout.Value, _pollingInterval);
-                });
-            }
-        }
-        catch (TimeoutException ex)
-        {
-            throw new ExpectException(GetDoesNotStartWithError(latestValue, value), ex);
-        }
-
-        return _conditions;
+        return ExpectValue($"Expect {_subject} does not start with {value}", timeout,
+            latest => !latest.StartsWith(value, comparisonType),
+            (latest, ex) => new ExpectException(GetDoesNotStartWithError(latest, value), ex));
     }
 
     /// <inheritdoc />
@@ -257,33 +143,9 @@ public abstract class TextualConditions<TSelf> : Conditions<TSelf>, ITextualCond
     /// <inheritdoc />
     public TSelf EndsWith(string value, StringComparison comparisonType, TimeSpan? timeout = default)
     {
-        timeout ??= _timeout;
-
-        string latestValue = null;
-
-        bool condition()
-        {
-            latestValue = FetchValueFunc();
-
-            return latestValue.EndsWith(value, comparisonType);
-        }
-
-        try
-        {
-            using (var scope = _logger.BeginLogScope($"Expect {_subject} ends with {value}"))
-            {
-                scope.Execute(() =>
-                {
-                    Waiter.Until(condition, timeout.Value, _pollingInterval);
-                });
-            }
-        }
-        catch (TimeoutException ex)
-        {
-            throw new ExpectException(GetEndsWithError(latestValue, value), ex);
-        }
-
-        return _conditions;
+        return ExpectValue($"Expect {_subject} ends with {value}", timeout,
+            latest => latest.EndsWith(value, comparisonType),
+            (latest, ex) => new ExpectException(GetEndsWithError(latest, value), ex));
     }
 
     /// <inheritdoc />
@@ -295,33 +157,9 @@ public abstract class TextualConditions<TSelf> : Conditions<TSelf>, ITextualCond
     /// <inheritdoc />
     public TSelf DoesNotEndWith(string value, StringComparison comparisonType, TimeSpan? timeout = default)
     {
-        timeout ??= _timeout;
-
-        string latestValue = null;
-
-        bool condition()
-        {
-            latestValue = FetchValueFunc();
-
-            return !latestValue.EndsWith(value, comparisonType);
-        }
-
-        try
-        {
-            using (var scope = _logger.BeginLogScope($"Expect {_subject} does not end with {value}"))
-            {
-                scope.Execute(() =>
-                {
-                    Waiter.Until(condition, timeout.Value, _pollingInterval);
-                });
-            }
-        }
-        catch (TimeoutException ex)
-        {
-            throw new ExpectException(GetDoesNotEndWithError(latestValue, value), ex);
-        }
-
-        return _conditions;
+        return ExpectValue($"Expect {_subject} does not end with {value}", timeout,
+            latest => !latest.EndsWith(value, comparisonType),
+            (latest, ex) => new ExpectException(GetDoesNotEndWithError(latest, value), ex));
     }
 
     /// <inheritdoc />
@@ -333,33 +171,9 @@ public abstract class TextualConditions<TSelf> : Conditions<TSelf>, ITextualCond
     /// <inheritdoc />
     public TSelf Contains(string value, StringComparison comparisonType, TimeSpan? timeout = default)
     {
-        timeout ??= _timeout;
-
-        string latestValue = null;
-
-        bool condition()
-        {
-            latestValue = FetchValueFunc();
-
-            return latestValue.IndexOf(value, comparisonType) >= 0;
-        }
-
-        try
-        {
-            using (var scope = _logger.BeginLogScope($"Expect {_subject} contains {value}"))
-            {
-                scope.Execute(() =>
-                {
-                    Waiter.Until(condition, timeout.Value, _pollingInterval);
-                });
-            }
-        }
-        catch (TimeoutException ex)
-        {
-            throw new ExpectException(GetContainsError(latestValue, value), ex);
-        }
-
-        return _conditions;
+        return ExpectValue($"Expect {_subject} contains {value}", timeout,
+            latest => latest.IndexOf(value, comparisonType) >= 0,
+            (latest, ex) => new ExpectException(GetContainsError(latest, value), ex));
     }
 
     /// <inheritdoc />
@@ -371,97 +185,25 @@ public abstract class TextualConditions<TSelf> : Conditions<TSelf>, ITextualCond
     /// <inheritdoc />
     public TSelf DoesNotContain(string value, StringComparison comparisonType, TimeSpan? timeout = default)
     {
-        timeout ??= _timeout;
-
-        string latestValue = null;
-
-        bool condition()
-        {
-            latestValue = FetchValueFunc();
-
-            return latestValue.IndexOf(value, comparisonType) == -1;
-        }
-
-        try
-        {
-            using (var scope = _logger.BeginLogScope($"Expect {_subject} does not contain {value}"))
-            {
-                scope.Execute(() =>
-                {
-                    Waiter.Until(condition, timeout.Value, _pollingInterval);
-                });
-            }
-        }
-        catch (TimeoutException ex)
-        {
-            throw new ExpectException(GetDoesNotContainError(latestValue, value), ex);
-        }
-
-        return _conditions;
+        return ExpectValue($"Expect {_subject} does not contain {value}", timeout,
+            latest => latest.IndexOf(value, comparisonType) == -1,
+            (latest, ex) => new ExpectException(GetDoesNotContainError(latest, value), ex));
     }
 
     /// <inheritdoc />
     public TSelf Matches(Regex regex, TimeSpan? timeout = default)
     {
-        timeout ??= _timeout;
-
-        string latestValue = null;
-
-        bool condition()
-        {
-            latestValue = FetchValueFunc();
-
-            return regex.IsMatch(latestValue);
-        }
-
-        try
-        {
-            using (var scope = _logger.BeginLogScope($"Expect {_subject} matches {regex} regular expression"))
-            {
-                scope.Execute(() =>
-                {
-                    Waiter.Until(condition, timeout.Value, _pollingInterval);
-                });
-            }
-        }
-        catch (TimeoutException ex)
-        {
-            throw new ExpectException(GetMatchesError(latestValue, regex), ex);
-        }
-
-        return _conditions;
+        return ExpectValue($"Expect {_subject} matches {regex} regular expression", timeout,
+            latest => regex.IsMatch(latest),
+            (latest, ex) => new ExpectException(GetMatchesError(latest, regex), ex));
     }
 
     /// <inheritdoc />
     public TSelf DoesNotMatch(Regex regex, TimeSpan? timeout = default)
     {
-        timeout ??= _timeout;
-
-        string latestValue = null;
-
-        bool condition()
-        {
-            latestValue = FetchValueFunc();
-
-            return !regex.IsMatch(latestValue);
-        }
-
-        try
-        {
-            using (var scope = _logger.BeginLogScope($"Expect {_subject} does not match {regex} regular expression"))
-            {
-                scope.Execute(() =>
-                {
-                    Waiter.Until(condition, timeout.Value, _pollingInterval);
-                });
-            }
-        }
-        catch (TimeoutException ex)
-        {
-            throw new ExpectException(GetDoesNotMatchError(latestValue, regex), ex);
-        }
-
-        return _conditions;
+        return ExpectValue($"Expect {_subject} does not match {regex} regular expression", timeout,
+            latest => !regex.IsMatch(latest),
+            (latest, ex) => new ExpectException(GetDoesNotMatchError(latest, regex), ex));
     }
 
     /// <summary>Gets the error message when the "is" condition fails.</summary>

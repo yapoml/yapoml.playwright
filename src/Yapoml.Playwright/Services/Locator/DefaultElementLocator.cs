@@ -19,8 +19,8 @@ public class DefaultElementLocator : IElementLocator
 
     /// <inheritdoc />
     [DebuggerHidden]
-    public IReadOnlyList<ILocator> FindElements(ILocator searchContext, string by)
+    public Task<IReadOnlyList<ILocator>> FindElementsAsync(ILocator searchContext, string by)
     {
-        return Task.Run(() => searchContext.Locator(by).AllAsync()).GetAwaiter().GetResult();
+        return searchContext.Locator(by).AllAsync();
     }
 }

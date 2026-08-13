@@ -25,7 +25,7 @@ public class StringStyleConditions<TConditions> : TextualConditions<TConditions>
     }
 
     /// <inheritdoc />
-    protected override Func<string> FetchValueFunc => () => RelocateOnStaleReference(() => Task.Run(() => _elementHandler.Locate().EvaluateAsync($"node => window.getComputedStyle(node).getPropertyValue('{_styleName}')")).GetAwaiter().GetResult().ToString());
+    protected override Func<Task<string>> FetchValueFunc => async () => (await _elementHandler.Locate().EvaluateAsync($"node => window.getComputedStyle(node).getPropertyValue('{_styleName}')").ConfigureAwait(false)).ToString();
 
     /// <inheritdoc />
     public override NumericConditions<TConditions, int> Length

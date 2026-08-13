@@ -1,5 +1,6 @@
 ﻿using Microsoft.Playwright;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Yapoml.Playwright.Components.Metadata;
 
 namespace Yapoml.Playwright.Services.Locator;
@@ -18,7 +19,12 @@ public interface IElementsListHandler
     /// Locates all matching elements.
     /// </summary>
     /// <returns>A read-only list of Playwright <see cref="ILocator"/> instances for the matched elements.</returns>
-    IReadOnlyList<ILocator> LocateMany();
+    Task<IReadOnlyList<ILocator>> LocateManyAsync();
+
+    /// <summary>
+    /// Gets the lazy locator matching all the elements, without resolving them.
+    /// </summary>
+    ILocator Locate();
 
     /// <summary>
     /// Gets the locator selector string used to find the elements.

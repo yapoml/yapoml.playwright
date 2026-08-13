@@ -33,19 +33,27 @@ namespace {{namespace}}
 
 			var url = navService.BuildUri("{{ url.path }}", segments, queryParams);
 
-			EventSource.PageEventSource.RaiseOnPageNavigating(this, url, Metadata);
-
-			using (var scope = _logger.BeginLogScope($"Opening {Metadata.Name} page by {url}"))
+			Chain.Add(async () =>
 			{
-				scope.Execute(() =>
+				EventSource.PageEventSource.RaiseOnPageNavigating(this, url, Metadata);
+
+				using (var scope = _logger.BeginLogScope($"Opening {Metadata.Name} page by {url}"))
 				{
-					Driver.GotoAsync(url.ToString()).GetAwaiter().GetResult();
-				});
-			}
+					await scope.ExecuteAsync(() => Driver.GotoAsync(url.ToString())).ConfigureAwait(false);
+				}
+			});
 
 			return this;
 		}
 		{{ end }}
+
+		/// <summary>
+		/// Executes pending steps of the chain.
+		/// </summary>
+		public new global::System.Runtime.CompilerServices.TaskAwaiter<{{ get_page_class_name this }}> GetAwaiter()
+		{
+			return AwaitChainAsync(this).GetAwaiter();
+		}
 
 		{{- for component in components }}
 
@@ -110,7 +118,7 @@ namespace {{namespace}}
 			var timeoutOptions = SpaceOptions.Services.Get<global::Yapoml.Playwright.Options.TimeoutOptions>();
 			var elementLocator = SpaceOptions.Services.Get<global::Yapoml.Playwright.Services.Locator.IElementLocator>();
 
-			return new OneTimeConditions(this, timeoutOptions.Timeout, timeoutOptions.PollingInterval, Driver, ElementHandlerRepository, elementLocator, Metadata, EventSource, _logger, SpaceOptions);
+			return new OneTimeConditions(this, timeoutOptions.Timeout, timeoutOptions.PollingInterval, Driver, ElementHandlerRepository, elementLocator, Metadata, EventSource, _logger, SpaceOptions) { Chain = Chain };
 		}
 
 		/// <summary>
@@ -123,7 +131,7 @@ namespace {{namespace}}
 			var timeoutOptions = SpaceOptions.Services.Get<global::Yapoml.Playwright.Options.TimeoutOptions>();
 			var elementLocator = SpaceOptions.Services.Get<global::Yapoml.Playwright.Services.Locator.IElementLocator>();
 
-			it(new Conditions(timeoutOptions.Timeout, timeoutOptions.PollingInterval, Driver, ElementHandlerRepository, elementLocator, Metadata, EventSource, _logger, SpaceOptions));
+			it(new Conditions(timeoutOptions.Timeout, timeoutOptions.PollingInterval, Driver, ElementHandlerRepository, elementLocator, Metadata, EventSource, _logger, SpaceOptions) { Chain = Chain });
 
 			return this;
 		}

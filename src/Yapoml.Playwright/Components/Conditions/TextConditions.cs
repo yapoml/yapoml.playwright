@@ -23,11 +23,11 @@ public class TextConditions<TConditions> : TextualConditions<TConditions>
     }
 
     /// <inheritdoc />
-    protected override Func<string> FetchValueFunc => () => RelocateOnStaleReference(() => Task.Run(() => _elementHandler.Locate().TextContentAsync()).GetAwaiter().GetResult().Trim());
+    protected override Func<Task<string>> FetchValueFunc => async () => (await _elementHandler.Locate().TextContentAsync().ConfigureAwait(false)).Trim();
 
     /// <inheritdoc />
     public override NumericConditions<TConditions, int> Length
-        => new TextualLengthConditons<TConditions>(_conditions, _timeout, _pollingInterval, FetchValueFunc, $"text of {_elementHandler.ComponentMetadata.Name}", _logger);
+        => new TextualLengthConditons<TConditions>(_conditions, _timeout, _pollingInterval, FetchValueFunc, $"text of {_elementHandler.ComponentMetadata.Name}", _logger) { Chain = Chain };
 
     /// <inheritdoc />
     protected override string GetIsError(string latestValue, string expectedValue)
@@ -99,10 +99,5 @@ public class TextConditions<TConditions> : TextualConditions<TConditions>
     protected override string GetDoesNotMatchError(string latestValue, Regex regex)
     {
         return $"Text '{latestValue}' of the {_elementHandler.ComponentMetadata.Name} component matches '{regex}'.";
-    }
-
-    private T RelocateOnStaleReference<T>(Func<T> act)
-    {
-        return act();
     }
 }

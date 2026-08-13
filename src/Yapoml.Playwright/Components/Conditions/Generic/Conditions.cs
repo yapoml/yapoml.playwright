@@ -1,4 +1,6 @@
 ﻿using System;
+using System.ComponentModel;
+using System.Threading.Tasks;
 using Yapoml.Framework.Logging;
 
 namespace Yapoml.Playwright.Components.Conditions.Generic;
@@ -27,6 +29,18 @@ public abstract class Conditions<TConditions>
         _timeout = timeout;
         _pollingInterval = pollingInterval;
         _logger = logger;
+    }
+
+    /// <summary>Gets the chain of pending asynchronous steps shared with the owning conditions.</summary>
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    public Chain Chain { get; set; } = new Chain();
+
+    /// <summary>Enqueues a condition to be evaluated when the chain is awaited.</summary>
+    protected TConditions Enqueue(Func<Task> condition)
+    {
+        Chain.Add(condition);
+
+        return _conditions;
     }
 
     /// <summary>

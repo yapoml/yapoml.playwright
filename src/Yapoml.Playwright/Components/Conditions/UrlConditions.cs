@@ -1,6 +1,7 @@
 ﻿using Microsoft.Playwright;
 using System;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using Yapoml.Framework.Logging;
 using Yapoml.Playwright.Components.Conditions.Generic;
 using Yapoml.Playwright.Components.Metadata;
@@ -26,19 +27,19 @@ public class UrlConditions<TConditions> : TextualConditions<TConditions>
     }
 
     /// <inheritdoc />
-    protected override Func<string> FetchValueFunc => () => _driver.Url;
+    protected override Func<Task<string>> FetchValueFunc => () => Task.FromResult(_driver.Url);
 
     /// <summary>
     /// Conditions for url's length.
     /// </summary>
     public override NumericConditions<TConditions, int> Length
-        => new TextualLengthConditons<TConditions>(_conditions, _timeout, _pollingInterval, FetchValueFunc, $"{_pageMetadata.Name} page url", _logger);
+        => new TextualLengthConditons<TConditions>(_conditions, _timeout, _pollingInterval, FetchValueFunc, $"{_pageMetadata.Name} page url", _logger) { Chain = Chain };
 
     /// <summary>
     /// Conditions for url's path.
     /// </summary>
     public UrlPathConditions<TConditions> Path
-        => new UrlPathConditions<TConditions>(_driver, _conditions, _timeout, _pollingInterval, _pageMetadata, _logger);
+        => new UrlPathConditions<TConditions>(_driver, _conditions, _timeout, _pollingInterval, _pageMetadata, _logger) { Chain = Chain };
 
     /// <inheritdoc />
     protected override string GetIsError(string latestValue, string expectedValue)

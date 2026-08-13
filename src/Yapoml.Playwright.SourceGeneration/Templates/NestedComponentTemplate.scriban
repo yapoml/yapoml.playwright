@@ -154,7 +154,7 @@ public partial class {{$1.singular_name}}ComponentList : global::Yapoml.Playwrig
 		var timeoutOptions = spaceOptions.Services.Get<global::Yapoml.Playwright.Options.TimeoutOptions>();
 		var elementLocator = spaceOptions.Services.Get<global::Yapoml.Playwright.Services.Locator.IElementLocator>();
 		base.listConditions = new Conditions(timeoutOptions.Timeout, timeoutOptions.PollingInterval, driver, elementsListHandler, elementLocator, eventSource, _logger, spaceOptions);
-		oneTimeConditions = new OneTimeConditions(this, timeoutOptions.Timeout, timeoutOptions.PollingInterval, driver, elementsListHandler, elementLocator, eventSource, _logger, spaceOptions) { Chain = Chain };
+		oneTimeConditions = new OneTimeConditions(this, timeoutOptions.Timeout, timeoutOptions.PollingInterval, driver, elementsListHandler, elementLocator, eventSource, _logger, spaceOptions);
 	}
 
 	/// <summary>
@@ -170,7 +170,7 @@ public partial class {{$1.singular_name}}ComponentList : global::Yapoml.Playwrig
 	/// </summary>
 	public OneTimeConditions Expect()
 	{
-		return oneTimeConditions;
+		return Share(oneTimeConditions);
 	}
 
 	/// <summary>
@@ -178,7 +178,7 @@ public partial class {{$1.singular_name}}ComponentList : global::Yapoml.Playwrig
 	/// </summary>
 	public {{$1.singular_name}}ComponentList Expect(global::System.Action<Conditions> it)
 	{
-		it(listConditions);
+		it(Share(listConditions));
 
 		return this;
 	}

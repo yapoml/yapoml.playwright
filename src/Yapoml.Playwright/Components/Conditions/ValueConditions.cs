@@ -23,7 +23,7 @@ public class ValueConditions<TConditions> : TextualConditions<TConditions>
     }
 
     /// <inheritdoc />
-    public override NumericConditions<TConditions, int> Length => new TextualLengthConditons<TConditions>(_conditions, _timeout, _pollingInterval, FetchValueFunc, $"value of {_elementHandler.ComponentMetadata.Name}", _logger) { Chain = Chain };
+    public override NumericConditions<TConditions, int> Length => Share(new TextualLengthConditons<TConditions>(_conditions, _timeout, _pollingInterval, FetchValueFunc, $"value of {_elementHandler.ComponentMetadata.Name}", _logger));
 
     /// <inheritdoc />
     protected override Func<Task<string>> FetchValueFunc => () => _elementHandler.Locate().InputValueAsync();

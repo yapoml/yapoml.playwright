@@ -1,4 +1,4 @@
-﻿{{ for component in $1.components }}
+{{ for component in $1.components }}
 {{if !component.is_plural && (component.by.segments == null || component.by.segments.size == 0) }}
 public global::{{component.namespace}}.{{get_component_return_type component}}.ChainConditions {{component.name}}
 {
@@ -9,7 +9,7 @@ public global::{{component.namespace}}.{{get_component_return_type component}}.C
 		{{ include 'ByTemplate' component }}
 
 		var elementHandler = ResolveElementHandler("{{component.name}}", by, byFrom, "{{component.original_name}}");
-		return new global::{{component.namespace}}.{{get_component_return_type component}}.ChainConditions(Timeout, PollingInterval, Driver, elementHandler, ElementLocator, EventSource, Logger, SpaceOptions) { Chain = Chain };
+		return Share(new global::{{component.namespace}}.{{get_component_return_type component}}.ChainConditions(Timeout, PollingInterval, Driver, elementHandler, ElementLocator, EventSource, Logger, SpaceOptions));
 	}
 }
 {{ else if component.is_plural && (component.by.segments == null || component.by.segments.size == 0) }}
@@ -22,7 +22,7 @@ public global::{{component.namespace}}.{{get_component_return_type component}}Li
 		{{ include 'ByTemplate' component }}
 
 		var elementsListHandler = CreateElementsListHandler(by, byFrom, "{{singularize(component.original_name)}}", "{{component.original_name}}");
-		return new global::{{component.namespace}}.{{component.singular_name}}ComponentList.Conditions(Timeout, PollingInterval, Driver, elementsListHandler, ElementLocator, EventSource, Logger, SpaceOptions) { Chain = Chain };
+		return Share(new global::{{component.namespace}}.{{component.singular_name}}ComponentList.Conditions(Timeout, PollingInterval, Driver, elementsListHandler, ElementLocator, EventSource, Logger, SpaceOptions));
 	}
 }
 {{ end }}
@@ -39,7 +39,7 @@ public global::{{component.namespace}}.{{get_component_return_type component}}.C
 		{{ include 'ByTemplate' component }}
 
 		var elementHandler = ResolveElementHandler("{{component.name}}", by, byFrom, "{{component.original_name}}");
-		return new global::{{component.namespace}}.{{get_component_return_type component}}.ChainConditions(Timeout, PollingInterval, Driver, elementHandler, ElementLocator, EventSource, Logger, SpaceOptions) { Chain = Chain };
+		return Share(new global::{{component.namespace}}.{{get_component_return_type component}}.ChainConditions(Timeout, PollingInterval, Driver, elementHandler, ElementLocator, EventSource, Logger, SpaceOptions));
 	}
 }
 {{ else if component.is_plural && (component.by.segments == null || component.by.segments.size == 0) }}
@@ -52,7 +52,7 @@ public global::{{component.namespace}}.{{get_component_return_type component}}Li
 		{{ include 'ByTemplate' component }}
 
 		var elementsListHandler = CreateElementsListHandler(by, byFrom, "{{singularize(component.original_name)}}", "{{component.original_name}}");
-		return new global::{{component.namespace}}.{{component.singular_name}}ComponentList.Conditions(Timeout, PollingInterval, Driver, elementsListHandler, ElementLocator, EventSource, Logger, SpaceOptions) { Chain = Chain };
+		return Share(new global::{{component.namespace}}.{{component.singular_name}}ComponentList.Conditions(Timeout, PollingInterval, Driver, elementsListHandler, ElementLocator, EventSource, Logger, SpaceOptions));
 	}
 }
 {{ end }}

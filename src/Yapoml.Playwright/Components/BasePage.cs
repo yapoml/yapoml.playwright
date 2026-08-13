@@ -1,4 +1,5 @@
 ﻿using Microsoft.Playwright;
+using System;
 using System.ComponentModel;
 using System.Threading.Tasks;
 using Yapoml.Framework.Logging;
@@ -35,8 +36,24 @@ public abstract class BasePage
     protected IPage Driver { get; }
 
     /// <summary>Gets the chain of pending asynchronous steps built on this page.</summary>
+    internal Chain Chain { get; }
+
+    /// <summary>Makes the child conditions build into the same chain as this page.</summary>
+    protected T Share<T>(T child) where T : BaseConditions
+    {
+        child.Chain = Chain;
+
+        return child;
+    }
+
+    /// <summary>
+    /// Enqueues a step to be executed when the page is awaited.
+    /// </summary>
     [EditorBrowsable(EditorBrowsableState.Never)]
-    public Chain Chain { get; }
+    protected void Enqueue(Func<Task> step)
+    {
+        Chain.Add(step);
+    }
 
     /// <summary>
     /// Executes the pending steps and returns the awaited page back, so generated pages can expose <c>GetAwaiter</c>.

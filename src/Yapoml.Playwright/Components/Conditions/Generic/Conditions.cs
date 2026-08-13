@@ -9,7 +9,7 @@ namespace Yapoml.Playwright.Components.Conditions.Generic;
 /// Base class for all condition objects, providing shared timeout, polling interval, and utility methods.
 /// </summary>
 /// <typeparam name="TConditions">The conditions type for fluent chaining.</typeparam>
-public abstract class Conditions<TConditions>
+public abstract class Conditions<TConditions> : BaseConditions
 {
     /// <summary>The conditions instance for fluent chaining.</summary>
     protected readonly TConditions _conditions;
@@ -30,10 +30,6 @@ public abstract class Conditions<TConditions>
         _pollingInterval = pollingInterval;
         _logger = logger;
     }
-
-    /// <summary>Gets the chain of pending asynchronous steps shared with the owning conditions.</summary>
-    [EditorBrowsable(EditorBrowsableState.Never)]
-    public Chain Chain { get; set; } = new Chain();
 
     /// <summary>Enqueues a condition to be evaluated when the chain is awaited.</summary>
     protected TConditions Enqueue(Func<Task> condition)

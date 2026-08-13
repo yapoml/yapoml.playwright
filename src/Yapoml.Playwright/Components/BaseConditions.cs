@@ -6,10 +6,29 @@ using System.Threading.Tasks;
 namespace Yapoml.Playwright.Components;
 
 /// <summary>
+/// Non-generic root of every condition object, owning the chain that its steps are built into.
+/// </summary>
+public abstract class BaseConditions
+{
+    /// <summary>The chain these conditions build their steps into.</summary>
+    internal Chain Chain { get; set; } = new Chain();
+
+    /// <summary>
+    /// Makes the child conditions build into the same chain as these conditions.
+    /// </summary>
+    protected T Share<T>(T child) where T : BaseConditions
+    {
+        child.Chain = Chain;
+
+        return child;
+    }
+}
+
+/// <summary>
 /// Base class for all awaitable condition objects, providing shared timeout and polling interval configuration.
 /// </summary>
 /// <typeparam name="TSelf">The concrete conditions type for fluent chaining.</typeparam>
-public abstract class BaseConditions<TSelf>
+public abstract class BaseConditions<TSelf> : BaseConditions
 {
     /// <summary>The concrete conditions instance for fluent chaining.</summary>
     protected TSelf _self;
@@ -29,10 +48,6 @@ public abstract class BaseConditions<TSelf>
     protected TimeSpan Timeout { get; }
     /// <summary>Gets the interval between condition checks.</summary>
     protected TimeSpan PollingInterval { get; }
-
-    /// <summary>Gets the chain of pending asynchronous steps shared with the owning page or component.</summary>
-    [EditorBrowsable(EditorBrowsableState.Never)]
-    public Chain Chain { get; set; } = new Chain();
 
     /// <summary>Enqueues a condition to be evaluated when the chain is awaited.</summary>
     protected TSelf Enqueue(Func<Task> condition)

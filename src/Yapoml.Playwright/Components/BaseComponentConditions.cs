@@ -234,7 +234,7 @@ public abstract class BaseComponentConditions<TSelf> : BaseConditions<TSelf>, IT
     {
         get
         {
-            return new TextConditions<TSelf>(_self, ElementHandler, Timeout, PollingInterval, $"text of the {ElementHandler.ComponentMetadata.Name}", Logger) { Chain = Chain };
+            return Share(new TextConditions<TSelf>(_self, ElementHandler, Timeout, PollingInterval, $"text of the {ElementHandler.ComponentMetadata.Name}", Logger));
         }
     }
 
@@ -245,7 +245,7 @@ public abstract class BaseComponentConditions<TSelf> : BaseConditions<TSelf>, IT
     {
         get
         {
-            return new AttributesCollectionConditions<TSelf>(_self, ElementHandler, Timeout, PollingInterval, Logger) { Chain = Chain };
+            return Share(new AttributesCollectionConditions<TSelf>(_self, ElementHandler, Timeout, PollingInterval, Logger));
         }
     }
 
@@ -256,7 +256,7 @@ public abstract class BaseComponentConditions<TSelf> : BaseConditions<TSelf>, IT
     {
         get
         {
-            return new StylesCollectionConditions<TSelf>(_self, ElementHandler, Timeout, PollingInterval, Logger) { Chain = Chain };
+            return Share(new StylesCollectionConditions<TSelf>(_self, ElementHandler, Timeout, PollingInterval, Logger));
         }
     }
 
@@ -267,7 +267,7 @@ public abstract class BaseComponentConditions<TSelf> : BaseConditions<TSelf>, IT
     {
         get
         {
-            return new ValueConditions<TSelf>(_self, ElementHandler, Timeout, PollingInterval, $"value of the {ElementHandler.ComponentMetadata.Name}", Logger) { Chain = Chain };
+            return Share(new ValueConditions<TSelf>(_self, ElementHandler, Timeout, PollingInterval, $"value of the {ElementHandler.ComponentMetadata.Name}", Logger));
         }
     }
 

@@ -33,13 +33,13 @@ public class UrlConditions<TConditions> : TextualConditions<TConditions>
     /// Conditions for url's length.
     /// </summary>
     public override NumericConditions<TConditions, int> Length
-        => new TextualLengthConditons<TConditions>(_conditions, _timeout, _pollingInterval, FetchValueFunc, $"{_pageMetadata.Name} page url", _logger) { Chain = Chain };
+        => Share(new TextualLengthConditons<TConditions>(_conditions, _timeout, _pollingInterval, FetchValueFunc, $"{_pageMetadata.Name} page url", _logger));
 
     /// <summary>
     /// Conditions for url's path.
     /// </summary>
     public UrlPathConditions<TConditions> Path
-        => new UrlPathConditions<TConditions>(_driver, _conditions, _timeout, _pollingInterval, _pageMetadata, _logger) { Chain = Chain };
+        => Share(new UrlPathConditions<TConditions>(_driver, _conditions, _timeout, _pollingInterval, _pageMetadata, _logger));
 
     /// <inheritdoc />
     protected override string GetIsError(string latestValue, string expectedValue)

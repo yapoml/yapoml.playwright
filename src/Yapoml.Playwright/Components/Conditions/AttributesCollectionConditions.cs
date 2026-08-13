@@ -30,7 +30,7 @@ public class AttributesCollectionConditions<TConditions> : Conditions<TCondition
     {
         get
         {
-            return new StringAttributeConditions<TConditions>(_conditions, _elementHandler, attributeName, _timeout, _pollingInterval, $"{attributeName} attribute of the {_elementHandler.ComponentMetadata.Name}", _logger) { Chain = Chain };
+            return Share(new StringAttributeConditions<TConditions>(_conditions, _elementHandler, attributeName, _timeout, _pollingInterval, $"{attributeName} attribute of the {_elementHandler.ComponentMetadata.Name}", _logger));
         }
     }
 
@@ -58,11 +58,11 @@ public class AttributesCollectionConditions<TConditions> : Conditions<TCondition
     /// Gets numeric conditions for the <c>width</c> attribute.
     /// </summary>
     public NumericAttributeConditions<TConditions, int> Width =>
-        new NumericAttributeConditions<TConditions, int>(_conditions, _elementHandler, "width", _timeout, _pollingInterval, $"width attribute of the {_elementHandler.ComponentMetadata.Name}", _logger) { Chain = Chain };
+        Share(new NumericAttributeConditions<TConditions, int>(_conditions, _elementHandler, "width", _timeout, _pollingInterval, $"width attribute of the {_elementHandler.ComponentMetadata.Name}", _logger));
 
     /// <summary>
     /// Gets numeric conditions for the <c>tabindex</c> attribute.
     /// </summary>
     public NumericAttributeConditions<TConditions, int> TabIndex =>
-        new NumericAttributeConditions<TConditions, int>(_conditions, _elementHandler, "tabindex", _timeout, _pollingInterval, $"tabindex attribute of the {_elementHandler.ComponentMetadata.Name}", _logger) { Chain = Chain };
+        Share(new NumericAttributeConditions<TConditions, int>(_conditions, _elementHandler, "tabindex", _timeout, _pollingInterval, $"tabindex attribute of the {_elementHandler.ComponentMetadata.Name}", _logger));
 }

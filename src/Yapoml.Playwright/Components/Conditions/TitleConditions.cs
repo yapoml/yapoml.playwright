@@ -30,7 +30,7 @@ public class TitleConditions<TConditions> : TextualConditions<TConditions>
 
     /// <inheritdoc />
     public override NumericConditions<TConditions, int> Length
-        => new TextualLengthConditons<TConditions>(_conditions, _timeout, _pollingInterval, FetchValueFunc, $"{_pageMetadata.Name} page title", _logger) { Chain = Chain };
+        => Share(new TextualLengthConditons<TConditions>(_conditions, _timeout, _pollingInterval, FetchValueFunc, $"{_pageMetadata.Name} page title", _logger));
 
     /// <inheritdoc />
     protected override string GetIsError(string latestValue, string expectedValue)

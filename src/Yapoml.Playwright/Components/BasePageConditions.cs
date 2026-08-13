@@ -80,7 +80,7 @@ public abstract class BasePageConditions<TSelf> : BaseConditions<TSelf>
     {
         get
         {
-            return new UrlConditions<TSelf>(Driver, _self, Timeout, PollingInterval, PageMetadata, Logger) { Chain = Chain };
+            return Share(new UrlConditions<TSelf>(Driver, _self, Timeout, PollingInterval, PageMetadata, Logger));
         }
     }
 
@@ -91,7 +91,7 @@ public abstract class BasePageConditions<TSelf> : BaseConditions<TSelf>
     {
         get
         {
-            return new TitleConditions<TSelf>(Driver, _self, Timeout, PollingInterval, PageMetadata, Logger) { Chain = Chain };
+            return Share(new TitleConditions<TSelf>(Driver, _self, Timeout, PollingInterval, PageMetadata, Logger));
         }
     }
 

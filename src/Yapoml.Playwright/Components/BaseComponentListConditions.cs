@@ -52,12 +52,13 @@ public class BaseComponentListConditions<TSelf, TComponentConditions> : BaseCond
     /// <summary>
     /// Conditions for the count of components in the list.
     /// </summary>
-    public CountCollectionConditions<TSelf> Count => new CountCollectionConditions<TSelf>(_self, ElementsListHandler, Timeout, PollingInterval, Logger) { Chain = Chain };
+    public CountCollectionConditions<TSelf> Count => Share(new CountCollectionConditions<TSelf>(_self, ElementsListHandler, Timeout, PollingInterval, Logger));
 
     private TComponentConditions CreateElementConditions(ILocator element)
     {
         var elementHandler = new ElementHandler(Driver, null, ElementLocator, ElementsListHandler.By, ElementsListHandler.From, element, ElementsListHandler.ComponentsListMetadata.ComponentMetadata, ElementsListHandler.ElementHandlerRepository.CreateNestedRepository(), EventSource);
 
+        // not shared: per element conditions own an isolated chain evaluated in place
         return (TComponentConditions)Activator.CreateInstance(typeof(TComponentConditions), TimeSpan.FromMilliseconds(-1), PollingInterval, Driver, elementHandler, ElementLocator, EventSource, Logger, SpaceOptions);
     }
 

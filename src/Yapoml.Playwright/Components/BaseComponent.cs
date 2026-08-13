@@ -27,32 +27,11 @@ public abstract partial class BaseComponent<TComponent, TConditions, TCondition>
     /// <summary>The concrete component instance for fluent chaining.</summary>
     protected TComponent component;
 
-    private TConditions _conditions;
-    private TCondition _oneTimeConditions;
+    /// <summary>The chainable conditions instance.</summary>
+    protected TConditions conditions;
 
-    /// <summary>The chainable conditions instance. Assigning it shares the component's chain with the conditions.</summary>
-    protected TConditions conditions
-    {
-        get => _conditions;
-        set
-        {
-            _conditions = value;
-
-            if (value != null) value.Chain = Chain;
-        }
-    }
-
-    /// <summary>The one-time conditions instance. Assigning it shares the component's chain with the conditions.</summary>
-    protected TCondition oneTimeConditions
-    {
-        get => _oneTimeConditions;
-        set
-        {
-            _oneTimeConditions = value;
-
-            if (value != null) value.Chain = Chain;
-        }
-    }
+    /// <summary>The one-time conditions instance.</summary>
+    protected TCondition oneTimeConditions;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="BaseComponent{TComponent, TConditions, TCondition}"/> class.
@@ -68,7 +47,7 @@ public abstract partial class BaseComponent<TComponent, TConditions, TCondition>
     /// </summary>
     public virtual TCondition Expect()
     {
-        return oneTimeConditions;
+        return Share(oneTimeConditions);
     }
 
     /// <summary>
@@ -76,7 +55,7 @@ public abstract partial class BaseComponent<TComponent, TConditions, TCondition>
     /// </summary>
     public virtual TComponent Expect(Action<TConditions> it)
     {
-        it(conditions);
+        it(Share(conditions));
 
         return component;
     }
@@ -154,8 +133,15 @@ public abstract class BaseComponent
     protected ComponentMetadata Metadata { get; }
 
     /// <summary>Gets the chain of pending asynchronous steps shared with the page and parent component.</summary>
-    [EditorBrowsable(EditorBrowsableState.Never)]
-    public Chain Chain { get; }
+    internal Chain Chain { get; }
+
+    /// <summary>Makes the child conditions build into the same chain as this component.</summary>
+    private protected T Share<T>(T child) where T : BaseConditions
+    {
+        child.Chain = Chain;
+
+        return child;
+    }
 
     /// <summary>Gets the space options configuration.</summary>
     protected ISpaceOptions SpaceOptions { get; private set; }

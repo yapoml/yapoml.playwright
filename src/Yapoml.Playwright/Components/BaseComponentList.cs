@@ -33,19 +33,8 @@ public class BaseComponentList<TComponent, TListConditions, TComponentConditions
     where TListConditions : BaseComponentListConditions<TListConditions, TComponentConditions>
     where TComponentConditions : BaseComponentConditions<TComponentConditions>
 {
-    /// <summary>The list-level conditions instance. Assigning it shares the list's chain with the conditions.</summary>
-    protected TListConditions listConditions
-    {
-        get => _listConditions;
-        set
-        {
-            _listConditions = value;
-
-            if (value != null) value.Chain = Chain;
-        }
-    }
-
-    private TListConditions _listConditions;
+    /// <summary>The list-level conditions instance.</summary>
+    protected TListConditions listConditions;
 
     private IList<TComponent> _list;
 
@@ -80,8 +69,15 @@ public class BaseComponentList<TComponent, TListConditions, TComponentConditions
     }
 
     /// <summary>Gets the chain of pending asynchronous steps shared with the page and parent component.</summary>
-    [EditorBrowsable(EditorBrowsableState.Never)]
-    public Chain Chain { get; }
+    internal Chain Chain { get; }
+
+    /// <summary>Makes the child conditions build into the same chain as this list.</summary>
+    protected T Share<T>(T child) where T : BaseConditions
+    {
+        child.Chain = Chain;
+
+        return child;
+    }
 
     /// <summary>
     /// Executes the pending steps and returns the awaited list back, so generated lists can expose <c>GetAwaiter</c>.

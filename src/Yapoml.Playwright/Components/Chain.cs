@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Threading.Tasks;
 using Yapoml.Framework.Options;
 
@@ -10,16 +9,14 @@ namespace Yapoml.Playwright.Components;
 /// An ordered queue of pending asynchronous steps produced by a fluent chain.
 /// Steps are enqueued while the chain is being built and executed when it is awaited.
 /// </summary>
-[EditorBrowsable(EditorBrowsableState.Never)]
-public sealed class Chain
+internal sealed class Chain
 {
     private readonly Queue<Func<Task>> _steps = new Queue<Func<Task>>();
 
     /// <summary>
     /// Gets the chain shared by every page, component and list of the space, registering it when accessed first.
     /// </summary>
-    public static Chain Resolve(ISpaceOptions spaceOptions)
-    {
+    public static Chain Resolve(ISpaceOptions spaceOptions)    {
         if (spaceOptions.Services.TryGet<Chain>(out var chain))
         {
             return chain;

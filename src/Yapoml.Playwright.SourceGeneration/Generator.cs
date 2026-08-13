@@ -17,9 +17,6 @@ namespace Yapoml.Playwright.SourceGeneration;
 [Generator]
 internal class Generator : IIncrementalGenerator
 {
-    private string _rootNamespace;
-    private string _projectDir;
-
     static Generator()
     {
         AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
@@ -27,11 +24,12 @@ internal class Generator : IIncrementalGenerator
 
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
-        var globalOptions = context.AnalyzerConfigOptionsProvider.Select((o, c) => o.GlobalOptions);
-        context.RegisterSourceOutput(globalOptions, (c, s) =>
+        var options = context.AnalyzerConfigOptionsProvider.Select((provider, _) =>
         {
-            s.TryGetValue("build_property.RootNamespace", out _rootNamespace);
-            s.TryGetValue("build_property.ProjectDir", out _projectDir);
+            provider.GlobalOptions.TryGetValue("build_property.RootNamespace", out var rootNamespace);
+            provider.GlobalOptions.TryGetValue("build_property.ProjectDir", out var projectDir);
+
+            return (rootNamespace, projectDir);
         });
 
         var textFiles = context.AdditionalTextsProvider.Where(file =>
@@ -41,8 +39,10 @@ internal class Generator : IIncrementalGenerator
             || file.Path.EndsWith(".component.yml", StringComparison.OrdinalIgnoreCase))
             .Collect();
 
-        context.RegisterSourceOutput(textFiles, (spc, files) =>
+        context.RegisterSourceOutput(textFiles.Combine(options), (spc, source) =>
         {
+            var (files, (rootNamespace, projectDir)) = source;
+
             try
             {
                 var sourceProducer = new SourceProducer();
@@ -50,7 +50,7 @@ internal class Generator : IIncrementalGenerator
                 var parser = new WorkspaceParser();
 
                 // build yapoml generation context
-                var yaContextBuilder = new WorkspaceContextBuilder(_projectDir, _rootNamespace, parser);
+                var yaContextBuilder = new WorkspaceContextBuilder(projectDir, rootNamespace, parser);
 
                 var parsingSw = Stopwatch.StartNew();
 

@@ -29,8 +29,11 @@ internal class SwagLabsTests
     [Test]
     public async Task IncorrectLogin()
     {
-        var error = await _ya.LoginPage.Open().Form
-            .Login.Click().Error;
+        var form = _ya.LoginPage.Open().Form;
+
+        form.Login.Click();
+
+        var error = await form.Error;
 
         await error.Expect(it => it.IsDisplayed().Text.Is("Epic sadface: Username is required"));
 

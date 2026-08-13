@@ -4,10 +4,11 @@ partial class PagesSpace
 {
     public InventoryPage Login(string username, string password)
     {
-        LoginPage.Open().Form
-            .Username.Type(username)
-            .Password.Type(password)
-            .Login.Click();
+        var form = LoginPage.Open().Form;
+
+        form.Username.Type(username);
+        form.Password.Type(password);
+        form.Login.Click();
 
         return InventoryPage.Expect().IsOpened();
     }

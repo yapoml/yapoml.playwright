@@ -45,8 +45,10 @@ internal class SwagLabsTests
     [Test]
     public async Task AddToCart()
     {
-        await _ya.Login("standard_user", "secret_sauce")
-            .Products[p => p.Name == "Sauce Labs Backpack"].AddToCartButton.Click();
+        var product = await _ya.Login("standard_user", "secret_sauce")
+            .Products[async p => await p.Name.Text == "Sauce Labs Backpack"];
+
+        await product.AddToCartButton.Click();
 
         await _ya.InventoryPage.PrimaryHeader.ShoppingCart
             .Expect(its => its.Badge.Is("1").Styles.BackgroundColor.Is("rgb(226, 35, 26)"))
@@ -55,7 +57,7 @@ internal class SwagLabsTests
         await _ya.CartPage.Expect().IsOpened()
             .Items.Expect().Count.Is(1);
 
-        await _ya.CartPage.RemoveAllItems()
+        await (await _ya.CartPage.RemoveAllItems())
             .Expect(its => its.Items.IsEmpty())
             .Expect(its => its.PrimaryHeader.ShoppingCart.Badge.IsNotDisplayed());
     }

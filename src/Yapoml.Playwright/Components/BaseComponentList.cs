@@ -1,8 +1,8 @@
 ﻿using Microsoft.Playwright;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 #if NET6_0_OR_GREATER
@@ -27,7 +27,7 @@ namespace Yapoml.Playwright.Components;
 /// <typeparam name="TComponent">The concrete component type in the list.</typeparam>
 /// <typeparam name="TListConditions">The conditions type for list-level expectations.</typeparam>
 /// <typeparam name="TComponentConditions">The conditions type for individual component expectations.</typeparam>
-public class BaseComponentList<TComponent, TListConditions, TComponentConditions> : IReadOnlyList<TComponent>
+public class BaseComponentList<TComponent, TListConditions, TComponentConditions> : IAsyncEnumerable<TComponent>
     where TComponent : BaseComponent
     where TListConditions : BaseComponentListConditions<TListConditions, TComponentConditions>
     where TComponentConditions : BaseComponentConditions<TComponentConditions>
@@ -97,16 +97,13 @@ public class BaseComponentList<TComponent, TListConditions, TComponentConditions
     }
 
     /// <summary>
-    /// Executes the pending steps and reads a value. Blocks the caller until list reads become awaitable.
+    /// Executes the pending steps and reads a value once the chain is drained.
     /// </summary>
-    private T Read<T>(Func<Task<T>> read)
+    private async Task<T> ReadAsync<T>(Func<Task<T>> read)
     {
-        return Task.Run(async () =>
-        {
-            await Chain.RunAsync().ConfigureAwait(false);
+        await Chain.RunAsync().ConfigureAwait(false);
 
-            return await read().ConfigureAwait(false);
-        }).GetAwaiter().GetResult();
+        return await read().ConfigureAwait(false);
     }
 
     private async Task<IList<TComponent>> LocateAllAsync()
@@ -125,11 +122,11 @@ public class BaseComponentList<TComponent, TListConditions, TComponentConditions
     /// <param name="index">The zero-based index of the component.</param>
     /// <returns>The component at the specified index.</returns>
     /// <exception cref="ExpectException">Thrown when the component at the index cannot be found within the timeout.</exception>
-    public TComponent this[int index]
+    public Task<TComponent> this[int index]
     {
         get
         {
-            return Read(async () =>
+            return ReadAsync(async () =>
             {
                 async Task<bool> condition()
                 {
@@ -170,11 +167,11 @@ public class BaseComponentList<TComponent, TListConditions, TComponentConditions
     /// <param name="text">The text content to match.</param>
     /// <returns>The first component with matching text.</returns>
     /// <exception cref="ExpectException">Thrown when no component with the specified text is found within the timeout.</exception>
-    public TComponent this[string text]
+    public Task<TComponent> this[string text]
     {
         get
         {
-            return Read(async () =>
+            return ReadAsync(async () =>
             {
                 TComponent component = null;
 
@@ -182,7 +179,15 @@ public class BaseComponentList<TComponent, TListConditions, TComponentConditions
                 {
                     _list = await LocateAllAsync().ConfigureAwait(false);
 
-                    component = _list.FirstOrDefault(c => c.Text == text);
+                    foreach (var candidate in _list)
+                    {
+                        if (await candidate.Text.ConfigureAwait(false) == text)
+                        {
+                            component = candidate;
+
+                            break;
+                        }
+                    }
 
                     if (component is null)
                     {
@@ -220,14 +225,14 @@ public class BaseComponentList<TComponent, TListConditions, TComponentConditions
     /// <returns>The first component satisfying the predicate.</returns>
     /// <exception cref="ExpectException">Thrown when no component satisfying the predicate is found within the timeout.</exception>
 #if NET6_0_OR_GREATER
-        public TComponent this[Func<TComponent, bool> predicate, [CallerArgumentExpression("predicate")] string predicateExpression = null]
+        public Task<TComponent> this[Func<TComponent, Task<bool>> predicate, [CallerArgumentExpression("predicate")] string predicateExpression = null]
 #else
-    public TComponent this[Func<TComponent, bool> predicate]
+    public Task<TComponent> this[Func<TComponent, Task<bool>> predicate]
 #endif
     {
         get
         {
-            return Read(async () =>
+            return ReadAsync(async () =>
             {
                 TComponent component = null;
 
@@ -235,7 +240,17 @@ public class BaseComponentList<TComponent, TListConditions, TComponentConditions
                 {
                     _list = await LocateAllAsync().ConfigureAwait(false);
 
-                    component = _list.FirstOrDefault(predicate);
+                    component = null;
+
+                    foreach (var candidate in _list)
+                    {
+                        if (await predicate(candidate).ConfigureAwait(false))
+                        {
+                            component = candidate;
+
+                            break;
+                        }
+                    }
 
                     if (component is null)
                     {
@@ -274,7 +289,7 @@ public class BaseComponentList<TComponent, TListConditions, TComponentConditions
     /// Gets the first component in the list.
     /// </summary>
     /// <returns>The first component.</returns>
-    public TComponent First()
+    public Task<TComponent> First()
     {
         return this[0];
     }
@@ -285,9 +300,9 @@ public class BaseComponentList<TComponent, TListConditions, TComponentConditions
     /// <param name="predicate">The predicate to match components against.</param>
     /// <returns>The first component satisfying the predicate.</returns>
 #if NET6_0_OR_GREATER
-        public TComponent First(Func<TComponent, bool> predicate, [CallerArgumentExpression("predicate")] string predicateExpression = null)
+        public Task<TComponent> First(Func<TComponent, Task<bool>> predicate, [CallerArgumentExpression("predicate")] string predicateExpression = null)
 #else
-    public TComponent First(Func<TComponent, bool> predicate)
+    public Task<TComponent> First(Func<TComponent, Task<bool>> predicate)
 #endif
     {
 #if NET6_0_OR_GREATER
@@ -300,48 +315,30 @@ public class BaseComponentList<TComponent, TListConditions, TComponentConditions
     /// <summary>
     /// Gets the number of components in the list.
     /// </summary>
-    public int Count
-    {
-        get
-        {
-            EnsureLocated();
-
-            return _list.Count;
-        }
-    }
+    public Task<int> Count => ReadAsync(async () => (await LocateAllAsync().ConfigureAwait(false)).Count);
 
     /// <inheritdoc />
-    public IEnumerator<TComponent> GetEnumerator()
+    public async IAsyncEnumerator<TComponent> GetAsyncEnumerator(CancellationToken cancellationToken = default)
     {
-        EnsureLocated();
+        _list = await ReadAsync(() => LocateAllAsync()).ConfigureAwait(false);
 
-        return _list.GetEnumerator();
-    }
-
-    IEnumerator IEnumerable.GetEnumerator()
-    {
-        return GetEnumerator();
+        foreach (var item in _list)
+        {
+            yield return item;
+        }
     }
 
     /// <summary>
     /// Performs the specified action on each component.
     /// </summary>
     /// <param name="action">The action to be performed.</param>
-    public void ForEach(Action<TComponent> action)
+    public async Task ForEach(Action<TComponent> action)
     {
-        EnsureLocated();
+        _list = await ReadAsync(() => LocateAllAsync()).ConfigureAwait(false);
 
         foreach (var item in _list)
         {
             action(item);
-        }
-    }
-
-    private void EnsureLocated()
-    {
-        if (_list == null)
-        {
-            _list = Read(() => LocateAllAsync());
         }
     }
 }

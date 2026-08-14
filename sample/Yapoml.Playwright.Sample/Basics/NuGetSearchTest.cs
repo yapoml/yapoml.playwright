@@ -66,17 +66,17 @@ public class NuGetSearchTest
     }
 
     [Test]
-    public void NavigateWithYapoml()
+    public async Task NavigateWithYapoml()
     {
         var ya = _page.Ya(opts =>
             opts.WithBaseUrl("https://nuget.org"))
             .Basics.Pages;
 
         // it opens https://nuget.org/packages?q=yaml
-        Assert.That(ya.PackagesPage.Open(q: "yaml").Packages.Count, Is.EqualTo(20));
+        Assert.That(await ya.PackagesPage.Open(q: "yaml").Packages.Count, Is.EqualTo(20));
 
         // it opens https://nuget.org/packages/Newtonsoft.Json
-        Console.WriteLine(ya.PackageDetailsPage.Open("Newtonsoft.Json").Version.Text);
+        Console.WriteLine(await ya.PackageDetailsPage.Open("Newtonsoft.Json").Version.Text);
     }
 
     [Test]
@@ -99,7 +99,7 @@ public class NuGetSearchTest
     {
         var packagesPage = _page.Ya(opts => opts.WithBaseUrl("https://nuget.org")).Basics.Pages.PackagesPage;
 
-        foreach (var package in await packagesPage.Open(q: "yaml").Packages)
+        await foreach (var package in packagesPage.Open(q: "yaml").Packages)
         {
             await package.ScrollIntoView();
         }
@@ -116,12 +116,12 @@ public class NuGetSearchTest
 
         var packagesPage = _page.Ya().Basics.Pages.PackagesPage;
 
-        foreach (var package in packagesPage.Packages)
+        await foreach (var package in packagesPage.Packages)
         {
-            Console.WriteLine(package.Title.Text);
+            Console.WriteLine(await package.Title.Text);
         }
 
-        var myPackage = packagesPage.Packages[p => p.Title == "Yapoml.Playwright"];
+        var myPackage = await packagesPage.Packages[async p => await p.Title.Text == "Yapoml.Playwright"];
         Console.Write(myPackage);
     }
 

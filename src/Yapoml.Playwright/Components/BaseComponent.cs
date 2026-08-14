@@ -73,33 +73,6 @@ public abstract partial class BaseComponent<TComponent, TConditions, TCondition>
 
         return component;
     }
-
-    /// <summary>
-    /// Compares the component's text content with a string value.
-    /// </summary>
-    /// <param name="component">The component to compare.</param>
-    /// <param name="value">The string value to compare against.</param>
-    /// <returns><c>true</c> if the component's text equals the value; otherwise, <c>false</c>.</returns>
-    public static bool operator ==(BaseComponent<TComponent, TConditions, TCondition> component, string value)
-    {
-        if (component is null)
-        {
-            return value == null;
-        }
-
-        return component.Text == value;
-    }
-
-    /// <summary>
-    /// Compares the component's text content with a string value for inequality.
-    /// </summary>
-    /// <param name="component">The component to compare.</param>
-    /// <param name="value">The string value to compare against.</param>
-    /// <returns><c>true</c> if the component's text does not equal the value; otherwise, <c>false</c>.</returns>
-    public static bool operator !=(BaseComponent<TComponent, TConditions, TCondition> component, string value)
-    {
-        return !(component == value);
-    }
 }
 
 /// <summary>
@@ -226,7 +199,7 @@ public abstract class BaseComponent
     /// input elements (<c>&lt;input&gt;</c>) do not have any inner text, so they will return an empty string for this property.
     /// To get the value of an input element, you may need to use the <see cref="AttributesCollection.Value"/> property.
     /// </remarks>
-    public virtual string Text => Read(() => RelocateOnStaleReferenceAsync(() => WrappedElement.TextContentAsync())).Trim();
+    public virtual Task<string> Text => ReadAsync(async () => (await RelocateOnStaleReferenceAsync(() => WrappedElement.TextContentAsync()).ConfigureAwait(false)).Trim());
 
     /// <summary>
     /// Used to indicate whether a component can respond to user interactions or not.
@@ -237,7 +210,7 @@ public abstract class BaseComponent
     /// For example, you can use it to check if a checkbox is checked or unchecked, or if a text field is editable or read-only.
     /// </para>
     /// </summary>
-    public virtual bool IsEnabled => Read(() => RelocateOnStaleReferenceAsync(() => WrappedElement.IsEnabledAsync()));
+    public virtual Task<bool> IsEnabled => ReadAsync(() => RelocateOnStaleReferenceAsync(() => WrappedElement.IsEnabledAsync()));
 
     /// <summary>
     /// Indicates whether a component currently is checked or not.
@@ -245,7 +218,7 @@ public abstract class BaseComponent
     /// It returns a boolean value: <c>true</c> if the component is checked, and <c>false</c> if the component is unchecked.
     /// </para>
     /// </summary>
-    public virtual bool IsChecked => Read(() => RelocateOnStaleReferenceAsync(() => WrappedElement.IsCheckedAsync()));
+    public virtual Task<bool> IsChecked => ReadAsync(() => RelocateOnStaleReferenceAsync(() => WrappedElement.IsCheckedAsync()));
 
     /// <summary>
     /// Indicates whether a component currently is partially visible within viewport or not.
@@ -253,13 +226,7 @@ public abstract class BaseComponent
     /// It returns a boolean value: <c>true</c> if the component is in viewport, and <c>false</c> if the component is not.
     /// </para>
     /// </summary>
-    public virtual bool IsInView
-    {
-        get
-        {
-            throw new NotImplementedException();
-        }
-    }
+    public virtual Task<bool> IsInView => throw new NotImplementedException();
 
     /// <summary>
     /// Indicates whether a component is visible on the page or not.
@@ -276,13 +243,7 @@ public abstract class BaseComponent
     /// <remarks>
     /// It doesn't expect a component exists in DOM. It only returns <c>true</c> if a component is found in DOM and visible. Otherwise, it returns <c>false</c>.
     /// </remarks>
-    public virtual bool IsDisplayed
-    {
-        get
-        {
-            return Read(() => WrappedElement.IsVisibleAsync());
-        }
-    }
+    public virtual Task<bool> IsDisplayed => ReadAsync(() => WrappedElement.IsVisibleAsync());
 
     /// <summary>
     /// Indicates whether a component currently has logical focus or not.
@@ -290,39 +251,17 @@ public abstract class BaseComponent
     /// It returns a boolean value: <c>true</c> if the component has focus, and <c>false</c> if the component does not have focus.
     /// </para>
     /// </summary>
-    public virtual bool IsFocused
+    public virtual Task<bool> IsFocused => ReadAsync(async () =>
     {
-        get
-        {
-            var isFocusedRes = Read(() => WrappedElement.EvaluateAsync("node => document.activeElement === node"));
+        var isFocusedRes = await WrappedElement.EvaluateAsync("node => document.activeElement === node").ConfigureAwait(false);
 
-            return bool.Parse(isFocusedRes.ToString());
-        }
-    }
+        return bool.Parse(isFocusedRes.ToString());
+    });
 
     /// <summary>
     /// Returns a value of the component.
     /// </summary>
-    public virtual string Value
-    {
-        get
-        {
-            return Read(() => WrappedElement.InputValueAsync());
-        }
-    }
-
-    /// <inheritdoc />
-    public override bool Equals(object obj)
-    {
-        var str = obj as string;
-
-        if (str != null)
-        {
-            return str.Equals(Text);
-        }
-
-        return base.Equals(obj);
-    }
+    public virtual Task<string> Value => ReadAsync(() => WrappedElement.InputValueAsync());
 
     /// <summary>
     /// Retries an async function upon stale element references.
@@ -333,16 +272,13 @@ public abstract class BaseComponent
     }
 
     /// <summary>
-    /// Executes the pending steps and reads a value. Blocks the caller until value reads become awaitable.
+    /// Executes the pending steps and reads a value once the chain is drained.
     /// </summary>
-    protected T Read<T>(Func<Task<T>> read)
+    protected async Task<T> ReadAsync<T>(Func<Task<T>> read)
     {
-        return Task.Run(async () =>
-        {
-            await Chain.RunAsync().ConfigureAwait(false);
+        await Chain.RunAsync().ConfigureAwait(false);
 
-            return await read().ConfigureAwait(false);
-        }).GetAwaiter().GetResult();
+        return await read().ConfigureAwait(false);
     }
 
     /// <summary>

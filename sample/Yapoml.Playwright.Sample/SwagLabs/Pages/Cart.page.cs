@@ -1,12 +1,14 @@
-﻿namespace Yapoml.Playwright.Sample.SwagLabs.Pages;
+﻿using System.Threading.Tasks;
+
+namespace Yapoml.Playwright.Sample.SwagLabs.Pages;
 
 partial class CartPage
 {
-    public CartPage RemoveAllItems()
+    public async Task<CartPage> RemoveAllItems()
     {
         using (_logger.BeginLogScope("Removing all items from cart"))
         {
-            Items.ForEach(i => i.RemoveButton.Click());
+            await Items.ForEach(i => i.RemoveButton.Click());
         }
 
         return this;

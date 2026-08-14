@@ -14,6 +14,8 @@ public class StylesCollection
 {
     private readonly IElementHandler _elementHandler;
 
+    private readonly Chain _chain;
+
     private readonly TimeSpan _timeout;
     private readonly TimeSpan _pollingInterval;
 
@@ -26,6 +28,8 @@ public class StylesCollection
     {
         _elementHandler = elementHandler;
 
+        _chain = Chain.Resolve(spaceOptions);
+
         _timeout = spaceOptions.Services.Get<TimeoutOptions>().Timeout;
         _pollingInterval = spaceOptions.Services.Get<TimeoutOptions>().PollingInterval;
     }
@@ -35,35 +39,38 @@ public class StylesCollection
     /// </summary>
     /// <param name="name">The CSS property name (e.g., "color", "font-size").</param>
     /// <returns>The computed style value as a string.</returns>
-    public string this[string name]
+    public Task<string> this[string name]
     {
         get
         {
-            var style = Task.Run(() => _elementHandler.Locate().EvaluateAsync($"node => window.getComputedStyle(node).getPropertyValue('{name}')")).GetAwaiter().GetResult();
+            return ReadAsync(async () =>
+            {
+                var style = await _elementHandler.Locate().EvaluateAsync($"node => window.getComputedStyle(node).getPropertyValue('{name}')").ConfigureAwait(false);
 
-            return style.ToString();
+                return style.ToString();
+            });
         }
     }
 
     /// <summary>
     /// Gets the computed <c>color</c> CSS property value.
     /// </summary>
-    public string Color => this["color"];
+    public Task<string> Color => this["color"];
 
     /// <summary>
     /// Gets the computed <c>background-color</c> CSS property value.
     /// </summary>
-    public string BackgroundColor => this["background-color"];
+    public Task<string> BackgroundColor => this["background-color"];
 
     /// <summary>
     /// Gets the computed <c>opacity</c> CSS property value.
     /// </summary>
-    public string Opacity => this["opacity"];
+    public Task<string> Opacity => this["opacity"];
 
-    private T RelocateOnStaleReference<T>(Func<T> act)
+    private async Task<T> ReadAsync<T>(Func<Task<T>> read)
     {
-        _elementHandler.Locate(_timeout, _pollingInterval);
+        await _chain.RunAsync().ConfigureAwait(false);
 
-        return act();
+        return await read().ConfigureAwait(false);
     }
 }

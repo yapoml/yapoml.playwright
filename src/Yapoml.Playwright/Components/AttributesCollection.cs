@@ -14,6 +14,8 @@ public class AttributesCollection
 {
     private readonly IElementHandler _elementHandler;
 
+    private readonly Chain _chain;
+
     private readonly TimeSpan _timeout;
     private readonly TimeSpan _pollingInterval;
 
@@ -26,6 +28,8 @@ public class AttributesCollection
     {
         _elementHandler = elementHandler;
 
+        _chain = Chain.Resolve(spaceOptions);
+
         _timeout = spaceOptions.Services.Get<TimeoutOptions>().Timeout;
         _pollingInterval = spaceOptions.Services.Get<TimeoutOptions>().PollingInterval;
     }
@@ -35,36 +39,38 @@ public class AttributesCollection
     /// </summary>
     /// <param name="name">The name of the attribute to retrieve.</param>
     /// <returns>The attribute value, or <c>null</c> if the attribute does not exist.</returns>
-    public string this[string name]
+    public Task<string> this[string name]
     {
         get
         {
-            return RelocateOnStaleReference(() => Task.Run(() => _elementHandler.Locate().GetAttributeAsync(name)).GetAwaiter().GetResult());
+            return ReadAsync(() => _elementHandler.Locate().GetAttributeAsync(name));
         }
     }
 
     /// <summary>
     /// Gets the value of the <c>href</c> attribute.
     /// </summary>
-    public string Href => this["href"];
+    public Task<string> Href => this["href"];
 
     /// <summary>
     /// Gets the value of the <c>value</c> attribute.
     /// </summary>
-    public string Value => this["value"];
+    public Task<string> Value => this["value"];
 
     /// <summary>
     /// Gets the value of the <c>class</c> attribute.
     /// </summary>
-    public string Class => this["class"];
+    public Task<string> Class => this["class"];
 
     /// <summary>
     /// Gets the value of the <c>style</c> attribute.
     /// </summary>
-    public string Style => this["style"];
+    public Task<string> Style => this["style"];
 
-    private T RelocateOnStaleReference<T>(Func<T> act)
+    private async Task<T> ReadAsync<T>(Func<Task<T>> read)
     {
-        return act();
+        await _chain.RunAsync().ConfigureAwait(false);
+
+        return await read().ConfigureAwait(false);
     }
 }

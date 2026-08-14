@@ -565,14 +565,14 @@ partial class BaseComponent<TComponent, TConditions, TCondition>
     /// Gets a screenshot of the current state of the component in PNG format.
     /// </summary>
     /// <returns>A byte array representing the PNG screenshot image.</returns>
-    public virtual byte[] GetScreenshot()
+    public virtual Task<byte[]> GetScreenshot()
     {
-        return Read(() => RelocateOnStaleReferenceAsync(() => WrappedElement.ScreenshotAsync()));
+        return ReadAsync(() => RelocateOnStaleReferenceAsync(() => WrappedElement.ScreenshotAsync()));
     }
 
     /// <inheritdoc cref="GetScreenshot()"/>
     /// <param name="when">Condition to be satisfied before taking a screenshot.</param>
-    public virtual byte[] GetScreenshot(Action<TConditions> when)
+    public virtual Task<byte[]> GetScreenshot(Action<TConditions> when)
     {
         when(conditions);
 

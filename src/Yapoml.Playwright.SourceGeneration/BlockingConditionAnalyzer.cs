@@ -20,7 +20,7 @@ public class BlockingConditionAnalyzer : DiagnosticAnalyzer
     private static readonly DiagnosticDescriptor Rule = new DiagnosticDescriptor(
         DiagnosticId,
         "Blocking call inside a condition",
-        "This blocking call runs eagerly instead of joining the awaited chain. Wrap the asynchronous work in 'Enqueue(async () => ...)' and 'await' it",
+        "This blocking call runs eagerly instead of joining the awaited chain. Wrap the asynchronous work in 'Enqueue(async () => ...)' and 'await' it.",
         "Usage",
         DiagnosticSeverity.Warning,
         isEnabledByDefault: true);

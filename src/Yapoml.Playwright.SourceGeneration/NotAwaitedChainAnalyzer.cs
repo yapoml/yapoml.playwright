@@ -18,7 +18,7 @@ public class NotAwaitedChainAnalyzer : DiagnosticAnalyzer
     private static readonly DiagnosticDescriptor Rule = new DiagnosticDescriptor(
         DiagnosticId,
         "Chain is not awaited",
-        "The chain is not awaited, so none of its steps are executed. Add 'await' before the expression",
+        "The chain is not awaited, so none of its steps are executed. Add 'await' before the expression.",
         "Usage",
         DiagnosticSeverity.Warning,
         isEnabledByDefault: true);

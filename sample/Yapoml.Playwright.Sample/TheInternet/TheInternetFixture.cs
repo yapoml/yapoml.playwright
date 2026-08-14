@@ -38,9 +38,7 @@ internal class TheInternetFixture
     [Test]
     public async Task Hover()
     {
-        var user = await _ya.HoversPage.Open().Users[1];
-
-        user.Hover();
+        var user = _ya.HoversPage.Open().Users[1].Hover();
 
         await user.Name.Expect(it => it.IsDisplayed().Is("name: user2"));
     }

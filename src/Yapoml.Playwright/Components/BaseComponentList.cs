@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -116,107 +117,29 @@ public class BaseComponentList<TComponent, TListConditions, TComponentConditions
         return new List<TComponent>(elements.Select(e => factory.Create<TComponent, TListConditions, TComponentConditions>(_page, _parentComponent, _driver, new ElementHandler(_driver, null, locator, _elementsListHandler.By, _elementsListHandler.From, e, _componentsListMetadata.ComponentMetadata, _elementsListHandler.ElementHandlerRepository.CreateNestedRepository(), _eventSource), _componentsListMetadata.ComponentMetadata, _spaceOptions)));
     }
 
+    private TComponent CreateItem(ILocator itemLocator)
+    {
+        var factory = _spaceOptions.Services.Get<IComponentFactory>();
+        var locator = _spaceOptions.Services.Get<IElementLocator>();
+
+        var elementHandler = new ElementHandler(_driver, null, locator, _elementsListHandler.By, _elementsListHandler.From, itemLocator, _componentsListMetadata.ComponentMetadata, _elementsListHandler.ElementHandlerRepository.CreateNestedRepository(), _eventSource);
+
+        return factory.Create<TComponent, TListConditions, TComponentConditions>(_page, _parentComponent, _driver, elementHandler, _componentsListMetadata.ComponentMetadata, _spaceOptions);
+    }
+
     /// <summary>
-    /// Gets the component at the specified index. Waits until sufficient elements are located.
+    /// Gets the component at the specified index. The element is resolved lazily when the chain is awaited.
     /// </summary>
     /// <param name="index">The zero-based index of the component.</param>
-    /// <returns>The component at the specified index.</returns>
-    /// <exception cref="ExpectException">Thrown when the component at the index cannot be found within the timeout.</exception>
-    public Task<TComponent> this[int index]
-    {
-        get
-        {
-            return ReadAsync(async () =>
-            {
-                async Task<bool> condition()
-                {
-                    _list = await LocateAllAsync().ConfigureAwait(false);
-
-                    if (_list.Count > index)
-                    {
-                        return true;
-                    }
-                    else
-                    {
-                        _elementsListHandler.Invalidate();
-
-                        return false;
-                    }
-                }
-
-                var timeout = _spaceOptions.Services.Get<TimeoutOptions>().Timeout;
-                var pollingInterval = _spaceOptions.Services.Get<TimeoutOptions>().PollingInterval;
-
-                try
-                {
-                    await Waiter.UntilAsync(condition, timeout, pollingInterval).ConfigureAwait(false);
-                }
-                catch (TimeoutException exp)
-                {
-                    throw new ExpectException($"Couldn't get a {_componentsListMetadata.ComponentMetadata.Name} by index {index} from {_list.Count} {_componentsListMetadata.Name}.", exp);
-                }
-
-                return _list[index];
-            });
-        }
-    }
+    /// <returns>A chainable component pointing at the indexed element.</returns>
+    public TComponent this[int index] => CreateItem(_elementsListHandler.Locate().Nth(index));
 
     /// <summary>
-    /// Gets the first component whose text content matches the specified string. Waits until a matching element is found.
+    /// Gets the component whose text content matches the specified string. The element is resolved lazily when the chain is awaited.
     /// </summary>
     /// <param name="text">The text content to match.</param>
-    /// <returns>The first component with matching text.</returns>
-    /// <exception cref="ExpectException">Thrown when no component with the specified text is found within the timeout.</exception>
-    public Task<TComponent> this[string text]
-    {
-        get
-        {
-            return ReadAsync(async () =>
-            {
-                TComponent component = null;
-
-                async Task<bool> condition()
-                {
-                    _list = await LocateAllAsync().ConfigureAwait(false);
-
-                    foreach (var candidate in _list)
-                    {
-                        if (await candidate.Text.ConfigureAwait(false) == text)
-                        {
-                            component = candidate;
-
-                            break;
-                        }
-                    }
-
-                    if (component is null)
-                    {
-                        _elementsListHandler.Invalidate();
-
-                        return false;
-                    }
-                    else
-                    {
-                        return true;
-                    }
-                }
-
-                var timeout = _spaceOptions.Services.Get<TimeoutOptions>().Timeout;
-                var pollingInterval = _spaceOptions.Services.Get<TimeoutOptions>().PollingInterval;
-
-                try
-                {
-                    await Waiter.UntilAsync(condition, timeout, pollingInterval).ConfigureAwait(false);
-                }
-                catch (TimeoutException exp)
-                {
-                    throw new ExpectException($"{_componentsListMetadata.Name} contain no matching {_componentsListMetadata.ComponentMetadata.Name} with '{text}' text.", exp);
-                }
-
-                return component;
-            });
-        }
-    }
+    /// <returns>A chainable component pointing at the matching element.</returns>
+    public TComponent this[string text] => CreateItem(_elementsListHandler.Locate().Filter(new LocatorFilterOptions { HasTextRegex = new Regex("^" + Regex.Escape(text) + "$") }));
 
     /// <summary>
     /// Gets the first component satisfying the specified predicate. Waits until a matching element is found.
@@ -286,10 +209,10 @@ public class BaseComponentList<TComponent, TListConditions, TComponentConditions
     }
 
     /// <summary>
-    /// Gets the first component in the list.
+    /// Gets the first component in the list. The element is resolved lazily when the chain is awaited.
     /// </summary>
-    /// <returns>The first component.</returns>
-    public Task<TComponent> First()
+    /// <returns>A chainable component pointing at the first element.</returns>
+    public TComponent First()
     {
         return this[0];
     }

@@ -31,7 +31,7 @@ internal class SwagLabsTests
     {
         var form = _ya.LoginPage.Open().Form;
 
-        form.Login.Click();
+        await form.Login.Click();
 
         var error = await form.Error;
 

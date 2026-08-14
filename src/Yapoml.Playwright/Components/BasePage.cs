@@ -1,6 +1,5 @@
 ﻿using Microsoft.Playwright;
 using System;
-using System.ComponentModel;
 using System.Threading.Tasks;
 using Yapoml.Framework.Logging;
 using Yapoml.Framework.Options;
@@ -49,7 +48,6 @@ public abstract class BasePage
     /// <summary>
     /// Enqueues a step to be executed when the page is awaited.
     /// </summary>
-    [EditorBrowsable(EditorBrowsableState.Never)]
     protected void Enqueue(Func<Task> step)
     {
         Chain.Add(step);
@@ -58,7 +56,6 @@ public abstract class BasePage
     /// <summary>
     /// Executes the pending steps and returns the awaited page back, so generated pages can expose <c>GetAwaiter</c>.
     /// </summary>
-    [EditorBrowsable(EditorBrowsableState.Never)]
     protected async Task<TPage> AwaitChainAsync<TPage>(TPage self)
     {
         await Chain.RunAsync().ConfigureAwait(false);

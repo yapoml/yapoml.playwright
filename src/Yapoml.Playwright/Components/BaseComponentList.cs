@@ -2,7 +2,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -71,6 +70,14 @@ public class BaseComponentList<TComponent, TListConditions, TComponentConditions
     /// <summary>Gets the chain of pending asynchronous steps shared with the page and parent component.</summary>
     internal Chain Chain { get; }
 
+    /// <summary>
+    /// Enqueues a step to be executed when the list is awaited.
+    /// </summary>
+    protected void Enqueue(Func<Task> step)
+    {
+        Chain.Add(step);
+    }
+
     /// <summary>Makes the child conditions build into the same chain as this list.</summary>
     protected T Share<T>(T child) where T : BaseConditions
     {
@@ -82,7 +89,6 @@ public class BaseComponentList<TComponent, TListConditions, TComponentConditions
     /// <summary>
     /// Executes the pending steps and returns the awaited list back, so generated lists can expose <c>GetAwaiter</c>.
     /// </summary>
-    [EditorBrowsable(EditorBrowsableState.Never)]
     protected async Task<TList> AwaitChainAsync<TList>(TList self)
     {
         await Chain.RunAsync().ConfigureAwait(false);

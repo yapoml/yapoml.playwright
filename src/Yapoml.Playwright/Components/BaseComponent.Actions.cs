@@ -16,7 +16,7 @@ partial class BaseComponent<TComponent, TConditions, TCondition>
     /// <returns>The same instance of the component to continue interaction with it.</returns>
     public virtual TComponent Clear()
     {
-        Chain.Add(async () =>
+        Enqueue(async () =>
         {
             using (var scope = _logger.BeginLogScope($"Clearing {Metadata.Name}"))
             {
@@ -58,7 +58,7 @@ partial class BaseComponent<TComponent, TConditions, TCondition>
             scopeName = $"Typing '{text}' into {Metadata.Name}";
         }
 
-        Chain.Add(async () =>
+        Enqueue(async () =>
         {
             using (var scope = _logger.BeginLogScope(scopeName))
             {
@@ -85,7 +85,7 @@ partial class BaseComponent<TComponent, TConditions, TCondition>
     /// <returns>The same instance of the component to continue interaction with it.</returns>
     public virtual TComponent Fill(string text)
     {
-        Chain.Add(async () =>
+        Enqueue(async () =>
         {
             using (var scope = _logger.BeginLogScope($"Filling in {component.Metadata.Name} within '{text}'"))
             {
@@ -112,7 +112,7 @@ partial class BaseComponent<TComponent, TConditions, TCondition>
     /// <returns>The same instance of the component to continue interaction with it.</returns>
     public virtual TComponent Click()
     {
-        Chain.Add(async () =>
+        Enqueue(async () =>
         {
             using (var scope = _logger.BeginLogScope($"Clicking on {Metadata.Name}"))
             {
@@ -137,7 +137,7 @@ partial class BaseComponent<TComponent, TConditions, TCondition>
     /// <param name="y">Coordinates offset by Y-axis.</param>
     public virtual TComponent Click(int x, int y)
     {
-        Chain.Add(async () =>
+        Enqueue(async () =>
         {
             using (var scope = _logger.BeginLogScope($"Clicking on {Metadata.Name} by X: {x}, Y: {y}"))
             {
@@ -167,7 +167,7 @@ partial class BaseComponent<TComponent, TConditions, TCondition>
     /// <returns>The same instance of the component to continue interaction with it.</returns>
     public virtual TComponent Hover()
     {
-        Chain.Add(async () =>
+        Enqueue(async () =>
         {
             using (var scope = _logger.BeginLogScope($"Hovering over {Metadata.Name}"))
             {
@@ -192,7 +192,7 @@ partial class BaseComponent<TComponent, TConditions, TCondition>
     /// <param name="y">Coordinates offset by Y-axis.</param>
     public virtual TComponent Hover(int x, int y)
     {
-        Chain.Add(async () =>
+        Enqueue(async () =>
         {
             using (var scope = _logger.BeginLogScope($"Hovering on {Metadata.Name} by X: {x}, Y: {y}"))
             {
@@ -228,7 +228,7 @@ partial class BaseComponent<TComponent, TConditions, TCondition>
         }
         else
         {
-            Chain.Add(async () =>
+            Enqueue(async () =>
             {
                 using (var scope = _logger.BeginLogScope($"Scrolling {Metadata.Name} into view"))
                 {
@@ -264,7 +264,7 @@ partial class BaseComponent<TComponent, TConditions, TCondition>
     {
         if (options == null) throw new ArgumentNullException(nameof(options));
 
-        Chain.Add(async () =>
+        Enqueue(async () =>
         {
             using (var scope = _logger.BeginLogScope($"Scrolling {Metadata.Name} into view with options {options}"))
             {
@@ -300,7 +300,7 @@ partial class BaseComponent<TComponent, TConditions, TCondition>
         }
         else
         {
-            Chain.Add(async () =>
+            Enqueue(async () =>
             {
                 using (var scope = _logger.BeginLogScope($"Focusing {Metadata.Name}"))
                 {
@@ -334,7 +334,7 @@ partial class BaseComponent<TComponent, TConditions, TCondition>
     {
         if (options == null) throw new ArgumentNullException(nameof(options));
 
-        Chain.Add(async () =>
+        Enqueue(async () =>
         {
             using (var scope = _logger.BeginLogScope($"Focusing {Metadata.Name} with options {options}"))
             {
@@ -364,7 +364,7 @@ partial class BaseComponent<TComponent, TConditions, TCondition>
     /// <returns>The same instance of the component to continue interaction with it.</returns>
     public virtual TComponent Blur()
     {
-        Chain.Add(async () =>
+        Enqueue(async () =>
         {
             using (var scope = _logger.BeginLogScope($"Bluring {Metadata.Name}"))
             {
@@ -391,7 +391,7 @@ partial class BaseComponent<TComponent, TConditions, TCondition>
     /// <returns>The same instance of the component to continue interaction with it.</returns>
     public virtual TComponent ContextClick()
     {
-        Chain.Add(async () =>
+        Enqueue(async () =>
         {
             using (var scope = _logger.BeginLogScope($"Context clicking on {Metadata.Name}"))
             {
@@ -418,7 +418,7 @@ partial class BaseComponent<TComponent, TConditions, TCondition>
     /// <returns>The same instance of the component to continue interaction with it.</returns>
     public virtual TComponent DoubleClick()
     {
-        Chain.Add(async () =>
+        Enqueue(async () =>
         {
             using (var scope = _logger.BeginLogScope($"Double clicking on {Metadata.Name}"))
             {
@@ -444,7 +444,7 @@ partial class BaseComponent<TComponent, TConditions, TCondition>
     /// <returns>The same instance of the component to continue interaction with it.</returns>
     public virtual TComponent Check()
     {
-        Chain.Add(async () =>
+        Enqueue(async () =>
         {
             using (var scope = _logger.BeginLogScope($"Checking on {Metadata.Name}"))
             {
@@ -470,7 +470,7 @@ partial class BaseComponent<TComponent, TConditions, TCondition>
     /// <returns>The same instance of the component to continue interaction with it.</returns>
     public virtual TComponent Uncheck()
     {
-        Chain.Add(async () =>
+        Enqueue(async () =>
         {
             using (var scope = _logger.BeginLogScope($"Unchecking on {Metadata.Name}"))
             {
@@ -498,7 +498,7 @@ partial class BaseComponent<TComponent, TConditions, TCondition>
         where TToConditions : BaseComponentConditions<TToConditions>
         where TToCondition : BaseComponentConditions<TToComponent>
     {
-        Chain.Add(async () =>
+        Enqueue(async () =>
         {
             using (var scope = _logger.BeginLogScope($"Dragging {Metadata.Name} to {toComponent.Metadata.Name}"))
             {
@@ -530,7 +530,7 @@ partial class BaseComponent<TComponent, TConditions, TCondition>
         where TToConditions : BaseComponentConditions<TToConditions>
         where TToCondition : BaseComponentConditions<TToComponent>
     {
-        Chain.Add(async () =>
+        Enqueue(async () =>
         {
             using (var scope = _logger.BeginLogScope($"Dragging {Metadata.Name} to {toComponent.Metadata.Name}"))
             {

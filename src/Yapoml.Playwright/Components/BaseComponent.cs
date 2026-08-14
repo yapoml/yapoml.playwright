@@ -135,6 +135,14 @@ public abstract class BaseComponent
     /// <summary>Gets the chain of pending asynchronous steps shared with the page and parent component.</summary>
     internal Chain Chain { get; }
 
+    /// <summary>
+    /// Enqueues a step to be executed when the component is awaited.
+    /// </summary>
+    protected void Enqueue(Func<Task> step)
+    {
+        Chain.Add(step);
+    }
+
     /// <summary>Makes the child conditions build into the same chain as this component.</summary>
     private protected T Share<T>(T child) where T : BaseConditions
     {

@@ -60,6 +60,16 @@ public abstract partial class BaseComponent<TComponent, TConditions, TCondition>
         return component;
     }
 
+    /// <summary>
+    /// Various awaitable and chainable conditions on the component with async lambda support.
+    /// </summary>
+    public virtual TComponent Expect(Func<TConditions, Task> it)
+    {
+        Enqueue(async () => await it(Share(conditions)));
+
+        return component;
+    }
+
     /// <summary>Executes the pending steps and returns the component back.</summary>
     [EditorBrowsable(EditorBrowsableState.Never)]
     public TaskAwaiter<TComponent> GetAwaiter()

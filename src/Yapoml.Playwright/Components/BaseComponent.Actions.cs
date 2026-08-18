@@ -31,7 +31,7 @@ partial class BaseComponent<TComponent, TConditions, TCondition>
     /// <param name="when">Condition to be satisfied before clearing a text.</param>
     public virtual TComponent Clear(Action<TConditions> when)
     {
-        when(conditions);
+        when(Share(conditions));
 
         return Clear();
     }
@@ -73,7 +73,7 @@ partial class BaseComponent<TComponent, TConditions, TCondition>
     /// <param name="when">Condition to be satisfied before simulating a mouse click.</param>
     public virtual TComponent Type(string text, Action<TConditions> when)
     {
-        when(conditions);
+        when(Share(conditions));
 
         return Type(text);
     }
@@ -100,7 +100,7 @@ partial class BaseComponent<TComponent, TConditions, TCondition>
     /// <param name="when">Condition to be satisfied before simulating a mouse click.</param>
     public virtual TComponent Fill(string text, Action<TConditions> when)
     {
-        when(conditions);
+        when(Share(conditions));
 
         return Fill(text);
     }
@@ -127,7 +127,7 @@ partial class BaseComponent<TComponent, TConditions, TCondition>
     /// <param name="when">Condition to be satisfied before simulating a mouse click.</param>
     public virtual TComponent Click(Action<TConditions> when)
     {
-        when(conditions);
+        when(Share(conditions));
 
         return Click();
     }
@@ -152,7 +152,7 @@ partial class BaseComponent<TComponent, TConditions, TCondition>
     /// <inheritdoc cref="Click(Action{TConditions})"/>
     public virtual TComponent Click(int x, int y, Action<TConditions> when)
     {
-        when(conditions);
+        when(Share(conditions));
 
         return Click(x, y);
     }
@@ -182,7 +182,7 @@ partial class BaseComponent<TComponent, TConditions, TCondition>
     /// <param name="when">Condition to be satisfied before simulating a mouse click.</param>
     public virtual TComponent Hover(Action<TConditions> when)
     {
-        when(conditions);
+        when(Share(conditions));
 
         return Hover();
     }
@@ -207,7 +207,7 @@ partial class BaseComponent<TComponent, TConditions, TCondition>
     /// <inheritdoc cref="Hover(Action{TConditions})"/>
     public virtual TComponent Hover(int x, int y, Action<TConditions> when)
     {
-        when(conditions);
+        when(Share(conditions));
 
         return Hover(x, y);
     }
@@ -250,7 +250,7 @@ partial class BaseComponent<TComponent, TConditions, TCondition>
         }
         else
         {
-            when(conditions);
+            when(Share(conditions));
 
             ScrollIntoView();
         }
@@ -279,7 +279,7 @@ partial class BaseComponent<TComponent, TConditions, TCondition>
     /// <inheritdoc cref="ScrollIntoView(Action{TConditions})"/>
     public virtual TComponent ScrollIntoView(ScrollIntoViewOptions options, Action<TConditions> when)
     {
-        when(conditions);
+        when(Share(conditions));
 
         return ScrollIntoView(options);
     }
@@ -322,7 +322,7 @@ partial class BaseComponent<TComponent, TConditions, TCondition>
         }
         else
         {
-            when(conditions);
+            when(Share(conditions));
 
             return Focus();
         }
@@ -349,7 +349,7 @@ partial class BaseComponent<TComponent, TConditions, TCondition>
     /// <inheritdoc cref="Focus(Action{TConditions})"/>
     public virtual TComponent Focus(FocusOptions options, Action<TConditions> when)
     {
-        when(conditions);
+        when(Share(conditions));
 
         return Focus(options);
     }
@@ -379,7 +379,7 @@ partial class BaseComponent<TComponent, TConditions, TCondition>
     /// <param name="when">Condition to be satisfied before removing the focus.</param>
     public virtual TComponent Blur(Action<TConditions> when)
     {
-        when(conditions);
+        when(Share(conditions));
 
         return Blur();
     }
@@ -406,7 +406,7 @@ partial class BaseComponent<TComponent, TConditions, TCondition>
     /// <param name="when">Condition to be satisfied before simulating a mouse right click.</param>
     public virtual TComponent ContextClick(Action<TConditions> when)
     {
-        when(conditions);
+        when(Share(conditions));
 
         return ContextClick();
     }
@@ -433,7 +433,7 @@ partial class BaseComponent<TComponent, TConditions, TCondition>
     /// <param name="when">Condition to be satisfied before simulating a mouse double click.</param>
     public virtual TComponent DoubleClick(Action<TConditions> when)
     {
-        when(conditions);
+        when(Share(conditions));
 
         return DoubleClick();
     }
@@ -459,7 +459,7 @@ partial class BaseComponent<TComponent, TConditions, TCondition>
     /// <param name="when">Condition to be satisfied before checking.</param>
     public virtual TComponent Check(Action<TConditions> when)
     {
-        when(conditions);
+        when(Share(conditions));
 
         return Check();
     }
@@ -485,7 +485,7 @@ partial class BaseComponent<TComponent, TConditions, TCondition>
     /// <param name="when">Condition to be satisfied before unchecking.</param>
     public virtual TComponent Uncheck(Action<TConditions> when)
     {
-        when(conditions);
+        when(Share(conditions));
 
         return Uncheck();
     }
@@ -517,7 +517,7 @@ partial class BaseComponent<TComponent, TConditions, TCondition>
         where TToConditions : BaseComponentConditions<TToConditions>
         where TToCondition : BaseComponentConditions<TToComponent>
     {
-        when(conditions);
+        when(Share(conditions));
 
         return DragAndDrop(toComponent);
     }
@@ -556,7 +556,7 @@ partial class BaseComponent<TComponent, TConditions, TCondition>
         where TToConditions : BaseComponentConditions<TToConditions>
         where TToCondition : BaseComponentConditions<TToComponent>
     {
-        when(conditions);
+        when(Share(conditions));
 
         return DragAndDrop(toComponent, x, y);
     }
@@ -574,7 +574,7 @@ partial class BaseComponent<TComponent, TConditions, TCondition>
     /// <param name="when">Condition to be satisfied before taking a screenshot.</param>
     public virtual Task<byte[]> GetScreenshot(Action<TConditions> when)
     {
-        when(conditions);
+        when(Share(conditions));
 
         return GetScreenshot();
     }
